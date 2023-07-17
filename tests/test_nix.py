@@ -1,15 +1,16 @@
-from typing import (
-    Iterator,
-    Optional,
-    Dict,
-    List,
-    cast,
-    Set,
-    Any,
-)
-import subprocess
-import pytest
 import json
+import subprocess
+from typing import (
+    Any,
+    Dict,
+    Iterator,
+    List,
+    Optional,
+    Set,
+    cast,
+)
+
+import pytest
 
 
 def assert_deepequals(
@@ -37,13 +38,13 @@ def assert_deepequals(
     }, ignore_paths=set(["metadata.poetry-version"]))
     """
 
-    _path = cast(tuple[str], (_path if _path else tuple()))
+    _path = cast(tuple[str], (_path if _path else ()))
     ignore_paths = ignore_paths if ignore_paths else set()
     path = ".".join(_path)
     err = ValueError("{}: {} != {}".format(path, a, b))
 
     def make_path(entry):
-        return _path + (str(entry),)
+        return (*_path, str(entry))
 
     if isinstance(a, list):
         if not isinstance(b, list) or len(a) != len(b):
@@ -82,9 +83,7 @@ def nix_eval(attr: str) -> Dict:
         "-A",
         attr,
     ]
-    proc = subprocess.run(
-        cmd, stdout=subprocess.PIPE, check=True, stderr=subprocess.PIPE
-    )
+    proc = subprocess.run(cmd, stdout=subprocess.PIPE, check=True, stderr=subprocess.PIPE)
     return json.loads(proc.stdout)
 
 

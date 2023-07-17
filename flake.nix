@@ -33,12 +33,13 @@
 
         devShells.default = pkgs.mkShell {
           packages = [
-            pkgs.treefmt
-            pkgs.deadnix
-            pkgs.statix
-            pkgs.nixpkgs-fmt
+            pkgs.treefmt # Format all the things in one go
+            pkgs.deadnix # Check for dead Nix code
+            pkgs.statix # Static Nix analysis
+            pkgs.ruff # Python linter
+            pkgs.nixpkgs-fmt # Nix formatter
             pythonEnv
-            pkgs.pdm
+            pkgs.pdm # Python PEP-621 compliant package manager
           ];
 
           shellHook = ''
@@ -72,6 +73,7 @@
             deadnix = "deadnix --fail";
             statix = "statix check";
             mypy = "mypy .";
+            ruff = "ruff check .";
           };
 
       });
