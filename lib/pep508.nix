@@ -32,93 +32,89 @@ let
     if m != null then elemAt m 0 else expr;
 
 in
-(lib.fix (self: {
+lib.fix (self: {
   # Parse PEP 508 markers into an AST
   parseMarkers = input:
     let
       # Find the positions of lhs/op/rhs in the input string
-      pos = (
-        foldl'
-          (acc: c:
-            let
-              # # Look ahead to find the operator (either "and", "not" or "or").
-              cond =
-                if self.openP > 0 || acc.inString then ""
-                else if substring acc.pos 5 input == " and " then "and"
-                else if substring acc.pos 4 input == " or " then "or"
-                else if substring acc.pos 5 input == " not " then "not"
-                else "";
+      pos = foldl'
+        (acc: c:
+          let
+            # # Look ahead to find the operator (either "and", "not" or "or").
+            cond =
+              if self.openP > 0 || acc.inString then ""
+              else if substring acc.pos 5 input == " and " then "and"
+              else if substring acc.pos 4 input == " or " then "or"
+              else if substring acc.pos 5 input == " not " then "not"
+              else "";
 
-              # When we've reached the operator we know the start/end positions of lhs/op/rhs
-              rhsOffset =
-                if cond != "" && condGt cond acc.cond then
-                  (
-                    if (cond == "and" || cond == "not") then 5
-                    else if (cond == "or") then 4
-                    else throw "Unknown cond: ${cond}"
-                  ) else -1;
-
-              self = {
-                # If we are inside a string don't track the opening and closing of parens
-                openP = if acc.inString then acc.openP else
+            # When we've reached the operator we know the start/end positions of lhs/op/rhs
+            rhsOffset =
+              if cond != "" && condGt cond acc.cond then
                 (
-                  if c == "(" then acc.openP + 1
-                  else if c == ")" then acc.openP - 1
-                  else acc.openP
-                );
+                  if (cond == "and" || cond == "not") then 5
+                  else if (cond == "or") then 4
+                  else throw "Unknown cond: ${cond}"
+                ) else -1;
 
-                # Check opening and closing of strings
-                inString =
-                  if acc.inString && c == "'" then true
-                  else if !acc.inString && c == "'" then false
-                  else acc.inString;
+            self = {
+              # If we are inside a string don't track the opening and closing of parens
+              openP = if acc.inString then acc.openP else
+              (
+                if c == "(" then acc.openP + 1
+                else if c == ")" then acc.openP - 1
+                else acc.openP
+              );
 
-                pos = acc.pos + 1;
+              # Check opening and closing of strings
+              inString =
+                if acc.inString && c == "'" then true
+                else if !acc.inString && c == "'" then false
+                else acc.inString;
 
-                cond = if cond != "" then cond else acc.cond;
+              pos = acc.pos + 1;
 
-                lhs = if (rhsOffset != -1) then acc.pos else acc.lhs;
-                rhs = if (rhsOffset != -1) then (acc.pos + rhsOffset) else acc.rhs;
-              };
+              cond = if cond != "" then cond else acc.cond;
 
-            in
-            self)
-          {
-            openP = 0; # Number of open parens
-            inString = false; # If the parser is inside a string
-            pos = 0; # Parser position
-            done = false;
+              lhs = if (rhsOffset != -1) then acc.pos else acc.lhs;
+              rhs = if (rhsOffset != -1) then (acc.pos + rhsOffset) else acc.rhs;
+            };
 
-            # Keep track of last logical condition to do precedence ordering
-            cond = "";
+          in
+          self)
+        {
+          openP = 0; # Number of open parens
+          inString = false; # If the parser is inside a string
+          pos = 0; # Parser position
+          done = false;
 
-            # Stop positions for each value
-            lhs = -1;
-            rhs = -1;
+          # Keep track of last logical condition to do precedence ordering
+          cond = "";
 
-          }
-          (lib.stringToCharacters input)
-      );
+          # Stop positions for each value
+          lhs = -1;
+          rhs = -1;
+
+        }
+        (lib.stringToCharacters input);
 
     in
-    (
-      if pos.lhs == -1 then
-        (
-          let # Value is a comparison
-            m = split re.operators (unparen input);
-          in
-          {
-            lhs = stripStr (elemAt m 0);
-            op = elemAt (elemAt m 1) 0;
-            rhs = stripStr (elemAt m 2);
-          }
-        ) else {
-        # Value is an expression group
-        lhs = self.parseMarkers (unparen (substring 0 pos.lhs input));
-        op = substring (pos.lhs + 1) (pos.rhs - pos.lhs - 2) input;
-        rhs = self.parseMarkers (unparen (substring pos.rhs (stringLength input) input));
-      }
-    );
+    if pos.lhs == -1 then
+      (
+        let # Value is a comparison
+          m = split re.operators (unparen input);
+        in
+        {
+          lhs = stripStr (elemAt m 0);
+          op = elemAt (elemAt m 1) 0;
+          rhs = stripStr (elemAt m 2);
+        }
+      ) else {
+      # Value is an expression group
+      lhs = self.parseMarkers (unparen (substring 0 pos.lhs input));
+      op = substring (pos.lhs + 1) (pos.rhs - pos.lhs - 2) input;
+      rhs = self.parseMarkers (unparen (substring pos.rhs (stringLength input) input));
+    };
 
   # Example input
   # "name [fred,bar] @ http://foo.com ; python_version=='2.7'"
@@ -140,28 +136,26 @@ in
           m3 = match "^(.+)@(.+)$" input;
 
         in
-        (
-          if m1 != null then {
-            packageSegment = elemAt m1 0;
-            url = stripStr (elemAt m1 1);
-            markerSegment = elemAt m1 2;
-          }
-          else if m2 != null then {
-            packageSegment = elemAt m2 0;
-            url = null;
-            markerSegment = elemAt m2 1;
-          }
-          else if m3 != null then {
-            packageSegment = elemAt m3 0;
-            url = stripStr (elemAt m3 1);
-            markerSegment = null;
-          }
-          else {
-            packageSegment = input;
-            url = null;
-            markerSegment = null;
-          }
-        );
+        if m1 != null then {
+          packageSegment = elemAt m1 0;
+          url = stripStr (elemAt m1 1);
+          markerSegment = elemAt m1 2;
+        }
+        else if m2 != null then {
+          packageSegment = elemAt m2 0;
+          url = null;
+          markerSegment = elemAt m2 1;
+        }
+        else if m3 != null then {
+          packageSegment = elemAt m3 0;
+          url = stripStr (elemAt m3 1);
+          markerSegment = null;
+        }
+        else {
+          packageSegment = input;
+          url = null;
+          markerSegment = null;
+        };
 
       # Extract metadata from the package segment
       package =
@@ -512,4 +506,4 @@ in
     };
 
   };
-}))
+})

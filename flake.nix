@@ -35,6 +35,8 @@
           packages = [
             pkgs.treefmt
             pkgs.deadnix
+            pkgs.statix
+            pkgs.nixpkgs-fmt
             pythonEnv
             pkgs.pdm
           ];
@@ -65,15 +67,10 @@
             '';
           in
           {
-
-            pytest = mkCheck "pytest" ''
-              pytest --workers auto
-            '';
-
-            treefmt = mkCheck "treefmt" ''
-              treefmt --no-cache --fail-on-change
-            '';
-
+            pytest = mkCheck "pytest" "pytest --workers auto";
+            treefmt = mkCheck "treefmt" "treefmt --no-cache --fail-on-change";
+            deadnix = mkCheck "deadnix" "deadnix --fail";
+            statix = mkCheck "statix" "statix check";
           };
 
       });

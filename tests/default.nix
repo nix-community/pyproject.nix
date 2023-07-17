@@ -7,6 +7,6 @@ let
 in
 {
   # Applies attrNames to tests so we can just dump the JSON to get the test suite names
-  discovery = lib.mapAttrs (_: module: lib.mapAttrs (_: tests: lib.attrNames tests) module) pyLib.tests;
+  discovery = lib.mapAttrs (_: lib.mapAttrs (_: lib.attrNames)) pyLib.tests;
   inherit (pyLib) tests;
 }
