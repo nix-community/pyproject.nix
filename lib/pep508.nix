@@ -15,15 +15,11 @@ let
     not = 1;
     "" = -1;
   };
-  condGt = l: r: let
-    result = if l == "" then false else condPrio.${l} >= condPrio.${r};
-  in builtins.trace (builtins.toJSON { inherit result l r; }) result;
-
-
-  # l = "" || builtins.trace (builtins.toJSON {
-  #   prio = ();
-  #   inherit l r;
-  # }) (condPrio.${l} >= condPrio.${r});
+  condGt = l: r:
+    let
+      result = if l == "" then false else condPrio.${l} >= condPrio.${r};
+    in
+    result;
 
   # Strip leading/trailing whitespace from string
   stripStr = s: lib.elemAt (builtins.split "^ *" (lib.elemAt (builtins.split " *$" s) 0)) 2;
@@ -32,8 +28,9 @@ let
   splitComma = s: if s == "" then [ ] else filter (x: lib.isString x && x != "" && x != " ") (split "(,)|(, *)|( *,)|( *, *)" s);
 
   # Remove groupings ( ) from expression
-  unparen = expr:
+  unparen = expr':
     let
+      expr = stripStr expr';
       m = builtins.match "\\((.+)\\)" expr;
     in
     if m != null then elemAt m 0 else expr;
@@ -68,7 +65,7 @@ let
 
               # When we've reached the operator we know the start/end positions of lhs/op/rhs
               rhsOffset =
-                if condGt cond acc.cond then
+                if cond != "" && condGt cond acc.cond then
                   (
                     if (cond == "and" || cond == "not") then 5
                     else if (cond == "or") then 4
@@ -122,7 +119,7 @@ let
       if pos.lhs == -1 then
         (
           let # Value is a comparison
-            m = split re.operators input;
+            m = split re.operators (unparen input);
           in
           {
             lhs = stripStr (elemAt m 0);
@@ -139,6 +136,7 @@ let
 
 in
 (lib.fix (self: {
+
   # Example input
   # "name [fred,bar] @ http://foo.com ; python_version=='2.7'"
   parseString = input:
@@ -511,13 +509,13 @@ in
             op = "or";
             lhs = {
               op = "==";
-              rhs = "os_name";
-              lhs = "'a'";
+              lhs = "os_name";
+              rhs = "'a'";
             };
             rhs = {
               op = "==";
-              rhs = "os_name";
-              lhs = "'b'";
+              lhs = "os_name";
+              rhs = "'b'";
             };
           };
           rhs = {

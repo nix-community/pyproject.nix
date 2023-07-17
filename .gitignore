@@ -1,3 +1,4 @@
 __pycache__
 __pypackages__
 .direnv
+.pdm-python
