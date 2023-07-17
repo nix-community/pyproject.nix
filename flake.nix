@@ -2,15 +2,21 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
+    nix-github-actions.url = "github:nix-community/nix-github-actions";
+    nix-github-actions.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { self, nixpkgs, flake-utils }:
+  outputs = { self, nixpkgs, flake-utils, nix-github-actions }:
     let
       inherit (nixpkgs) lib;
     in
     {
-      libChecks = (import ./lib { inherit lib; }).tests;
+      githubActions = nix-github-actions.lib.mkGithubMatrix {
+        checks = { inherit (self.checks) x86_64-linux; };
+      };
+
       lib = builtins.removeAttrs (import ./lib { inherit lib; }) [ "tests" ];
+
     } // flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
