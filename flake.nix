@@ -66,11 +66,12 @@
               touch $out
             '';
           in
-          {
-            pytest = mkCheck "pytest" "pytest --workers auto";
-            treefmt = mkCheck "treefmt" "treefmt --no-cache --fail-on-change";
-            deadnix = mkCheck "deadnix" "deadnix --fail";
-            statix = mkCheck "statix" "statix check";
+          lib.mapAttrs mkCheck {
+            pytest = "pytest --workers auto";
+            treefmt = "treefmt --no-cache --fail-on-change";
+            deadnix = "deadnix --fail";
+            statix = "statix check";
+            mypy = "mypy .";
           };
 
       });

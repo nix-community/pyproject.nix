@@ -1,9 +1,9 @@
 from typing import (
     Iterator,
     Optional,
-    Tuple,
     Dict,
     List,
+    cast,
     Set,
     Any,
 )
@@ -16,7 +16,7 @@ def assert_deepequals(
     a: Any,
     b: Any,
     ignore_paths: Optional[Set[str]] = None,
-    _path: Optional[Tuple[str]] = None,
+    _path: Optional[tuple[str]] = None,
 ):
     """Compare objects a and b keeping track of object path for error reporting.
 
@@ -37,7 +37,7 @@ def assert_deepequals(
     }, ignore_paths=set(["metadata.poetry-version"]))
     """
 
-    _path = _path if _path else tuple()
+    _path = cast(tuple[str], (_path if _path else tuple()))
     ignore_paths = ignore_paths if ignore_paths else set()
     path = ".".join(_path)
     err = ValueError("{}: {} != {}".format(path, a, b))
