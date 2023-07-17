@@ -15,11 +15,7 @@ let
     not = 1;
     "" = -1;
   };
-  condGt = l: r:
-    let
-      result = if l == "" then false else condPrio.${l} >= condPrio.${r};
-    in
-    result;
+  condGt = l: r: if l == "" then false else condPrio.${l} >= condPrio.${r};
 
   # Strip leading/trailing whitespace from string
   stripStr = s: lib.elemAt (builtins.split "^ *" (lib.elemAt (builtins.split " *$" s) 0)) 2;
@@ -37,17 +33,8 @@ let
 
   # Parse grouped expressions
   #
-  # Example input: "(os_name=='a' or os_name=='b') and os_name=='c'"
-  # Output:
-  # {
-  #   "lhs": {
-  #     "lhs": "os_name=='a'",
-  #     "op": "or",
-  #     "rhs": "os_name=='b'"
-  #   },
-  #   "op": "and",
-  #   "rhs": "os_name=='c'"
-  # }
+  # Example input: "name [fred,bar] @ http://foo.com ; python_version=='2.7'"
+  # For output see tests below.
   parseMarkers = input:
     let
       # Find the positions of lhs/op/rhs in the input string
