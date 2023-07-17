@@ -31,10 +31,9 @@ let
     in
     if m != null then elemAt m 0 else expr;
 
-  # Parse grouped expressions
-  #
-  # Example input: "name [fred,bar] @ http://foo.com ; python_version=='2.7'"
-  # For output see tests below.
+in
+(lib.fix (self: {
+  # Parse PEP 508 markers into an AST
   parseMarkers = input:
     let
       # Find the positions of lhs/op/rhs in the input string
@@ -115,14 +114,11 @@ let
           }
         ) else {
         # Value is an expression group
-        lhs = parseMarkers (unparen (substring 0 pos.lhs input));
+        lhs = self.parseMarkers (unparen (substring 0 pos.lhs input));
         op = substring (pos.lhs + 1) (pos.rhs - pos.lhs - 2) input;
-        rhs = parseMarkers (unparen (substring pos.rhs (stringLength input) input));
+        rhs = self.parseMarkers (unparen (substring pos.rhs (stringLength input) input));
       }
     );
-
-in
-(lib.fix (self: {
 
   # Example input
   # "name [fred,bar] @ http://foo.com ; python_version=='2.7'"
@@ -206,7 +202,7 @@ in
     {
       inherit (package) name conditions optionals;
       inherit (tokens) url;
-      markers = if tokens.markerSegment == null then null else parseMarkers tokens.markerSegment;
+      markers = if tokens.markerSegment == null then null else self.parseMarkers tokens.markerSegment;
     };
 
   tests = lib.mapAttrs (_: case: case // { output = self.parseString case.input; }) {

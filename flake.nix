@@ -28,6 +28,7 @@
         {
           default = pkgs.mkShell {
             packages = [
+              pkgs.treefmt
               pythonEnv
               pkgs.pdm
             ];
