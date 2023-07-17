@@ -205,7 +205,7 @@ in
       markers = if tokens.markerSegment == null then null else self.parseMarkers tokens.markerSegment;
     };
 
-  tests = lib.mapAttrs (_: case: case // { output = self.parseString case.input; }) {
+  tests.parse = lib.mapAttrs (_: case: case // { output = self.parseString case.input; }) {
     simple = {
       input = "blinker";
       expected = {

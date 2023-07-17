@@ -70,12 +70,18 @@ def assert_deepequals(
         raise err
 
 
-def nix_eval(attr: str, args: Optional[List[str]] = None) -> Dict:
-    cmd: List[str] = ["nix", "eval", "--json"]
-    if args:
-        cmd.extend(args)
-    cmd.append(attr)
-
+def nix_eval(attr: str) -> Dict:
+    cmd: List[str] = [
+        "nix-instantiate",
+        "--eval",
+        "--strict",
+        "--json",
+        "--extra-experimental-features",
+        "nix-command flakes",
+        "./tests/",
+        "-A",
+        attr,
+    ]
     proc = subprocess.run(
         cmd, stdout=subprocess.PIPE, check=True, stderr=subprocess.PIPE
     )
@@ -86,24 +92,27 @@ def gen_checks() -> Iterator[str]:
     """Get sub attributes of flake attribute libChecks to generate tests"""
     proc = subprocess.run(
         [
-            "nix",
-            "eval",
+            "nix-instantiate",
+            "--eval",
+            "--strict",
             "--json",
-            "--apply",
-            "builtins.mapAttrs (_: v: builtins.attrNames v)",
-            "--json",
-            ".#libChecks",
+            "--extra-experimental-features",
+            "nix-command flakes",
+            "./tests/",
+            "-A",
+            "discovery",
         ],
         check=True,
         stdout=subprocess.PIPE,
     )
-    for suite, cases in json.loads(proc.stdout).items():
-        for test_case in cases:
-            yield f"{suite}.{test_case}"
+    for module_name, suites in json.loads(proc.stdout).items():
+        for suite_name, attrs in suites.items():
+            for attr in attrs:
+                yield f"{module_name}.{suite_name}.{attr}"
 
 
 @pytest.mark.parametrize("check", gen_checks())
 def test_attrs(check) -> None:
     """Automatically generate pytest tests from Nix attribute set"""
-    result = nix_eval(f".#libChecks.{check}")
+    result = nix_eval(f"tests.{check}")
     assert_deepequals(result["output"], result["expected"])
