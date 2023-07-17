@@ -11,7 +11,7 @@
     in
     {
       libChecks = (import ./lib { inherit lib; }).tests;
-      lib = import ./lib { inherit lib; };
+      lib = builtins.removeAttrs (import ./lib { inherit lib; }) [ "tests" ];
 
       devShells = eachSystem (system:
         let
@@ -29,6 +29,7 @@
           default = pkgs.mkShell {
             packages = [
               pkgs.treefmt
+              pkgs.deadnix
               pythonEnv
               pkgs.pdm
             ];

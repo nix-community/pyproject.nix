@@ -5,6 +5,6 @@ let
   };
 
 in
-modules // {
+(lib.mapAttrs (_: v: builtins.removeAttrs v [ "tests" ]) modules) // {
   tests = lib.mapAttrs (_: mod: mod.tests) modules;
 }
