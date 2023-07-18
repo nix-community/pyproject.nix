@@ -38,7 +38,7 @@
           version = "0.1";
           src = self;
           sourceRoot = "source/doc";
-          nativeBuildInputs = [ pythonEnv pkgs.nixdoc ];
+          nativeBuildInputs = [ pythonEnv pkgs.nixdoc pkgs.nixpkgs-fmt ];
           preBuild = "patchShebangs build_md.py";
           installPhase = ''
             runHook preInstall
@@ -50,9 +50,9 @@
         devShells.default =
           let
             checkInputs = builtins.filter (pkg: pkg != pkgs.nix) (
-              lib.unique (lib.flatten (
+              lib.unique ((lib.flatten (
                 lib.mapAttrsToList (_: drv: drv.nativeBuildInputs) self.checks.${system}
-              ))
+              )) ++ self.packages.${system}.doc-html.nativeBuildInputs)
             );
           in
           pkgs.mkShell {
@@ -60,8 +60,6 @@
               pkgs.pdm # Python PEP-621 compliant package manager
               pkgs.hivemind # Procfile runner
               pkgs.reflex # Generic file watcher
-
-              pkgs.nixdoc # Generate MD from Nix
             ];
           };
 
