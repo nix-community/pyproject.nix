@@ -40,7 +40,9 @@
           in
           pkgs.mkShell {
             packages = checkInputs ++ [
-              pkgs.pdm
+              pkgs.pdm # Python PEP-621 compliant package manager
+              pkgs.hivemind # Procfile runner
+              pkgs.reflex # Generic file watcher
             ];
           };
 

@@ -42,7 +42,7 @@ def assert_deepequals(
     err = ValueError("{}: {} != {}".format(path, a, b))
 
     def make_path(entry: Any) -> tuple[str, ...]:
-        return (*_path, str(entry))  # type: ignore:misc
+        return (*_path, str(entry))  # type: ignore[misc]
 
     if isinstance(a, list):
         if not isinstance(b, list) or len(a) != len(b):
