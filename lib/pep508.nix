@@ -1,7 +1,7 @@
 { lib }:
 
 let
-  inherit (builtins) match hasAttr elemAt split filter foldl' substring stringLength mapAttrs typeOf compareVersions fromJSON;
+  inherit (builtins) match hasAttr elemAt split filter foldl' substring stringLength mapAttrs typeOf compareVersions fromJSON isString;
   inherit (lib) stringToCharacters fix;
 
   re = {
@@ -18,11 +18,14 @@ let
   };
   condGt = l: r: if l == "" then false else condPrio.${l} >= condPrio.${r};
 
+  isEmptyStr = s: isString s && match " *" s == null;
+
   # TODO: Replace inefficient functions
   # Strip leading/trailing whitespace from string
   stripStr = s: elemAt (split "^ *" (elemAt (split " *$" s) 0)) 2;
+
   # Split a comma separated string
-  splitComma = s: if s == "" then [ ] else filter (x: lib.isString x && x != "" && x != " ") (split "(,)|(, *)|( *,)|( *, *)" s);
+  splitComma = s: if s == "" then [ ] else filter isEmptyStr (split " *, *" s);
 
   # Remove groupings ( ) from expression
   unparen = expr':
