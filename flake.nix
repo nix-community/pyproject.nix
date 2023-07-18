@@ -12,8 +12,10 @@
     in
     {
       githubActions = nix-github-actions.lib.mkGithubMatrix {
-        checks = { inherit (self.checks) x86_64-linux; } // {
-          inherit (self.packages.x86_64-linux) doc-html;
+        checks = lib.recursiveUpdate { inherit (self.checks) x86_64-linux; } {
+          x86_64-linux = {
+            inherit (self.packages.x86_64-linux) doc-html;
+          };
         };
       };
 
