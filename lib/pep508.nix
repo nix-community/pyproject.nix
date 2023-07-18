@@ -1,7 +1,8 @@
 { lib }:
 
 let
-  inherit (builtins) match elemAt split filter foldl' substring stringLength;
+  inherit (builtins) match hasAttr elemAt split filter foldl' substring stringLength mapAttrs typeOf compareVersions fromJSON;
+  inherit (lib) stringToCharacters fix;
 
   re = {
     operators = "([=><!~^]+)";
@@ -17,9 +18,9 @@ let
   };
   condGt = l: r: if l == "" then false else condPrio.${l} >= condPrio.${r};
 
+  # TODO: Replace inefficient functions
   # Strip leading/trailing whitespace from string
-  stripStr = s: lib.elemAt (builtins.split "^ *" (lib.elemAt (builtins.split " *$" s) 0)) 2;
-
+  stripStr = s: elemAt (split "^ *" (elemAt (split " *$" s) 0)) 2;
   # Split a comma separated string
   splitComma = s: if s == "" then [ ] else filter (x: lib.isString x && x != "" && x != " ") (split "(,)|(, *)|( *,)|( *, *)" s);
 
@@ -27,7 +28,7 @@ let
   unparen = expr':
     let
       expr = stripStr expr';
-      m = builtins.match "\\((.+)\\)" expr;
+      m = match "\\((.+)\\)" expr;
     in
     if m != null then elemAt m 0 else expr;
 
@@ -45,8 +46,51 @@ let
     powerpc64le = "ppc64le";
   };
 
+  # Marker eval operations
+  operations = {
+    # Simple equality
+    "==" = x: y: x == y;
+
+    # These implicitly means version compare and not just arbitrary lt/gt
+    "<=" = x: y: compareVersions x y <= 0;
+    "<" = x: y: compareVersions x y < 0;
+    ">=" = x: y: compareVersions x y >= 0;
+    ">" = x: y: compareVersions x y > 0;
+
+    # Logical conditions
+    "and" = x: y: x && y;
+    "or" = x: y: x || y;
+  };
+
 in
-lib.fix (self: {
+fix (self:
+let
+
+  # Process a value from evalMarkers
+  # These functions are mutually recursive.
+  processValue = value: environ:
+    let
+      type = typeOf value;
+      # If the value is a single ticked string we can't pass it plainly to toJSON
+      singleTicked = match "^'(.+)'$" value; # TODO: Account for escaped ' in input (unescape)
+    in
+    # If the value is a set it's a sub expression, call back to evalMarkers
+    if type == "set" then (self.evalMarkers environ value)
+    # If the value is a string it means we have arrived at an actual value
+    else if type == "string" then
+      (
+        # Try to look up the value from the platform environment
+        # If this doesn't exist unmarshal the value
+        if (hasAttr value environ) then environ.${value} else
+        (
+          if singleTicked != null then elemAt singleTicked 0 else fromJSON value
+        )
+      )
+    else throw "${type}: ${value}";
+
+in
+{
+
   /* Parse PEP 508 markers into an AST.
 
      Type: parseMarkers :: string -> AttrSet
@@ -137,7 +181,7 @@ lib.fix (self: {
           rhs = -1;
 
         }
-        (lib.stringToCharacters input);
+        (stringToCharacters input);
 
     in
     if pos.lhs == -1 then
@@ -257,7 +301,7 @@ lib.fix (self: {
       markers = if tokens.markerSegment == null then null else self.parseMarkers tokens.markerSegment;
     };
 
-  tests.parse = lib.mapAttrs (_: case: case // { output = self.parseString case.input; }) {
+  tests.parse = mapAttrs (_: case: case // { output = self.parseString case.input; }) {
     simple = {
       input = "blinker";
       expected = {
@@ -618,7 +662,7 @@ lib.fix (self: {
       implementation_version = python.version;
     };
 
-  tests.environ = lib.mapAttrs (_: case: case // { output = self.mkEnviron case.input; }) (
+  tests.environ = mapAttrs (_: case: case // { output = self.mkEnviron case.input; }) (
     let
       # Mock python derivations so we don't have to keep a pkgs reference
       mkPython =
@@ -705,9 +749,37 @@ lib.fix (self: {
           sys_platform = "linux";
         };
       };
-
-
     }
   );
+
+  /* Evaluate an environment as returned by `mkEnviron` against markers as returend by `parseMarkers`.
+
+     Type: evalMarkers :: AttrSet -> AttrSet -> bool
+
+     Example:
+       # evalMarkers (mkEnviron pkgs.python3) (parseMarkers "python_version < \"3.11\"")
+       true
+  */
+  evalMarkers = environ: marker: operations.${marker.op} (processValue marker.lhs environ) (processValue marker.rhs environ);
+
+  tests.eval = mapAttrs (_: case: case // { output = self.evalMarkers case.input.environ case.input.markers; }) {
+
+    trivial = {
+      input = {
+        environ = self.tests.environ.python38Linux.expected;
+        inherit (self.tests.parse.versionedWithMarker.expected) markers;
+      };
+      expected = true;
+    };
+
+    doubleMarkers = {
+      input = {
+        environ = self.tests.environ.python38Linux.expected;
+        inherit (self.tests.parse.doubleMarkersWithOptionals.expected) markers;
+      };
+      expected = false;
+    };
+
+  };
 
 })

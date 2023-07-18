@@ -20,6 +20,7 @@ extensions = [
 myst_enable_extensions = [
     "colon_fence",
     "html_admonition",
+    "linkify",
 ]
 
 templates_path = ["_templates"]

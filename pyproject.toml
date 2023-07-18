@@ -24,6 +24,7 @@ dev = [
     "sphinx>=7.0.1",
     "myst-parser>=2.0.0",
     "ipython>=8.14.0",
+    "linkify-it-py>=2.0.2",
 ]
 
 [tool.black]
