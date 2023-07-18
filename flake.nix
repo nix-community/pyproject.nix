@@ -27,53 +27,81 @@
             parsedDevDeps = map self.lib.pep508.parseString pyproject.tool.pdm.dev-dependencies.dev;
           in
           pkgs.python3.withPackages (ps: map (dep: ps.${dep.name}) parsedDevDeps);
-
       in
       {
 
-        devShells.default = pkgs.mkShell {
-          packages = [
-            pkgs.treefmt # Format all the things in one go
-            pkgs.deadnix # Check for dead Nix code
-            pkgs.statix # Static Nix analysis
-            pkgs.ruff # Python linter
-            pkgs.nixpkgs-fmt # Nix formatter
-            pythonEnv
-            pkgs.pdm # Python PEP-621 compliant package manager
-          ];
-
-          shellHook = ''
-            export NIX_PATH=nixpkgs=${nixpkgs}
-          '';
-        };
+        devShells.default =
+          let
+            checkInputs = builtins.filter (pkg: pkg != pkgs.nix) (
+              lib.unique (lib.flatten (
+                lib.mapAttrsToList (_: drv: drv.nativeBuildInputs) self.checks.${system}
+              ))
+            );
+          in
+          pkgs.mkShell {
+            packages = checkInputs ++ [
+              pkgs.pdm
+            ];
+          };
 
         checks =
           let
             mkCheck = name: check: pkgs.runCommand name
-              {
-                nativeBuildInputs = self.devShells.${system}.default.nativeBuildInputs ++ [
-                  pkgs.nix
-                ];
-                env.NIX_PATH = "nixpkgs=${nixpkgs}";
-              } ''
-              cp -rv ${self} src
-              chmod +w -R src
-              cd src
+              (check.attrs or { })
+              ''
+                cp -rv ${self} src
+                chmod +w -R src
+                cd src
 
-              export NIX_REMOTE=local?root=$PWD
+                ${check.check}
 
-              ${check}
-
-              touch $out
-            '';
+                touch $out
+              '';
           in
           lib.mapAttrs mkCheck {
-            pytest = "pytest --workers auto";
-            treefmt = "treefmt --no-cache --fail-on-change";
-            deadnix = "deadnix --fail";
-            statix = "statix check";
-            mypy = "mypy .";
-            ruff = "ruff check .";
+            pytest = {
+              attrs = {
+                nativeBuildInputs = [
+                  pkgs.nix
+                  pythonEnv
+                ];
+                env.NIX_PATH = "nixpkgs=${nixpkgs}";
+              };
+              check = ''
+                export NIX_REMOTE=local?root=$PWD
+                pytest --workers auto
+              '';
+            };
+
+            # Format all the things in one go
+            treefmt = {
+              attrs.nativeBuildInputs = [ pkgs.treefmt pkgs.nixpkgs-fmt pythonEnv ];
+              check = "treefmt --no-cache --fail-on-change";
+            };
+
+            # Check for dead Nix code
+            deadnix = {
+              attrs.nativeBuildInputs = [ pkgs.deadnix ];
+              check = "deadnix --fail";
+            };
+
+            # Static Nix analysis
+            statix = {
+              attrs.nativeBuildInputs = [ pkgs.statix ];
+              check = "statix check";
+            };
+
+            # Python type checking
+            mypy = {
+              attrs.nativeBuildInputs = [ pythonEnv ];
+              check = "mypy .";
+            };
+
+            # Python linter
+            ruff = {
+              attrs.nativeBuildInputs = [ pkgs.ruff ];
+              check = "ruff check .";
+            };
           };
 
       });
