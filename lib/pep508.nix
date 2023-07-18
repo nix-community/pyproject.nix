@@ -38,8 +38,8 @@ lib.fix (self: {
      Type: parseMarkers :: string -> AttrSet
 
      Example:
-       parseMarkers "(os_name=='a' or os_name=='b') and os_name=='c'"
-       => {
+       # parseMarkers "(os_name=='a' or os_name=='b') and os_name=='c'"
+       {
           op = "and";
           lhs = {
             op = "or";
@@ -148,8 +148,8 @@ lib.fix (self: {
      Type: parseString :: string -> AttrSet
 
      Example:
-       parseString "cachecontrol[filecache]>=0.13.0"
-       => {
+       # parseString "cachecontrol[filecache]>=0.13.0"
+       {
           name = "cachecontrol";
           conditions = [
             {

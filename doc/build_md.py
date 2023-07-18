@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from markdown_it import MarkdownIt
 import os
 import os.path
 import re
@@ -36,6 +37,27 @@ if __name__ == "__main__":
             if m := re.match(r"(^.+) \{.+$", line):
                 line = m.group(1)
         lines.append(line)
+
+    md = MarkdownIt("commonmark", {"breaks": True, "html": True})
+
+    # Walk code blocks from the end of the file and run nixpkgs-format on nix blocks
+    tokens = md.parse("\n".join(lines))
+    for token in reversed(tokens):
+        if token.tag != "code":
+            continue
+
+        if not token.map:
+            raise ValueError()
+
+        start, end = token.map
+
+        proc = subprocess.run(["nixpkgs-fmt"], input=token.content.encode(), stdout=subprocess.PIPE, check=True)
+
+        new_contents = lines[0 : start + 1]
+        new_contents.append(proc.stdout.decode())
+        new_contents.extend(lines[end - 1 :])
+
+        lines = new_contents
 
     try:
         os.mkdir(output_dir)
