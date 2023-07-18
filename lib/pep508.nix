@@ -116,8 +116,25 @@ lib.fix (self: {
       rhs = self.parseMarkers (unparen (substring pos.rhs (stringLength input) input));
     };
 
-  # Example input
-  # "name [fred,bar] @ http://foo.com ; python_version=='2.7'"
+  /* Parse a PEP-508 dependency string.
+
+     Type: parseString :: string -> AttrSet
+
+     Example:
+       parseString cachecontrol[filecache]>=0.13.0
+       => {
+          name = "cachecontrol";
+          conditions = [
+            {
+              op = ">=";
+              version = "0.13.0";
+            }
+          ];
+          optionals = [ "filecache" ];
+          markers = null;
+          url = null;
+        }
+  */
   parseString = input:
     let
       # Split the input into it's distinct parts: The package segment, URL and environment markers

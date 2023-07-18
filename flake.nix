@@ -12,7 +12,9 @@
     in
     {
       githubActions = nix-github-actions.lib.mkGithubMatrix {
-        checks = { inherit (self.checks) x86_64-linux; };
+        checks = { inherit (self.checks) x86_64-linux; } // {
+          inherit (self.packages.x86_64-linux) doc-html;
+        };
       };
 
       lib = builtins.removeAttrs (import ./lib { inherit lib; }) [ "tests" ];
@@ -29,6 +31,19 @@
           pkgs.python3.withPackages (ps: map (dep: ps.${dep.name}) parsedDevDeps);
       in
       {
+        packages.doc-html = pkgs.stdenv.mkDerivation {
+          pname = "pyproject-nix-docs-html";
+          version = "0.1";
+          src = self;
+          sourceRoot = "source/doc";
+          nativeBuildInputs = [ pythonEnv pkgs.nixdoc ];
+          preBuild = "patchShebangs build_md.py";
+          installPhase = ''
+            runHook preInstall
+            cp -a _build/html $out
+            runHook postInstall
+          '';
+        };
 
         devShells.default =
           let
@@ -43,6 +58,8 @@
               pkgs.pdm # Python PEP-621 compliant package manager
               pkgs.hivemind # Procfile runner
               pkgs.reflex # Generic file watcher
+
+              pkgs.nixdoc # Generate MD from Nix
             ];
           };
 
