@@ -33,7 +33,34 @@ let
 
 in
 lib.fix (self: {
-  # Parse PEP 508 markers into an AST
+  /* Parse PEP 508 markers into an AST.
+
+     Type: parseMarkers :: string -> AttrSet
+
+     Example:
+       parseMarkers "(os_name=='a' or os_name=='b') and os_name=='c'"
+       => {
+          op = "and";
+          lhs = {
+            op = "or";
+            lhs = {
+              op = "==";
+              lhs = "os_name";
+              rhs = "'a'";
+            };
+            rhs = {
+              op = "==";
+              lhs = "os_name";
+              rhs = "'b'";
+            };
+          };
+          rhs = {
+            op = "==";
+            lhs = "os_name";
+            rhs = "'c'";
+          };
+        }
+  */
   parseMarkers = input:
     let
       # Find the positions of lhs/op/rhs in the input string
@@ -121,7 +148,7 @@ lib.fix (self: {
      Type: parseString :: string -> AttrSet
 
      Example:
-       parseString cachecontrol[filecache]>=0.13.0
+       parseString "cachecontrol[filecache]>=0.13.0"
        => {
           name = "cachecontrol";
           conditions = [
