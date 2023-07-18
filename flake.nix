@@ -94,7 +94,7 @@
             # Python type checking
             mypy = {
               attrs.nativeBuildInputs = [ pythonEnv ];
-              check = "mypy .";
+              check = "mypy --strict .";
             };
 
             # Python linter

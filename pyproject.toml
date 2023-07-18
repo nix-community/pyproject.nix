@@ -20,6 +20,7 @@ dev = [
     "pytest-parallel>=0.1.1",
     "black>=23.7.0",
     "mypy>=1.4.1",
+    "pytest-watch>=4.2.0",
 ]
 
 [tool.black]

@@ -2,12 +2,10 @@ import json
 import subprocess
 from typing import (
     Any,
-    Dict,
     Iterator,
     List,
     Optional,
     Set,
-    cast,
 )
 
 import pytest
@@ -17,8 +15,8 @@ def assert_deepequals(
     a: Any,
     b: Any,
     ignore_paths: Optional[Set[str]] = None,
-    _path: Optional[tuple[str]] = None,
-):
+    _path: Optional[tuple[str, ...]] = None,
+) -> None:
     """Compare objects a and b keeping track of object path for error reporting.
 
     Keyword arguments:
@@ -38,13 +36,13 @@ def assert_deepequals(
     }, ignore_paths=set(["metadata.poetry-version"]))
     """
 
-    _path = cast(tuple[str], (_path if _path else ()))
+    _path = _path if _path else ()
     ignore_paths = ignore_paths if ignore_paths else set()
     path = ".".join(_path)
     err = ValueError("{}: {} != {}".format(path, a, b))
 
-    def make_path(entry):
-        return (*_path, str(entry))
+    def make_path(entry: Any) -> tuple[str, ...]:
+        return (*_path, str(entry))  # type: ignore:misc
 
     if isinstance(a, list):
         if not isinstance(b, list) or len(a) != len(b):
@@ -71,7 +69,7 @@ def assert_deepequals(
         raise err
 
 
-def nix_eval(attr: str) -> Dict:
+def nix_eval(attr: str) -> Any:
     cmd: List[str] = [
         "nix-instantiate",
         "--eval",
@@ -111,7 +109,7 @@ def gen_checks() -> Iterator[str]:
 
 
 @pytest.mark.parametrize("check", gen_checks())
-def test_attrs(check) -> None:
+def test_attrs(check: str) -> None:
     """Automatically generate pytest tests from Nix attribute set"""
     result = nix_eval(f"tests.{check}")
     assert_deepequals(result["output"], result["expected"])
