@@ -31,6 +31,20 @@ let
     in
     if m != null then elemAt m 0 else expr;
 
+  # Maps Nixpkgs CPU values to target machines known to be supported for manylinux* wheels.
+  # (a.k.a. `uname -m` output from CentOS 7)
+  #
+  # This is current as of manylinux2014 (PEP-0599), and is a superset of manylinux2010 / manylinux1.
+  # s390x is not supported in Nixpkgs, so we don't map it.
+  manyLinuxTargetMachines = {
+    x86_64 = "x86_64";
+    i686 = "i686";
+    aarch64 = "aarch64";
+    armv7l = "armv7l";
+    powerpc64 = "ppc64";
+    powerpc64le = "ppc64le";
+  };
+
 in
 lib.fix (self: {
   /* Parse PEP 508 markers into an AST.
@@ -548,6 +562,152 @@ lib.fix (self: {
         url = null;
       };
     };
-
   };
+
+  /* Create an attrset of platform variables.
+     As described in https://peps.python.org/pep-0508/#environment-markers.
+
+     Type: mkEnviron :: derivation -> AttrSet
+
+     Example:
+       # mkEnviron pkgs.python3
+       {
+         implementation_name = "cpython";
+         implementation_version = "3.8.2";
+         os_name = "posix";
+         platform_machine = "x86_64";
+         platform_python_implementation = "CPython";
+         platform_release = "";
+         platform_system = "Linux";
+         platform_version = "";
+         python_full_version = "3.8.2";
+         python_version = "3.8";
+         sys_platform = "linux";
+       }
+  */
+  mkEnviron = python:
+    let
+      inherit (python) stdenv;
+      targetMachine = manyLinuxTargetMachines.${stdenv.targetPlatform.parsed.cpu.name} or null;
+    in
+    {
+      os_name =
+        if python.pname == "jython" then "java"
+        else "posix";
+      sys_platform =
+        if stdenv.isLinux then "linux"
+        else if stdenv.isDarwin then "darwin"
+        else throw "Unsupported platform";
+      platform_machine = targetMachine;
+      platform_python_implementation =
+        let
+          impl = python.passthru.implementation;
+        in
+        if impl == "cpython" then "CPython"
+        else if impl == "pypy" then "PyPy"
+        else throw "Unsupported implementation ${impl}";
+      platform_release = ""; # Field not reproducible
+      platform_system =
+        if stdenv.isLinux then "Linux"
+        else if stdenv.isDarwin then "Darwin"
+        else throw "Unsupported platform";
+      platform_version = ""; # Field not reproducible
+      python_version = python.passthru.pythonVersion;
+      python_full_version = python.version;
+      implementation_name = python.passthru.implementation;
+      implementation_version = python.version;
+    };
+
+  tests.environ = lib.mapAttrs (_: case: case // { output = self.mkEnviron case.input; }) (
+    let
+      # Mock python derivations so we don't have to keep a pkgs reference
+      mkPython =
+        { pname ? "python"
+        , version
+        , pythonVersion ? version
+        , implementation ? "cpython"
+        , isLinux ? false
+        , isDarwin ? false
+        }: {
+          inherit pname version;
+          passthru = {
+            inherit pythonVersion implementation;
+          };
+          stdenv = {
+            inherit isLinux isDarwin;
+            targetPlatform.parsed.cpu.name = "x86_64";
+          };
+        };
+
+    in
+    {
+      python38Linux = {
+        input = mkPython {
+          version = "3.8.2";
+          pythonVersion = "3.8";
+          isLinux = true;
+        };
+        expected = {
+          implementation_name = "cpython";
+          implementation_version = "3.8.2";
+          os_name = "posix";
+          platform_machine = "x86_64";
+          platform_python_implementation = "CPython";
+          platform_release = "";
+          platform_system = "Linux";
+          platform_version = "";
+          python_full_version = "3.8.2";
+          python_version = "3.8";
+          sys_platform = "linux";
+        };
+      };
+
+      python311Darwin = {
+        input = mkPython {
+          version = "3.11.4";
+          pythonVersion = "3.11";
+          isDarwin = true;
+        };
+        expected = {
+          implementation_name = "cpython";
+          implementation_version = "3.11.4";
+          os_name = "posix";
+          platform_machine = "x86_64";
+          platform_python_implementation = "CPython";
+          platform_release = "";
+          platform_system = "Darwin";
+          platform_version = "";
+          python_full_version = "3.11.4";
+          python_version = "3.11";
+          sys_platform = "darwin";
+        };
+      };
+
+      pypy3Linux = {
+        input = mkPython {
+          pname = "pypy";
+          version = "7.3.11";
+          pythonVersion = "3.9";
+          isLinux = true;
+          implementation = "pypy";
+        };
+        expected = {
+          implementation_name = "pypy";
+          implementation_version = "7.3.11";
+          os_name = "posix";
+          platform_machine = "x86_64";
+          platform_python_implementation = "PyPy";
+          platform_release = "";
+          platform_system = "Linux";
+          platform_version = "";
+          python_full_version = "7.3.11";
+          python_version = "3.9";
+          sys_platform = "linux";
+        };
+      };
+
+
+    }
+  );
+
 })

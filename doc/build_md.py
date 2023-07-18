@@ -1,10 +1,11 @@
 #!/usr/bin/env python
-from markdown_it import MarkdownIt
 import os
 import os.path
 import re
 import subprocess
 import sys
+
+from markdown_it import MarkdownIt
 
 # Build markdown from Nix files using Nixdoc and apply some post-processing
 # Sphinx doesn't seem to support everything we need so let's patch it away until we can fix that.
