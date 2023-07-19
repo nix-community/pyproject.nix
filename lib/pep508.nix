@@ -1,7 +1,7 @@
 { lib }:
 
 let
-  inherit (builtins) match hasAttr elemAt split filter foldl' substring stringLength mapAttrs typeOf compareVersions fromJSON isString;
+  inherit (builtins) match hasAttr elemAt split filter foldl' substring stringLength mapAttrs typeOf compareVersions fromJSON isString head;
   inherit (lib) stringToCharacters fix;
 
   re = {
@@ -20,9 +20,8 @@ let
 
   isEmptyStr = s: isString s && match " *" s == null;
 
-  # TODO: Replace inefficient functions
   # Strip leading/trailing whitespace from string
-  stripStr = s: elemAt (split "^ *" (elemAt (split " *$" s) 0)) 2;
+  stripStr = s: let t = match "[\t ]*(.*[^\t ])[\t ]*" s; in if t == null then "" else head t;
 
   # Split a comma separated string
   splitComma = s: if s == "" then [ ] else filter isEmptyStr (split " *, *" s);
