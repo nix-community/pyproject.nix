@@ -4,6 +4,14 @@ let
 in
 
 lib.fix (self: {
+  # parseMarkers is implicitly covered by parseString
+  parseMarkers = {
+    dummy = {
+      expected = true;
+      expr = true;
+    };
+  };
+
   parseString = mapAttrs (_: case: case // { expr = pep508.parseString case.input; }) {
     testSimple = {
       input = "blinker";

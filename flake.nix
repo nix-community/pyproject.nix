@@ -40,6 +40,7 @@
         };
 
         flake.lib = import ./lib { inherit lib; };
+        flake.libTests = import ./lib/test.nix { inherit lib; pyproject = self.lib; };
 
         perSystem = { pkgs, config, system, ... }:
           {
@@ -58,16 +59,14 @@
 
             # Dump all unit tests as a JSON and assert that the output from lib.debug.runTests is empty in all cases
             checks.unittest =
-              let
-                tests = import ./lib/test.nix (self.lib // { inherit lib; });
-              in
               pkgs.runCommand "unittest"
                 {
                   nativeBuildInputs = [ pkgs.jq ];
-                  env.RESULTS = builtins.toJSON (lib.mapAttrs (_: lib.mapAttrs (_: lib.debug.runTests)) tests);
+                  env.RESULTS = builtins.toJSON (lib.mapAttrs (_: lib.mapAttrs (_: lib.debug.runTests)) self.libTests);
                   allowSubstitutes = false;
                 } ''
-                echo "$RESULTS" | jq '.[] | .[] | length == 0 // error("Tests failed!")' > /dev/null || (echo "$RESULTS" | jq && false)
+                echo "$RESULTS" | jq
+                echo "$RESULTS" | jq '.[] | .[] | length == 0 // error("Tests failed!")' > /dev/null
                 touch $out
               '';
           };
