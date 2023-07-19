@@ -42,7 +42,7 @@ jobs:
     - name: Install Nix
       uses: DeterminateSystems/nix-installer-action@v4
     - name: Run build
-      run: nix build -L .#doc-html
+      run: nix build -L .#doc
     - name: Deploy
       uses: peaceiris/actions-gh-pages@v3
       with:

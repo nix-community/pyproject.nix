@@ -33,7 +33,7 @@
         flake.githubActions = nix-github-actions.lib.mkGithubMatrix {
           checks = lib.recursiveUpdate { inherit (self.checks) x86_64-linux; } {
             x86_64-linux = {
-              inherit (self.packages.x86_64-linux) doc-html;
+              inherit (self.packages.x86_64-linux) doc;
             };
           };
         };
@@ -67,19 +67,7 @@
               ];
             };
 
-            packages.doc-html = pkgs.stdenv.mkDerivation {
-              pname = "pyproject-nix-docs-html";
-              version = "0.1";
-              src = self;
-              sourceRoot = "source/doc";
-              nativeBuildInputs = [ pythonEnv pkgs.nixdoc pkgs.nixpkgs-fmt ];
-              preBuild = "patchShebangs build_md.py";
-              installPhase = ''
-                runHook preInstall
-                cp -a _build/html $out
-                runHook postInstall
-              '';
-            };
+            packages.doc = pkgs.callPackage ./doc { src = self; inherit pythonEnv; };
 
             checks =
               let
@@ -106,14 +94,8 @@
                   };
                   check = ''
                     export NIX_REMOTE=local?root=$PWD
-                    pytest --workers auto
+                    pytest --mypy --workers auto
                   '';
-                };
-
-                # Python type checking
-                mypy = {
-                  attrs.nativeBuildInputs = [ pythonEnv ];
-                  check = "mypy --strict .";
                 };
               };
 
