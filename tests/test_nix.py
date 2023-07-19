@@ -7,7 +7,7 @@ from typing import (
 )
 
 import pytest
-from deepdiff import DeepDiff
+from deepdiff import DeepDiff  # type: ignore[import]
 
 
 def nix_eval(attr: str) -> Any:
