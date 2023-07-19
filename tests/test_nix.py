@@ -4,69 +4,10 @@ from typing import (
     Any,
     Iterator,
     List,
-    Optional,
-    Set,
 )
 
 import pytest
-
-
-def assert_deepequals(
-    a: Any,
-    b: Any,
-    ignore_paths: Optional[Set[str]] = None,
-    _path: Optional[tuple[str, ...]] = None,
-) -> None:
-    """Compare objects a and b keeping track of object path for error reporting.
-
-    Keyword arguments:
-    a -- Object a
-    b -- Object b
-    ignore_paths -- List of object paths (delimited by .)
-
-    Example:
-    assert_deepequals({
-        "poetry-version": "1.0.0a3",
-        "content-hash": "example",
-    }, {
-      "metadata": {
-        "poetry-version": "1.0.0a4",
-        "content-hash": "example",
-      }
-    }, ignore_paths=set(["metadata.poetry-version"]))
-    """
-
-    _path = _path if _path else ()
-    ignore_paths = ignore_paths if ignore_paths else set()
-    path = ".".join(_path)
-    err = ValueError("{}: {} != {}".format(path, a, b))
-
-    def make_path(entry: Any) -> tuple[str, ...]:
-        return (*_path, str(entry))  # type: ignore[misc]
-
-    if isinstance(a, list):
-        if not isinstance(b, list) or len(a) != len(b):
-            raise err
-
-        for vals in zip(a, b):
-            p = make_path("[]")
-            if ".".join(p) not in ignore_paths:
-                assert_deepequals(*vals, _path=p, ignore_paths=ignore_paths)
-
-    elif isinstance(a, dict):
-        if not isinstance(b, dict):
-            raise err
-
-        for key in set(a.keys()) | set(b.keys()):
-            p = make_path(key)
-            if ".".join(p) not in ignore_paths:
-                assert_deepequals(a[key], b[key], _path=p, ignore_paths=ignore_paths)
-
-    elif a == b:
-        return
-
-    else:
-        raise err
+from deepdiff import DeepDiff
 
 
 def nix_eval(attr: str) -> Any:
@@ -112,4 +53,4 @@ def gen_checks() -> Iterator[str]:
 def test_attrs(check: str) -> None:
     """Automatically generate pytest tests from Nix attribute set"""
     result = nix_eval(f"tests.{check}")
-    assert_deepequals(result["output"], result["expected"])
+    assert DeepDiff(result["output"], result["expected"]).pretty() == ""
