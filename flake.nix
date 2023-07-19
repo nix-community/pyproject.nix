@@ -18,6 +18,8 @@
   outputs = { self, nixpkgs, nix-github-actions, flake-parts, treefmt-nix, ... }@inputs:
     let
       inherit (nixpkgs) lib;
+      pyLib = import ./lib { inherit lib; };
+
     in
     flake-parts.lib.mkFlake
       { inherit inputs; }
@@ -38,9 +40,9 @@
           };
         };
 
-        flake.lib = builtins.removeAttrs (import ./lib { inherit lib; }) [ "tests" ];
+        flake.lib = builtins.removeAttrs pyLib [ "tests" ];
 
-        perSystem = { pkgs, config, ... }:
+        perSystem = { pkgs, config, system, ... }:
           let
 
             # Parse python environment from pyproject.toml
@@ -56,7 +58,7 @@
             treefmt.imports = [ ./dev/treefmt.nix ];
 
             proc.groups.run.processes = {
-              pytest.command = "${lib.getExe pkgs.reflex} -r '\.(py|nix)$' -- ${pythonEnv}/bin/pytest --workers auto --mypy";
+              nix-unittest.command = "${lib.getExe pkgs.reflex} -r '\.(nix)$' -- nix build --log-format raw-with-logs --quiet .#checks.${system}.unittest";
             };
 
             devShells.default = pkgs.mkShell {
@@ -74,20 +76,16 @@
 
             packages.doc = pkgs.callPackage ./doc { inherit self pythonEnv; };
 
-            checks.pytest = pkgs.runCommand "pytest"
+            # Dump all unit tests as a JSON and assert that the output from lib.debug.runTests is empty in all cases
+            checks.unittest = pkgs.runCommand "unittest"
               {
-                nativeBuildInputs = [
-                  pkgs.nix
-                  pythonEnv
-                ];
-                env.NIX_PATH = "nixpkgs=${nixpkgs}";
+                nativeBuildInputs = [ pkgs.jq ];
+                env.RESULTS = builtins.toJSON (lib.mapAttrs (_: lib.mapAttrs (_: lib.debug.runTests)) pyLib.tests);
+                allowSubstitutes = false;
               } ''
-              export NIX_REMOTE=local?root=$(mktemp -d)
-              cd ${self}
-              pytest --mypy --workers auto
+              echo "$RESULTS" | jq '.[] | .[] | length == 0 // error("Tests failed!")' > /dev/null || (echo "$RESULTS" | jq && false)
               touch $out
             '';
-
           };
       };
 }

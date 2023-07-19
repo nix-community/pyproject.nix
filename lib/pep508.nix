@@ -303,8 +303,8 @@ in
       markers = if tokens.markerSegment == null then null else self.parseMarkers tokens.markerSegment;
     };
 
-  tests.parse = mapAttrs (_: case: case // { output = self.parseString case.input; }) {
-    simple = {
+  tests.parse = mapAttrs (_: case: case // { expr = self.parseString case.input; }) {
+    testSimple = {
       input = "blinker";
       expected = {
         name = "blinker";
@@ -315,7 +315,7 @@ in
       };
     };
 
-    versioned = {
+    testVersioned = {
       input = "rich>=12.3.0";
       expected = {
         name = "rich";
@@ -331,7 +331,7 @@ in
       };
     };
 
-    withExtras = {
+    testExtras = {
       input = "mkdocstrings[python]";
       expected = {
         name = "mkdocstrings";
@@ -342,7 +342,7 @@ in
       };
     };
 
-    versionedWithDoubleConditions = {
+    testVersionedWithDoubleConditions = {
       input = "packaging>=20.9,!=22.0";
       expected = {
         name = "packaging";
@@ -362,7 +362,7 @@ in
       };
     };
 
-    versionedWithExtras = {
+    testVersionedWithExtras = {
       input = "cachecontrol[filecache]>=0.13.0";
       expected = {
         name = "cachecontrol";
@@ -378,7 +378,7 @@ in
       };
     };
 
-    versionedWithMarker = {
+    testVersionedWithMarker = {
       input = "tomli>=1.1.0; python_version < \"3.11\"";
       expected = {
         name = "tomli";
@@ -398,7 +398,7 @@ in
       };
     };
 
-    nameWithURL = {
+    testNameWithURL = {
       input = "name@http://foo.com";
       expected = {
         name = "name";
@@ -409,7 +409,7 @@ in
       };
     };
 
-    dottedNames = {
+    testDottedNames = {
       input = "A.B-C_D";
       expected = {
         name = "A.B-C_D";
@@ -420,7 +420,7 @@ in
       };
     };
 
-    completeExample = {
+    testCompleteExample = {
       input = "name [fred,bar] @ http://foo.com ; python_version=='2.7'";
       expected = {
         name = "name";
@@ -435,7 +435,7 @@ in
       };
     };
 
-    doubleMarkers = {
+    testDoubleMarkers = {
       input = "name; os_name=='a' or os_name=='b'";
       expected = {
         name = "name";
@@ -458,7 +458,7 @@ in
       };
     };
 
-    doubleMarkersWithOptionals = {
+    testDoubleMarkersWithOptionals = {
       input = "name[quux, strange];python_version<'2.7' and platform_version=='2'";
       expected = {
         name = "name";
@@ -481,7 +481,7 @@ in
       };
     };
 
-    exprGroups = {
+    testExprGroups = {
       # Should parse as (a and b) or c
       input = "name; os_name=='a' and os_name=='b' or os_name=='c'";
       expected = {
@@ -513,7 +513,7 @@ in
       };
     };
 
-    exprGroupsInt = {
+    testExprGroupsInt = {
       # Overriding precedence -> a and (b or c)
       input = "name; os_name=='a' and (os_name=='b' or os_name=='c')";
       expected = {
@@ -545,7 +545,7 @@ in
       };
     };
 
-    exprGroupsTail = {
+    testExprGroupsTail = {
       # should parse as a or (b and c)
       input = "name; os_name=='a' or os_name=='b' and os_name=='c'";
       expected = {
@@ -577,7 +577,7 @@ in
       };
     };
 
-    exprGroupsHead = {
+    testExprGroupsHead = {
       # Overriding precedence -> (a or b) and c
       input = "name; (os_name=='a' or os_name=='b') and os_name=='c'";
       expected = {
@@ -664,7 +664,7 @@ in
       implementation_version = python.version;
     };
 
-  tests.environ = mapAttrs (_: case: case // { output = self.mkEnviron case.input; }) (
+  tests.environ = mapAttrs (_: case: case // { expr = self.mkEnviron case.input; }) (
     let
       # Mock python derivations so we don't have to keep a pkgs reference
       mkPython =
@@ -687,7 +687,7 @@ in
 
     in
     {
-      python38Linux = {
+      testPython38Linux = {
         input = mkPython {
           version = "3.8.2";
           pythonVersion = "3.8";
@@ -708,7 +708,7 @@ in
         };
       };
 
-      python311Darwin = {
+      testPython311Darwin = {
         input = mkPython {
           version = "3.11.4";
           pythonVersion = "3.11";
@@ -729,7 +729,7 @@ in
         };
       };
 
-      pypy3Linux = {
+      testPypy3Linux = {
         input = mkPython {
           pname = "pypy";
           version = "7.3.11";
@@ -764,20 +764,20 @@ in
   */
   evalMarkers = environ: marker: operations.${marker.op} (processValue marker.lhs environ) (processValue marker.rhs environ);
 
-  tests.eval = mapAttrs (_: case: case // { output = self.evalMarkers case.input.environ case.input.markers; }) {
+  tests.eval = mapAttrs (_: case: case // { expr = self.evalMarkers case.input.environ case.input.markers; }) {
 
     trivial = {
       input = {
-        environ = self.tests.environ.python38Linux.expected;
-        inherit (self.tests.parse.versionedWithMarker.expected) markers;
+        environ = self.tests.environ.testPython38Linux.expected;
+        inherit (self.tests.parse.testVersionedWithMarker.expected) markers;
       };
       expected = true;
     };
 
     doubleMarkers = {
       input = {
-        environ = self.tests.environ.python38Linux.expected;
-        inherit (self.tests.parse.doubleMarkersWithOptionals.expected) markers;
+        environ = self.tests.environ.testPython38Linux.expected;
+        inherit (self.tests.parse.testDoubleMarkersWithOptionals.expected) markers;
       };
       expected = false;
     };
