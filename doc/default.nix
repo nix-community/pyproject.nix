@@ -1,10 +1,19 @@
 { stdenv
 , nixdoc
 , nixpkgs-fmt
-, pythonEnv
 , self
+, python3
 }:
 
+let
+  pythonEnv = python3.withPackages (ps: [
+    ps.sphinx
+    ps.myst-parser
+    ps.linkify-it-py
+    ps.sphinx-rtd-theme
+  ]);
+
+in
 stdenv.mkDerivation {
   pname = "pyproject-nix-docs-html";
   version = "0.1";

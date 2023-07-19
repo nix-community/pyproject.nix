@@ -43,17 +43,6 @@
         flake.lib = builtins.removeAttrs pyLib [ "tests" ];
 
         perSystem = { pkgs, config, system, ... }:
-          let
-
-            # Parse python environment from pyproject.toml
-            pythonEnv =
-              let
-                pyproject = lib.importTOML ./pyproject.toml;
-                parsedDevDeps = map self.lib.pep508.parseString pyproject.tool.pdm.dev-dependencies.dev;
-              in
-              pkgs.python3.withPackages (ps: map (dep: ps.${dep.name}) parsedDevDeps);
-
-          in
           {
             treefmt.imports = [ ./dev/treefmt.nix ];
 
@@ -63,18 +52,10 @@
 
             devShells.default = pkgs.mkShell {
               inputsFrom = [ config.flake-root.devShell ]; # Provides $FLAKE_ROOT in dev shell
-              env.SOURCE_DATE_EPOCH = self.lastModified; # Get a reasonable date in doc footer
-              packages = [
-                config.proc.groups.run.package
-                pythonEnv
-
-                # TODO: Make build_md into a Nix package
-                pkgs.nixdoc
-                pkgs.nixpkgs-fmt
-              ];
+              packages = [ config.proc.groups.run.package ];
             };
 
-            packages.doc = pkgs.callPackage ./doc { inherit self pythonEnv; };
+            packages.doc = pkgs.callPackage ./doc { inherit self; };
 
             # Dump all unit tests as a JSON and assert that the output from lib.debug.runTests is empty in all cases
             checks.unittest = pkgs.runCommand "unittest"
