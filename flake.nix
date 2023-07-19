@@ -61,13 +61,18 @@
 
             devShells.default = pkgs.mkShell {
               inputsFrom = [ config.flake-root.devShell ]; # Provides $FLAKE_ROOT in dev shell
+              env.SOURCE_DATE_EPOCH = self.lastModified; # Get a reasonable date in doc footer
               packages = [
                 config.proc.groups.run.package
                 pythonEnv
+
+                # TODO: Make build_md into a Nix package
+                pkgs.nixdoc
+                pkgs.nixpkgs-fmt
               ];
             };
 
-            packages.doc = pkgs.callPackage ./doc { src = self; inherit pythonEnv; };
+            packages.doc = pkgs.callPackage ./doc { inherit self pythonEnv; };
 
             checks.pytest = pkgs.runCommand "pytest"
               {
