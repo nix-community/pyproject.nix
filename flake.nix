@@ -18,7 +18,6 @@
   outputs = { self, nixpkgs, nix-github-actions, flake-parts, treefmt-nix, ... }@inputs:
     let
       inherit (nixpkgs) lib;
-      pyLib = import ./lib { inherit lib; };
 
     in
     flake-parts.lib.mkFlake
@@ -40,7 +39,7 @@
           };
         };
 
-        flake.lib = builtins.removeAttrs pyLib [ "tests" ];
+        flake.lib = import ./lib { inherit lib; };
 
         perSystem = { pkgs, config, system, ... }:
           {
@@ -58,15 +57,19 @@
             packages.doc = pkgs.callPackage ./doc { inherit self; };
 
             # Dump all unit tests as a JSON and assert that the output from lib.debug.runTests is empty in all cases
-            checks.unittest = pkgs.runCommand "unittest"
-              {
-                nativeBuildInputs = [ pkgs.jq ];
-                env.RESULTS = builtins.toJSON (lib.mapAttrs (_: lib.mapAttrs (_: lib.debug.runTests)) pyLib.tests);
-                allowSubstitutes = false;
-              } ''
-              echo "$RESULTS" | jq '.[] | .[] | length == 0 // error("Tests failed!")' > /dev/null || (echo "$RESULTS" | jq && false)
-              touch $out
-            '';
+            checks.unittest =
+              let
+                tests = import ./lib/test.nix (self.lib // { inherit lib; });
+              in
+              pkgs.runCommand "unittest"
+                {
+                  nativeBuildInputs = [ pkgs.jq ];
+                  env.RESULTS = builtins.toJSON (lib.mapAttrs (_: lib.mapAttrs (_: lib.debug.runTests)) tests);
+                  allowSubstitutes = false;
+                } ''
+                echo "$RESULTS" | jq '.[] | .[] | length == 0 // error("Tests failed!")' > /dev/null || (echo "$RESULTS" | jq && false)
+                touch $out
+              '';
           };
       };
 }
