@@ -69,35 +69,19 @@
 
             packages.doc = pkgs.callPackage ./doc { src = self; inherit pythonEnv; };
 
-            checks =
-              let
-                mkCheck = name: check: pkgs.runCommand name
-                  (check.attrs or { })
-                  ''
-                    cp -rv ${self} src
-                    chmod +w -R src
-                    cd src
-
-                    ${check.check}
-
-                    touch $out
-                  '';
-              in
-              lib.mapAttrs mkCheck {
-                pytest = {
-                  attrs = {
-                    nativeBuildInputs = [
-                      pkgs.nix
-                      pythonEnv
-                    ];
-                    env.NIX_PATH = "nixpkgs=${nixpkgs}";
-                  };
-                  check = ''
-                    export NIX_REMOTE=local?root=$PWD
-                    pytest --mypy --workers auto
-                  '';
-                };
-              };
+            checks.pytest = pkgs.runCommand "pytest"
+              {
+                nativeBuildInputs = [
+                  pkgs.nix
+                  pythonEnv
+                ];
+                env.NIX_PATH = "nixpkgs=${nixpkgs}";
+              } ''
+              export NIX_REMOTE=local?root=$(mktemp -d)
+              cd ${self}
+              pytest --mypy --workers auto
+              touch $out
+            '';
 
           };
       };
