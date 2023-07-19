@@ -31,8 +31,8 @@
       options = [
         "-eucx"
         ''
-          ${pkgs.lib.getExe pkgs.ruff} --fix "$@"
           ${pkgs.lib.getExe pkgs.python3.pkgs.black} "$@"
+          ${pkgs.lib.getExe pkgs.ruff} --fix "$@"
         ''
         "--" # this argument is ignored by bash
       ];

@@ -40,19 +40,35 @@
         };
 
         flake.lib = import ./lib { inherit lib; };
-        flake.libTests = import ./lib/test.nix { inherit lib; pyproject = self.lib; };
 
-        perSystem = { pkgs, config, system, ... }:
+        # Expose unit tests for external discovery
+        flake.libTests = import ./lib/test.nix { inherit lib; pyproject = self.lib; }; #U
+
+        perSystem = { pkgs, config, ... }:
+          let
+            # A test runner for Nix attrsets that are passed to lib.debug.runTests
+            test-runner =
+              let
+                pythonEnv = pkgs.python3.withPackages (ps: [ ps.pygments ps.deepdiff ]);
+              in
+              pkgs.runCommand "nix-test-runner" { nativeBuildInputs = [ pythonEnv ]; } ''
+                mkdir -p $out/bin
+                cp ${self}/dev/test_runner.py $out/bin/$name
+                chmod +x $out/bin/$name
+                patchShebangs $out/bin/$name
+              '';
+
+          in
           {
             treefmt.imports = [ ./dev/treefmt.nix ];
 
             proc.groups.run.processes = {
-              nix-unittest.command = "${lib.getExe pkgs.reflex} -r '\.(nix)$' -- nix build --log-format raw-with-logs --quiet .#checks.${system}.unittest";
+              nix-unittest.command = "${lib.getExe pkgs.reflex} -r '\.(nix)$' -- ${lib.getExe test-runner}";
             };
 
             devShells.default = pkgs.mkShell {
               inputsFrom = [ config.flake-root.devShell ]; # Provides $FLAKE_ROOT in dev shell
-              packages = [ config.proc.groups.run.package ];
+              packages = [ config.proc.groups.run.package test-runner ];
             };
 
             packages.doc = pkgs.callPackage ./doc { inherit self; };
@@ -61,13 +77,12 @@
             checks.unittest =
               pkgs.runCommand "unittest"
                 {
-                  nativeBuildInputs = [ pkgs.jq ];
-                  env.RESULTS = builtins.toJSON (lib.mapAttrs (_: lib.mapAttrs (_: lib.debug.runTests)) self.libTests);
+                  nativeBuildInputs = [ test-runner ];
+                  env.RESULTS = builtins.toJSON self.libTests;
                   allowSubstitutes = false;
                 } ''
-                echo "$RESULTS" | jq
-                echo "$RESULTS" | jq '.[] | .[] | length == 0 // error("Tests failed!")' > /dev/null
-                touch $out
+                echo "$RESULTS" > $out
+                nix-test-runner --ci-input $out
               '';
           };
       };
