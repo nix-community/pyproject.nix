@@ -20,6 +20,21 @@
         "type": "github"
       }
     },
+    "flake-root": {
+      "locked": {
+        "lastModified": 1680964220,
+        "narHash": "sha256-dIdTYcf+KW9a4pKHsEbddvLVSfR1yiAJynzg2x0nfWg=",
+        "owner": "srid",
+        "repo": "flake-root",
+        "rev": "f1c0b93d05bdbea6c011136ba1a135c80c5b326c",
+        "type": "github"
+      },
+      "original": {
+        "owner": "srid",
+        "repo": "flake-root",
+        "type": "github"
+      }
+    },
     "nix-github-actions": {
       "inputs": {
         "nixpkgs": [
@@ -56,11 +71,28 @@
         "type": "github"
       }
     },
+    "proc-flake": {
+      "locked": {
+        "lastModified": 1671388981,
+        "narHash": "sha256-p++h07G0qiJtnjnyJRPehLIXJ3sU5zGtpOfZbnUxuZU=",
+        "owner": "srid",
+        "repo": "proc-flake",
+        "rev": "676b5af467e52c06aa8a9165edb3345c6dbbabde",
+        "type": "github"
+      },
+      "original": {
+        "owner": "srid",
+        "repo": "proc-flake",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "flake-parts": "flake-parts",
+        "flake-root": "flake-root",
         "nix-github-actions": "nix-github-actions",
         "nixpkgs": "nixpkgs",
+        "proc-flake": "proc-flake",
         "treefmt-nix": "treefmt-nix"
       }
     },

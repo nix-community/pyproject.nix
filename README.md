@@ -2,6 +2,6 @@
 
 This is immature. Look away!
 
-#### Running tests
+#### Hacking
 
-`$ pytest`
+`$ run`

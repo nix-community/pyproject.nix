@@ -1,7 +1,0 @@
-[formatter.nix]
-command = "nixpkgs-fmt"
-includes = ["*.nix"]
-
-[formatter.python]
-command = "black"
-includes = ["*.py"]
