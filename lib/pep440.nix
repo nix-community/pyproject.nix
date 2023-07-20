@@ -120,8 +120,12 @@ fix (_self: {
       local = parseLocal tokens;
     };
 
-  /* Compare two versions as parsed by parseVersion according to PEP-440.
-     Returns -1 for less than, 0 for equality and 1 for greater than.
+  /* Compare two versions as parsed by `parseVersion` according to PEP-440.
+
+     Returns:
+       - -1 for less than
+       - 0 for equality
+       - 1 for greater than
 
      Type: compareVersions :: AttrSet -> AttrSet -> int
 
