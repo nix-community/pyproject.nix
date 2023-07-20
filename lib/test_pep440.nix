@@ -1,6 +1,6 @@
 { lib, pep440 }:
 let
-  inherit (pep440) parseVersion;
+  inherit (pep440) parseVersion compareVersions;
 
 in
 
@@ -120,6 +120,97 @@ lib.fix (_self: {
         release = [ 3 2 "*" ];
       };
     };
+
+    complex = {
+      expr = parseVersion "1.0b2.post345.dev456";
+      expected = {
+        dev = {
+          type = "dev";
+          value = 456;
+        };
+        epoch = 0;
+        local = null;
+        post = {
+          type = "post";
+          value = 345;
+        };
+        pre = {
+          type = "b";
+          value = 2;
+        };
+        release = [ 1 0 ];
+      };
+    };
+
+    epoch = {
+      expr = parseVersion "1!2.0";
+      expected = {
+        dev = null;
+        epoch = 2;
+        local = null;
+        post = null;
+        pre = null;
+        release = [ 1 0 ];
+      };
+    };
   };
+
+  compareVersions = {
+    simple = {
+      expr = compareVersions (parseVersion "3.0.0") (parseVersion "3.0.0");
+      expected = 0;
+    };
+
+    simpleRc = {
+      expr = compareVersions (parseVersion "3.0.0") (parseVersion "3.0.0rc1");
+      expected = 1;
+    };
+
+    simpleRcInv = {
+      expr = compareVersions (parseVersion "3.0.0rc1") (parseVersion "3.0.0");
+      expected = -1;
+    };
+
+    simplePost = {
+      expr = compareVersions (parseVersion "3.0.0") (parseVersion "3.0.0post1");
+      expected = -1;
+    };
+
+    simplePostInv = {
+      expr = compareVersions (parseVersion "3.0.0post1") (parseVersion "3.0.0");
+      expected = 1;
+    };
+
+    simpleDev = {
+      expr = compareVersions (parseVersion "3.0.0dev3") (parseVersion "3.0.0dev2");
+      expected = 1;
+    };
+
+    simpleDevInv = {
+      expr = compareVersions (parseVersion "3.0.0dev2") (parseVersion "3.0.0dev3");
+      expected = -1;
+    };
+
+    sameVersionDifferentRc = {
+      expr = compareVersions (parseVersion "2.3.1rc2") (parseVersion "2.3.1rc1");
+      expected = 1;
+    };
+
+    complex = {
+      expr = compareVersions (parseVersion "1.0b2.post345.dev456") (parseVersion "1.0b2.post345");
+      expected = -1;
+    };
+
+    epoch = {
+      expr = compareVersions (parseVersion "1.0") (parseVersion "1!2.0");
+      expected = -1;
+    };
+
+    epochInv = {
+      expr = compareVersions (parseVersion "1!2.0") (parseVersion "1.0");
+      expected = 1;
+    };
+  };
+
 
 })
