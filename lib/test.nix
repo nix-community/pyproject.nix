@@ -5,6 +5,11 @@ let
   # Work with the tests as a tree internally
   # The attrpath is: module(file) -> symbol(function) -> test
   tests = lib.fix (self: {
+    pep440 = import ./test_pep440.nix {
+      inherit (pyproject) pep440;
+      inherit lib;
+    };
+
     pep508 = import ./test_pep508.nix {
       inherit (pyproject) pep508;
       inherit lib;
@@ -16,7 +21,7 @@ let
     coverage = mapAttrs
       (moduleName: mapAttrs (sym: _: {
         expected = true;
-        expr = length (attrNames self.${moduleName}.${sym}) >= 1;
+        expr = self ? ${moduleName}.${sym} && length (attrNames self.${moduleName}.${sym}) >= 1;
       }))
       pyproject;
   });
