@@ -210,6 +210,16 @@ lib.fix (_self: {
       expr = compareVersions (parseVersion "1!2.0") (parseVersion "1.0");
       expected = 1;
     };
+
+    wildcard = {
+      expr = compareVersions (parseVersion "1.0.0") (parseVersion "1.0.*");
+      expected = 0;
+    };
+
+    wildcardNotEq = {
+      expr = compareVersions (parseVersion "1.2.0") (parseVersion "1.0.*");
+      expected = 1;
+    };
   };
 
 

@@ -1,7 +1,7 @@
-{ lib }:
+{ lib, pep440, ... }:
 
 let
-  inherit (builtins) match hasAttr elemAt split filter foldl' substring stringLength typeOf compareVersions fromJSON isString head;
+  inherit (builtins) match hasAttr elemAt split filter foldl' substring stringLength typeOf fromJSON isString head;
   inherit (lib) stringToCharacters fix;
 
   re = {
@@ -54,10 +54,10 @@ let
     "==" = x: y: x == y;
 
     # These implicitly means version compare and not just arbitrary lt/gt
-    "<=" = x: y: compareVersions x y <= 0;
-    "<" = x: y: compareVersions x y < 0;
-    ">=" = x: y: compareVersions x y >= 0;
-    ">" = x: y: compareVersions x y > 0;
+    "<=" = x: y: pep440.compareVersions (pep440.parseVersion x) (pep440.parseVersion y) <= 0;
+    "<" = x: y: pep440.compareVersions (pep440.parseVersion x) (pep440.parseVersion y) < 0;
+    ">=" = x: y: pep440.compareVersions (pep440.parseVersion x) (pep440.parseVersion y) >= 0;
+    ">" = x: y: pep440.compareVersions (pep440.parseVersion x) (pep440.parseVersion y) > 0;
 
     # Logical conditions
     "and" = x: y: x && y;
