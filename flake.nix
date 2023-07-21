@@ -13,9 +13,12 @@
 
     nix-github-actions.url = "github:nix-community/nix-github-actions";
     nix-github-actions.inputs.nixpkgs.follows = "nixpkgs";
+
+    nix-unit.url = "github:adisbladis/nix-unit";
+    nix-unit.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { self, nixpkgs, nix-github-actions, flake-parts, treefmt-nix, ... }@inputs:
+  outputs = { self, nixpkgs, nix-github-actions, flake-parts, treefmt-nix, nix-unit, ... }@inputs:
     let
       inherit (nixpkgs) lib;
 
@@ -44,31 +47,23 @@
         # Expose unit tests for external discovery
         flake.libTests = import ./lib/test.nix { inherit lib; pyproject = self.lib; }; #U
 
-        perSystem = { pkgs, config, ... }:
+        perSystem = { pkgs, config, system, ... }:
           let
-            # A test runner for Nix attrsets that are passed to lib.debug.runTests
-            test-runner =
-              let
-                pythonEnv = pkgs.python3.withPackages (ps: [ ps.pygments ps.deepdiff ]);
-              in
-              pkgs.runCommand "nix-test-runner" { nativeBuildInputs = [ pythonEnv ]; } ''
-                mkdir -p $out/bin
-                cp ${self}/dev/test_runner.py $out/bin/$name
-                chmod +x $out/bin/$name
-                patchShebangs $out/bin/$name
-              '';
-
+            nixUnit = nix-unit.packages.${system}.nix-unit;
           in
           {
             treefmt.imports = [ ./dev/treefmt.nix ];
 
             proc.groups.run.processes = {
-              nix-unittest.command = "${lib.getExe pkgs.reflex} -r '\.(nix)$' -- ${lib.getExe test-runner}";
+              nix-unittest.command = "${lib.getExe pkgs.reflex} -r '\.(nix)$' -- ${lib.getExe nixUnit} --flake '.#libTests'";
             };
 
             devShells.default = pkgs.mkShell {
               inputsFrom = [ config.flake-root.devShell ]; # Provides $FLAKE_ROOT in dev shell
-              packages = [ config.proc.groups.run.package test-runner ];
+              packages = [
+                config.proc.groups.run.package
+                nixUnit
+              ];
             };
 
             packages.doc = pkgs.callPackage ./doc { inherit self; };
@@ -77,12 +72,12 @@
             checks.unittest =
               pkgs.runCommand "unittest"
                 {
-                  nativeBuildInputs = [ test-runner ];
-                  env.RESULTS = builtins.toJSON self.libTests;
-                  allowSubstitutes = false;
+                  nativeBuildInputs = [ pkgs.jq ];
+                  env.RESULTS = builtins.toJSON (lib.debug.runTests self.libTests);
                 } ''
-                echo "$RESULTS" > $out
-                nix-test-runner --ci-input $out
+                echo "$RESULTS" | jq
+                echo "$RESULTS" | jq 'length == 0 // error("Tests failed")' > /dev/null
+                touch $out
               '';
           };
       };

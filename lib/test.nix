@@ -32,7 +32,7 @@ lib.listToAttrs (lib.flatten (lib.flatten (
   lib.mapAttrsToList
     (moduleName: lib.mapAttrsToList (sym: tests: map
       (testName: {
-        name = "${moduleName}/${sym}/${testName}";
+        name = "test${moduleName}/${sym}/${testName}";
         value = tests.${testName};
       })
       (lib.attrNames tests)))
