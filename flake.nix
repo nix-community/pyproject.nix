@@ -45,7 +45,7 @@
         flake.lib = import ./lib { inherit lib; };
 
         # Expose unit tests for external discovery
-        flake.libTests = import ./lib/test.nix { inherit lib; pyproject = self.lib; }; #U
+        flake.libTests = import ./lib/test.nix { inherit lib; pyproject = self.lib; };
 
         perSystem = { pkgs, config, system, ... }:
           let
@@ -67,18 +67,6 @@
             };
 
             packages.doc = pkgs.callPackage ./doc { inherit self; };
-
-            # Dump all unit tests as a JSON and assert that the output from lib.debug.runTests is empty in all cases
-            checks.unittest =
-              pkgs.runCommand "unittest"
-                {
-                  nativeBuildInputs = [ pkgs.jq ];
-                  env.RESULTS = builtins.toJSON (lib.debug.runTests self.libTests);
-                } ''
-                echo "$RESULTS" | jq
-                echo "$RESULTS" | jq 'length == 0 // error("Tests failed")' > /dev/null
-                touch $out
-              '';
           };
       };
 }

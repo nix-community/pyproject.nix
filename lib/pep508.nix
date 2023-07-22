@@ -316,12 +316,19 @@ in
          os_name = "posix";
          platform_machine = "x86_64";
          platform_python_implementation = "CPython";
+         # platform_release maps to platform.release() which returns
+         # the running kernel version on Linux.
+         # Because this field is not reproducible it's left empty.
          platform_release = "";
          platform_system = "Linux";
+         # platform_version maps to platform.version() which also returns
+         # the running kernel version on Linux.
+         # Because this field is not reproducible it's left empty.
          platform_version = "";
          python_full_version = "3.8.2";
          python_version = "3.8";
          sys_platform = "linux";
+         # extra is unset (PEP-508 explicitly states setting extra is an error unless application defined)
        }
   */
   mkEnviron = python:

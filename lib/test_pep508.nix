@@ -4,9 +4,9 @@ let
 in
 
 lib.fix (self: {
-  # parseMarkers is implicitly covered by parseString
+  # parseMarkers is implicitly covered by parseString but would fail coverage checks otherwise
   parseMarkers = {
-    dummy = {
+    testDummyCoverage = {
       expected = true;
       expr = true;
     };
@@ -410,7 +410,7 @@ lib.fix (self: {
   );
 
   evalMarkers = mapAttrs (_: case: case // { expr = pep508.evalMarkers case.input.environ case.input.markers; }) {
-    trivial = {
+    testTrivial = {
       input = {
         environ = self.mkEnviron.testPython38Linux.expected;
         inherit (self.parseString.testVersionedWithMarker.expected) markers;
@@ -418,7 +418,7 @@ lib.fix (self: {
       expected = true;
     };
 
-    doubleMarkers = {
+    testDoubleMarkers = {
       input = {
         environ = self.mkEnviron.testPython38Linux.expected;
         inherit (self.parseString.testDoubleMarkersWithOptionals.expected) markers;

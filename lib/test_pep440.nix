@@ -7,7 +7,7 @@ in
 lib.fix (_self: {
 
   parseVersion = {
-    simple = {
+    testSimple = {
       expr = parseVersion "3.0.0";
       expected = {
         dev = null;
@@ -19,7 +19,7 @@ lib.fix (_self: {
       };
     };
 
-    simplePost = {
+    testSimplePost = {
       expr = parseVersion "3.0.0post2";
       expected = {
         dev = null;
@@ -34,7 +34,7 @@ lib.fix (_self: {
       };
     };
 
-    simpleRc = {
+    testSimpleRc = {
       expr = parseVersion "3.0.0rc1";
       expected = {
         dev = null;
@@ -49,7 +49,7 @@ lib.fix (_self: {
       };
     };
 
-    simpleRcNormalized = {
+    testSimpleRcNormalized = {
       expr = parseVersion "3.0.0pre1";
       expected = {
         dev = null;
@@ -64,7 +64,7 @@ lib.fix (_self: {
       };
     };
 
-    implicitPost = {
+    testImplicitPost = {
       expr = parseVersion "3.0.0-1";
       expected = {
         dev = null;
@@ -79,7 +79,7 @@ lib.fix (_self: {
       };
     };
 
-    dev = {
+    testDev = {
       expr = parseVersion "1.2.0dev21";
       expected = {
         dev = {
@@ -94,7 +94,7 @@ lib.fix (_self: {
       };
     };
 
-    local = {
+    testLocal = {
       expr = parseVersion "1.2+4.3";
       expected = {
         dev = null;
@@ -109,7 +109,7 @@ lib.fix (_self: {
       };
     };
 
-    wildcard = {
+    testWildcard = {
       expr = parseVersion "3.2.*";
       expected = {
         dev = null;
@@ -121,7 +121,7 @@ lib.fix (_self: {
       };
     };
 
-    complex = {
+    testComplex = {
       expr = parseVersion "1.0b2.post345.dev456";
       expected = {
         dev = {
@@ -142,7 +142,7 @@ lib.fix (_self: {
       };
     };
 
-    epoch = {
+    testepoch = {
       expr = parseVersion "1!2.0";
       expected = {
         dev = null;
@@ -156,67 +156,67 @@ lib.fix (_self: {
   };
 
   compareVersions = {
-    simple = {
+    testSimple = {
       expr = compareVersions (parseVersion "3.0.0") (parseVersion "3.0.0");
       expected = 0;
     };
 
-    simpleRc = {
+    testSimpleRc = {
       expr = compareVersions (parseVersion "3.0.0") (parseVersion "3.0.0rc1");
       expected = 1;
     };
 
-    simpleRcInv = {
+    testSimpleRcInv = {
       expr = compareVersions (parseVersion "3.0.0rc1") (parseVersion "3.0.0");
       expected = -1;
     };
 
-    simplePost = {
+    testSimplePost = {
       expr = compareVersions (parseVersion "3.0.0") (parseVersion "3.0.0post1");
       expected = -1;
     };
 
-    simplePostInv = {
+    testSimplePostInv = {
       expr = compareVersions (parseVersion "3.0.0post1") (parseVersion "3.0.0");
       expected = 1;
     };
 
-    simpleDev = {
+    testSimpleDev = {
       expr = compareVersions (parseVersion "3.0.0dev3") (parseVersion "3.0.0dev2");
       expected = 1;
     };
 
-    simpleDevInv = {
+    testSimpleDevInv = {
       expr = compareVersions (parseVersion "3.0.0dev2") (parseVersion "3.0.0dev3");
       expected = -1;
     };
 
-    sameVersionDifferentRc = {
+    testSameVersionDifferentRc = {
       expr = compareVersions (parseVersion "2.3.1rc2") (parseVersion "2.3.1rc1");
       expected = 1;
     };
 
-    complex = {
+    testComplex = {
       expr = compareVersions (parseVersion "1.0b2.post345.dev456") (parseVersion "1.0b2.post345");
       expected = -1;
     };
 
-    epoch = {
+    testEpoch = {
       expr = compareVersions (parseVersion "1.0") (parseVersion "1!2.0");
       expected = -1;
     };
 
-    epochInv = {
+    testEpochInv = {
       expr = compareVersions (parseVersion "1!2.0") (parseVersion "1.0");
       expected = 1;
     };
 
-    wildcard = {
+    testWildcard = {
       expr = compareVersions (parseVersion "1.0.0") (parseVersion "1.0.*");
       expected = 0;
     };
 
-    wildcardNotEq = {
+    testWildcardNotEq = {
       expr = compareVersions (parseVersion "1.2.0") (parseVersion "1.0.*");
       expected = 1;
     };
