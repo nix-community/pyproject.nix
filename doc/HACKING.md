@@ -2,7 +2,7 @@
 
 ## Getting started
 
-To start hacking on nix-unit run `nix develop -c run` to run the project with a file watcher running the unit test suite.
+To start hacking run `nix develop -c run` to run the project with a file watcher running the unit test suite.
 
 ## Formatter
 
