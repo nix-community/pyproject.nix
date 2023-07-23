@@ -123,26 +123,49 @@ fix (self:
      Example:
        # parseMarkers "(os_name=='a' or os_name=='b') and os_name=='c'"
        {
-          op = "and";
-          lhs = {
-            op = "or";
-            lhs = {
-              op = "==";
-              lhs = "os_name";
-              rhs = "'a'";
-            };
-            rhs = {
-              op = "==";
-              lhs = "os_name";
-              rhs = "'b'";
-            };
-          };
-          rhs = {
-            op = "==";
-            lhs = "os_name";
-            rhs = "'c'";
-          };
-        }
+         lhs = {
+           lhs = {
+             lhs = {
+               type = "variable";
+               value = "os_name";
+             };
+             op = "==";
+             rhs = {
+               type = "string";
+               value = "a";
+             };
+             type = "compare";
+           };
+           op = "or";
+           rhs = {
+             lhs = {
+               type = "variable";
+               value = "os_name";
+             };
+             op = "==";
+             rhs = {
+               type = "string";
+               value = "b";
+             };
+             type = "compare";
+           };
+           type = "boolOp";
+         };
+         op = "and";
+         rhs = {
+           lhs = {
+             type = "variable";
+             value = "os_name";
+           };
+           op = "==";
+           rhs = {
+             type = "string";
+             value = "c";
+           };
+           type = "compare";
+         };
+         type = "boolOp";
+       }
   */
   parseMarkers = input:
     let
