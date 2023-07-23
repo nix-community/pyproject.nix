@@ -1,7 +1,7 @@
 { lib, ... }:
 let
   inherit (builtins) split filter match length elemAt head tail foldl';
-  inherit (lib) fix isString toInt toLower;
+  inherit (lib) fix isString toInt toLower sublist;
 
   filterNull = filter (x: x != null);
   filterEmpty = filter (x: length x > 0);
@@ -87,7 +87,7 @@ let
   else 0;
 
 in
-fix (_self: {
+fix (self: {
 
   /* Parse a version according to PEP-440.
 
@@ -181,4 +181,44 @@ fix (_self: {
       else 0
     )
   ];
+
+  /* Map comparison operators as strings to a comparator function.
+
+     Attributes:
+       - [Compatible release clause](https://peps.python.org/pep-0440/#compatible-release): `~=`
+       - [Version matching clause](https://peps.python.org/pep-0440/#version-matching): `==`
+       - [Version exclusion clause](https://peps.python.org/pep-0440/#version-exclusion): `!=`
+       - [Inclusive ordered comparison clause](https://peps.python.org/pep-0440/#inclusive-ordered-comparison): `<=`, `>=`
+       - [Exclusive ordered comparison clause](https://peps.python.org/pep-0440/#exclusive-ordered-comparison): `<`, `>`
+       - [Arbitrary equality clause](https://peps.python.org/pep-0440/#arbitrary-equality): `===`
+
+     Type: operators.${operator} :: AttrSet -> AttrSet -> bool
+
+     Example:
+       # comparators."==" (parseVersion "3.0.0") (parseVersion "3.0.0")
+       true
+  */
+  comparators = {
+    "~=" = a: b: (
+      # Local version identifiers are NOT permitted in this version specifier.
+      assert a.local == null && b.local == null;
+      self.comparators.">=" a b && self.comparators."==" a (b // {
+        release = sublist 0 ((length b.release) - 1) b.release;
+        # If a pre-release, post-release or developmental release is named in a compatible release clause as V.N.suffix, then the suffix is ignored when determining the required prefix match.
+        pre = null;
+        post = null;
+        dev = null;
+      })
+    );
+    "==" = a: b: self.compareVersions a b == 0;
+    "!=" = a: b: self.compareVersions a b != 0;
+    "<=" = a: b: self.compareVersions a b <= 0;
+    ">=" = a: b: self.compareVersions a b >= 0;
+    "<" = a: b: self.compareVersions a b < 0;
+    ">" = a: b: self.compareVersions a b > 0;
+
+    /* [Arbitrary equality clause](https://peps.python.org/pep-0440/#arbitrary-equality) */
+    "===" = throw "Arbitrary equality clause not supported";
+  };
+
 })

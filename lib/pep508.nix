@@ -89,12 +89,8 @@ let
     if isMarkerVariable value then value
     else fromJSON (if singleTicked != null then "\"" + head singleTicked + "\"" else value);
 
-  compareOps = {
+  compareOps = pep440.comparators // {
     "==" = x: y: x == y; # Simple equality
-    "<=" = x: y: pep440.compareVersions x y <= 0;
-    "<" = x: y: pep440.compareVersions x y < 0;
-    ">=" = x: y: pep440.compareVersions x y >= 0;
-    ">" = x: y: pep440.compareVersions x y > 0;
   };
 
   boolOps = {

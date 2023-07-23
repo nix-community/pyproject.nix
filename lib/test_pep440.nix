@@ -1,6 +1,6 @@
 { lib, pep440 }:
 let
-  inherit (pep440) parseVersion compareVersions;
+  inherit (pep440) parseVersion compareVersions comparators;
 
 in
 
@@ -222,5 +222,81 @@ lib.fix (_self: {
     };
   };
 
+  comparators = {
+    testSimple = {
+      expr = comparators."==" (parseVersion "3.0.0") (parseVersion "3.0.0");
+      expected = true;
+    };
+
+    testSimpleRc = {
+      expr = comparators.">" (parseVersion "3.0.0") (parseVersion "3.0.0rc1");
+      expected = true;
+    };
+
+    testSimpleRcInv = {
+      expr = comparators."<" (parseVersion "3.0.0rc1") (parseVersion "3.0.0");
+      expected = true;
+    };
+
+    testSimplePost = {
+      expr = comparators."<" (parseVersion "3.0.0") (parseVersion "3.0.0post1");
+      expected = true;
+    };
+
+    testSimplePostInv = {
+      expr = comparators.">" (parseVersion "3.0.0post1") (parseVersion "3.0.0");
+      expected = true;
+    };
+
+    testSimpleDev = {
+      expr = comparators."==" (parseVersion "3.0.0dev3") (parseVersion "3.0.0dev2");
+      expected = false;
+    };
+
+    testSimpleDevInv = {
+      expr = comparators."<" (parseVersion "3.0.0dev2") (parseVersion "3.0.0dev3");
+      expected = true;
+    };
+
+    testSameVersionDifferentRc = {
+      expr = comparators.">" (parseVersion "2.3.1rc2") (parseVersion "2.3.1rc1");
+      expected = true;
+    };
+
+    testComplex = {
+      expr = comparators."<" (parseVersion "1.0b2.post345.dev456") (parseVersion "1.0b2.post345");
+      expected = true;
+    };
+
+    testEpoch = {
+      expr = comparators."==" (parseVersion "1.0") (parseVersion "1!2.0");
+      expected = false;
+    };
+
+    testEpochInv = {
+      expr = comparators."==" (parseVersion "1!2.0") (parseVersion "1.0");
+      expected = false;
+    };
+
+    testWildcard = {
+      expr = comparators."==" (parseVersion "1.0.0") (parseVersion "1.0.*");
+      expected = true;
+    };
+
+    testWildcardNotEq = {
+      expr = comparators."!=" (parseVersion "1.2.0") (parseVersion "1.0.*");
+      expected = true;
+    };
+
+    testCompatibleReleaseEq = {
+      expr = comparators."~=" (parseVersion "2.2") (parseVersion "2.2");
+      expected = true;
+    };
+
+    testCompatibleReleaseNeq = {
+      expr = comparators."~=" (parseVersion "2.2.1") (parseVersion "2.1.1");
+      expected = false;
+    };
+  };
 
 })
