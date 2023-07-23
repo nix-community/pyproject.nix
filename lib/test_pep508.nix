@@ -1,8 +1,12 @@
-{ lib, pep508 }:
+{ lib
+, pep508
+, ...
+}:
+
 let
   inherit (builtins) mapAttrs;
-in
 
+in
 lib.fix (self: {
   # parseMarkers is implicitly covered by parseString but would fail coverage checks otherwise
   parseMarkers = {
@@ -31,7 +35,14 @@ lib.fix (self: {
         conditions = [
           {
             op = ">=";
-            version = "12.3.0";
+            version = {
+              dev = null;
+              epoch = 0;
+              local = null;
+              post = null;
+              pre = null;
+              release = [ 12 3 0 ];
+            };
           }
         ];
         optionals = [ ];
@@ -58,11 +69,25 @@ lib.fix (self: {
         conditions = [
           {
             op = ">=";
-            version = "20.9";
+            version = {
+              dev = null;
+              epoch = 0;
+              local = null;
+              post = null;
+              pre = null;
+              release = [ 20 9 ];
+            };
           }
           {
             op = "!=";
-            version = "22.0";
+            version = {
+              dev = null;
+              epoch = 0;
+              local = null;
+              post = null;
+              pre = null;
+              release = [ 22 0 ];
+            };
           }
         ];
         optionals = [ ];
@@ -78,7 +103,14 @@ lib.fix (self: {
         conditions = [
           {
             op = ">=";
-            version = "0.13.0";
+            version = {
+              dev = null;
+              epoch = 0;
+              local = null;
+              post = null;
+              pre = null;
+              release = [ 0 13 0 ];
+            };
           }
         ];
         optionals = [ "filecache" ];
@@ -90,19 +122,40 @@ lib.fix (self: {
     testVersionedWithMarker = {
       input = "tomli>=1.1.0; python_version < \"3.11\"";
       expected = {
-        name = "tomli";
         conditions = [
           {
             op = ">=";
-            version = "1.1.0";
+            version = {
+              dev = null;
+              epoch = 0;
+              local = null;
+              post = null;
+              pre = null;
+              release = [ 1 1 0 ];
+            };
           }
         ];
-        optionals = [ ];
         markers = {
+          lhs = {
+            type = "variable";
+            value = "python_version";
+          };
           op = "<";
-          lhs = "python_version";
-          rhs = "\"3.11\"";
+          rhs = {
+            type = "version";
+            value = {
+              dev = null;
+              epoch = 0;
+              local = null;
+              post = null;
+              pre = null;
+              release = [ 3 11 ];
+            };
+          };
+          type = "compare";
         };
+        name = "tomli";
+        optionals = [ ];
         url = null;
       };
     };
@@ -132,14 +185,28 @@ lib.fix (self: {
     testCompleteExample = {
       input = "name [fred,bar] @ http://foo.com ; python_version=='2.7'";
       expected = {
-        name = "name";
         conditions = [ ];
-        optionals = [ "fred" "bar" ];
         markers = {
+          lhs = {
+            type = "variable";
+            value = "python_version";
+          };
           op = "==";
-          lhs = "python_version";
-          rhs = "'2.7'";
+          rhs = {
+            type = "version";
+            value = {
+              dev = null;
+              epoch = 0;
+              local = null;
+              post = null;
+              pre = null;
+              release = [ 2 7 ];
+            };
+          };
+          type = "compare";
         };
+        name = "name";
+        optionals = [ "fred" "bar" ];
         url = "http://foo.com";
       };
     };
@@ -147,22 +214,37 @@ lib.fix (self: {
     testDoubleMarkers = {
       input = "name; os_name=='a' or os_name=='b'";
       expected = {
-        name = "name";
         conditions = [ ];
-        optionals = [ ];
         markers = {
-          op = "or";
           lhs = {
+            lhs = {
+              type = "variable";
+              value = "os_name";
+            };
             op = "==";
-            lhs = "os_name";
-            rhs = "'a'";
+            rhs = {
+              type = "string";
+              value = "a";
+            };
+            type = "compare";
           };
+          op = "or";
           rhs = {
+            lhs = {
+              type = "variable";
+              value = "os_name";
+            };
             op = "==";
-            lhs = "os_name";
-            rhs = "'b'";
+            rhs = {
+              type = "string";
+              value = "b";
+            };
+            type = "compare";
           };
+          type = "boolOp";
         };
+        name = "name";
+        optionals = [ ];
         url = null;
       };
     };
@@ -170,22 +252,51 @@ lib.fix (self: {
     testDoubleMarkersWithOptionals = {
       input = "name[quux, strange];python_version<'2.7' and platform_version=='2'";
       expected = {
-        name = "name";
         conditions = [ ];
-        optionals = [ "quux" "strange" ];
         markers = {
-          op = "and";
           lhs = {
+            lhs = {
+              type = "variable";
+              value = "python_version";
+            };
             op = "<";
-            lhs = "python_version";
-            rhs = "'2.7'";
+            rhs = {
+              type = "version";
+              value = {
+                dev = null;
+                epoch = 0;
+                local = null;
+                post = null;
+                pre = null;
+                release = [ 2 7 ];
+              };
+            };
+            type = "compare";
           };
+          op = "and";
           rhs = {
+            lhs = {
+              type = "variable";
+              value = "platform_version";
+            };
             op = "==";
-            lhs = "platform_version";
-            rhs = "'2'";
+            rhs = {
+              type = "version";
+              value = {
+                dev = null;
+                epoch = 0;
+                local = null;
+                post = null;
+                pre = null;
+                release = [ 2 ];
+              };
+            };
+            type = "compare";
           };
+          type = "boolOp";
         };
+        name = "name";
+        optionals = [ "quux" "strange" ];
         url = null;
       };
     };
@@ -194,30 +305,53 @@ lib.fix (self: {
       # Should parse as (a and b) or c
       input = "name; os_name=='a' and os_name=='b' or os_name=='c'";
       expected = {
-        name = "name";
         conditions = [ ];
-        optionals = [ ];
         markers = {
-          op = "or";
           lhs = {
-            op = "and";
             lhs = {
+              lhs = {
+                type = "variable";
+                value = "os_name";
+              };
               op = "==";
-              lhs = "os_name";
-              rhs = "'a'";
+              rhs = {
+                type = "string";
+                value = "a";
+              };
+              type = "compare";
             };
+            op = "and";
             rhs = {
+              lhs = {
+                type = "variable";
+                value = "os_name";
+              };
               op = "==";
-              lhs = "os_name";
-              rhs = "'b'";
+              rhs = {
+                type = "string";
+                value = "b";
+              };
+              type = "compare";
             };
+            type = "boolOp";
           };
+          op = "or";
           rhs = {
+            lhs = {
+              type = "variable";
+              value = "os_name";
+            };
             op = "==";
-            lhs = "os_name";
-            rhs = "'c'";
+            rhs = {
+              type = "string";
+              value = "c";
+            };
+            type = "compare";
           };
+          type = "boolOp";
         };
+        name = "name";
+        optionals = [ ];
         url = null;
       };
     };
@@ -226,30 +360,53 @@ lib.fix (self: {
       # Overriding precedence -> a and (b or c)
       input = "name; os_name=='a' and (os_name=='b' or os_name=='c')";
       expected = {
-        name = "name";
         conditions = [ ];
-        optionals = [ ];
         markers = {
-          op = "and";
           lhs = {
-            op = "==";
-            lhs = "os_name";
-            rhs = "'a'";
-          };
-          rhs = {
-            op = "or";
             lhs = {
-              op = "==";
-              lhs = "os_name";
-              rhs = "'b'";
+              type = "variable";
+              value = "os_name";
             };
+            op = "==";
             rhs = {
-              op = "==";
-              lhs = "os_name";
-              rhs = "'c'";
+              type = "string";
+              value = "a";
             };
+            type = "compare";
           };
+          op = "and";
+          rhs = {
+            lhs = {
+              lhs = {
+                type = "variable";
+                value = "os_name";
+              };
+              op = "==";
+              rhs = {
+                type = "string";
+                value = "b";
+              };
+              type = "compare";
+            };
+            op = "or";
+            rhs = {
+              lhs = {
+                type = "variable";
+                value = "os_name";
+              };
+              op = "==";
+              rhs = {
+                type = "string";
+                value = "c";
+              };
+              type = "compare";
+            };
+            type = "boolOp";
+          };
+          type = "boolOp";
         };
+        name = "name";
+        optionals = [ ];
         url = null;
       };
     };
@@ -258,30 +415,53 @@ lib.fix (self: {
       # should parse as a or (b and c)
       input = "name; os_name=='a' or os_name=='b' and os_name=='c'";
       expected = {
-        name = "name";
         conditions = [ ];
-        optionals = [ ];
         markers = {
-          op = "or";
           lhs = {
-            op = "==";
-            lhs = "os_name";
-            rhs = "'a'";
-          };
-          rhs = {
-            op = "and";
             lhs = {
-              op = "==";
-              lhs = "os_name";
-              rhs = "'b'";
+              type = "variable";
+              value = "os_name";
             };
+            op = "==";
             rhs = {
-              op = "==";
-              lhs = "os_name";
-              rhs = "'c'";
+              type = "string";
+              value = "a";
             };
+            type = "compare";
           };
+          op = "or";
+          rhs = {
+            lhs = {
+              lhs = {
+                type = "variable";
+                value = "os_name";
+              };
+              op = "==";
+              rhs = {
+                type = "string";
+                value = "b";
+              };
+              type = "compare";
+            };
+            op = "and";
+            rhs = {
+              lhs = {
+                type = "variable";
+                value = "os_name";
+              };
+              op = "==";
+              rhs = {
+                type = "string";
+                value = "c";
+              };
+              type = "compare";
+            };
+            type = "boolOp";
+          };
+          type = "boolOp";
         };
+        name = "name";
+        optionals = [ ];
         url = null;
       };
     };
@@ -290,30 +470,53 @@ lib.fix (self: {
       # Overriding precedence -> (a or b) and c
       input = "name; (os_name=='a' or os_name=='b') and os_name=='c'";
       expected = {
-        name = "name";
         conditions = [ ];
-        optionals = [ ];
         markers = {
-          op = "and";
           lhs = {
-            op = "or";
             lhs = {
+              lhs = {
+                type = "variable";
+                value = "os_name";
+              };
               op = "==";
-              lhs = "os_name";
-              rhs = "'a'";
+              rhs = {
+                type = "string";
+                value = "a";
+              };
+              type = "compare";
             };
+            op = "or";
             rhs = {
+              lhs = {
+                type = "variable";
+                value = "os_name";
+              };
               op = "==";
-              lhs = "os_name";
-              rhs = "'b'";
+              rhs = {
+                type = "string";
+                value = "b";
+              };
+              type = "compare";
             };
+            type = "boolOp";
           };
+          op = "and";
           rhs = {
+            lhs = {
+              type = "variable";
+              value = "os_name";
+            };
             op = "==";
-            lhs = "os_name";
-            rhs = "'c'";
+            rhs = {
+              type = "string";
+              value = "c";
+            };
+            type = "compare";
           };
+          type = "boolOp";
         };
+        name = "name";
+        optionals = [ ];
         url = null;
       };
     };
@@ -329,6 +532,7 @@ lib.fix (self: {
         , implementation ? "cpython"
         , isLinux ? false
         , isDarwin ? false
+        ,
         }: {
           inherit pname version;
           passthru = {
@@ -339,7 +543,6 @@ lib.fix (self: {
             targetPlatform.parsed.cpu.name = "x86_64";
           };
         };
-
     in
     {
       testPython38Linux = {
@@ -349,17 +552,78 @@ lib.fix (self: {
           isLinux = true;
         };
         expected = {
-          implementation_name = "cpython";
-          implementation_version = "3.8.2";
-          os_name = "posix";
-          platform_machine = "x86_64";
-          platform_python_implementation = "CPython";
-          platform_release = "";
-          platform_system = "Linux";
-          platform_version = "";
-          python_full_version = "3.8.2";
-          python_version = "3.8";
-          sys_platform = "linux";
+          implementation_name = {
+            type = "string";
+            value = "cpython";
+          };
+          implementation_version = {
+            type = "version";
+            value = {
+              dev = null;
+              epoch = 0;
+              local = null;
+              post = null;
+              pre = null;
+              release = [ 3 8 2 ];
+            };
+          };
+          os_name = {
+            type = "string";
+            value = "posix";
+          };
+          platform_machine = {
+            type = "string";
+            value = "x86_64";
+          };
+          platform_python_implementation = {
+            type = "string";
+            value = "CPython";
+          };
+          platform_release = {
+            type = "string";
+            value = "";
+          };
+          platform_system = {
+            type = "string";
+            value = "Linux";
+          };
+          platform_version = {
+            type = "version";
+            value = {
+              dev = null;
+              epoch = 0;
+              local = null;
+              post = null;
+              pre = null;
+              release = [ ];
+            };
+          };
+          python_full_version = {
+            type = "version";
+            value = {
+              dev = null;
+              epoch = 0;
+              local = null;
+              post = null;
+              pre = null;
+              release = [ 3 8 2 ];
+            };
+          };
+          python_version = {
+            type = "version";
+            value = {
+              dev = null;
+              epoch = 0;
+              local = null;
+              post = null;
+              pre = null;
+              release = [ 3 8 ];
+            };
+          };
+          sys_platform = {
+            type = "string";
+            value = "linux";
+          };
         };
       };
 
@@ -370,17 +634,78 @@ lib.fix (self: {
           isDarwin = true;
         };
         expected = {
-          implementation_name = "cpython";
-          implementation_version = "3.11.4";
-          os_name = "posix";
-          platform_machine = "x86_64";
-          platform_python_implementation = "CPython";
-          platform_release = "";
-          platform_system = "Darwin";
-          platform_version = "";
-          python_full_version = "3.11.4";
-          python_version = "3.11";
-          sys_platform = "darwin";
+          implementation_name = {
+            type = "string";
+            value = "cpython";
+          };
+          implementation_version = {
+            type = "version";
+            value = {
+              dev = null;
+              epoch = 0;
+              local = null;
+              post = null;
+              pre = null;
+              release = [ 3 11 4 ];
+            };
+          };
+          os_name = {
+            type = "string";
+            value = "posix";
+          };
+          platform_machine = {
+            type = "string";
+            value = "x86_64";
+          };
+          platform_python_implementation = {
+            type = "string";
+            value = "CPython";
+          };
+          platform_release = {
+            type = "string";
+            value = "";
+          };
+          platform_system = {
+            type = "string";
+            value = "Darwin";
+          };
+          platform_version = {
+            type = "version";
+            value = {
+              dev = null;
+              epoch = 0;
+              local = null;
+              post = null;
+              pre = null;
+              release = [ ];
+            };
+          };
+          python_full_version = {
+            type = "version";
+            value = {
+              dev = null;
+              epoch = 0;
+              local = null;
+              post = null;
+              pre = null;
+              release = [ 3 11 4 ];
+            };
+          };
+          python_version = {
+            type = "version";
+            value = {
+              dev = null;
+              epoch = 0;
+              local = null;
+              post = null;
+              pre = null;
+              release = [ 3 11 ];
+            };
+          };
+          sys_platform = {
+            type = "string";
+            value = "darwin";
+          };
         };
       };
 
@@ -393,17 +718,78 @@ lib.fix (self: {
           implementation = "pypy";
         };
         expected = {
-          implementation_name = "pypy";
-          implementation_version = "7.3.11";
-          os_name = "posix";
-          platform_machine = "x86_64";
-          platform_python_implementation = "PyPy";
-          platform_release = "";
-          platform_system = "Linux";
-          platform_version = "";
-          python_full_version = "7.3.11";
-          python_version = "3.9";
-          sys_platform = "linux";
+          implementation_name = {
+            type = "string";
+            value = "pypy";
+          };
+          implementation_version = {
+            type = "version";
+            value = {
+              dev = null;
+              epoch = 0;
+              local = null;
+              post = null;
+              pre = null;
+              release = [ 7 3 11 ];
+            };
+          };
+          os_name = {
+            type = "string";
+            value = "posix";
+          };
+          platform_machine = {
+            type = "string";
+            value = "x86_64";
+          };
+          platform_python_implementation = {
+            type = "string";
+            value = "PyPy";
+          };
+          platform_release = {
+            type = "string";
+            value = "";
+          };
+          platform_system = {
+            type = "string";
+            value = "Linux";
+          };
+          platform_version = {
+            type = "version";
+            value = {
+              dev = null;
+              epoch = 0;
+              local = null;
+              post = null;
+              pre = null;
+              release = [ ];
+            };
+          };
+          python_full_version = {
+            type = "version";
+            value = {
+              dev = null;
+              epoch = 0;
+              local = null;
+              post = null;
+              pre = null;
+              release = [ 7 3 11 ];
+            };
+          };
+          python_version = {
+            type = "version";
+            value = {
+              dev = null;
+              epoch = 0;
+              local = null;
+              post = null;
+              pre = null;
+              release = [ 3 9 ];
+            };
+          };
+          sys_platform = {
+            type = "string";
+            value = "linux";
+          };
         };
       };
     }
@@ -425,6 +811,5 @@ lib.fix (self: {
       };
       expected = false;
     };
-
   };
 })

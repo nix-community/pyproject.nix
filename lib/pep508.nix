@@ -1,7 +1,7 @@
 { lib, pep440, ... }:
 
 let
-  inherit (builtins) match hasAttr elemAt split filter foldl' substring stringLength typeOf fromJSON isString head;
+  inherit (builtins) match elemAt split filter foldl' substring stringLength typeOf fromJSON isString head mapAttrs elem;
   inherit (lib) stringToCharacters fix;
 
   re = {
@@ -19,6 +19,19 @@ let
   condGt = l: r: if l == "" then false else condPrio.${l} >= condPrio.${r};
 
   isEmptyStr = s: isString s && match " *" s == null;
+
+  # Parse a value into an attrset of { type = "valueType"; value = ...; }
+  # Will parse any field name suffixed with "version" as a PEP-440 version, otherwise
+  # the value is passed through and the type is inferred with builtins.typeOf
+  parseValueVersionDynamic = name: value: (
+    if match "^.+version" name != null && isString value then {
+      type = "version";
+      value = pep440.parseVersion value;
+    } else {
+      type = typeOf value;
+      inherit value;
+    }
+  );
 
   # Strip leading/trailing whitespace from string
   stripStr = s: let t = match "[\t ]*(.*[^\t ])[\t ]*" s; in if t == null then "" else head t;
@@ -48,49 +61,59 @@ let
     powerpc64le = "ppc64le";
   };
 
-  # Marker eval operations
-  operations = {
-    # Simple equality
-    "==" = x: y: x == y;
+  isMarkerVariable =
+    let
+      markerFields = [
+        "implementation_name"
+        "implementation_version"
+        "os_name"
+        "platform_machine"
+        "platform_python_implementation"
+        "platform_release"
+        "platform_system"
+        "platform_version"
+        "python_full_version"
+        "python_version"
+        "sys_platform"
+        "extra"
+      ];
+    in
+    s: elem s markerFields;
 
-    # These implicitly means version compare and not just arbitrary lt/gt
-    "<=" = x: y: pep440.compareVersions (pep440.parseVersion x) (pep440.parseVersion y) <= 0;
-    "<" = x: y: pep440.compareVersions (pep440.parseVersion x) (pep440.parseVersion y) < 0;
-    ">=" = x: y: pep440.compareVersions (pep440.parseVersion x) (pep440.parseVersion y) >= 0;
-    ">" = x: y: pep440.compareVersions (pep440.parseVersion x) (pep440.parseVersion y) > 0;
+  unpackValue = value:
+    let
+      # If the value is a single ticked string we can't pass it plainly to toJSON.
+      # Normalise to a double quoted.
+      singleTicked = match "^'(.+)'$" value; # TODO: Account for escaped ' in input (unescape)
+    in
+    if isMarkerVariable value then value
+    else fromJSON (if singleTicked != null then "\"" + head singleTicked + "\"" else value);
 
-    # Logical conditions
+  compareOps = {
+    "==" = x: y: x == y; # Simple equality
+    "<=" = x: y: pep440.compareVersions x y <= 0;
+    "<" = x: y: pep440.compareVersions x y < 0;
+    ">=" = x: y: pep440.compareVersions x y >= 0;
+    ">" = x: y: pep440.compareVersions x y > 0;
+  };
+
+  boolOps = {
     "and" = x: y: x && y;
     "or" = x: y: x || y;
   };
 
+  isPrimitiveType =
+    let
+      primitives = [
+        "int"
+        "float"
+        "string"
+      ];
+    in
+    type: elem type primitives;
+
 in
 fix (self:
-let
-
-  # Process a value from evalMarkers
-  # These functions are mutually recursive.
-  processValue = value: environ:
-    let
-      type = typeOf value;
-      # If the value is a single ticked string we can't pass it plainly to toJSON
-      singleTicked = match "^'(.+)'$" value; # TODO: Account for escaped ' in input (unescape)
-    in
-    # If the value is a set it's a sub expression, call back to evalMarkers
-    if type == "set" then (self.evalMarkers environ value)
-    # If the value is a string it means we have arrived at an actual value
-    else if type == "string" then
-      (
-        # Try to look up the value from the platform environment
-        # If this doesn't exist unmarshal the value
-        if (hasAttr value environ) then environ.${value} else
-        (
-          if singleTicked != null then elemAt singleTicked 0 else fromJSON value
-        )
-      )
-    else throw "${type}: ${value}";
-
-in
 {
 
   /* Parse PEP 508 markers into an AST.
@@ -188,16 +211,23 @@ in
     in
     if pos.lhs == -1 then
       (
-        let # Value is a comparison
+        let
           m = split re.operators (unparen input);
+          mAt = elemAt m;
+          lhs = stripStr (mAt 0);
         in
         {
-          lhs = stripStr (elemAt m 0);
-          op = elemAt (elemAt m 1) 0;
-          rhs = stripStr (elemAt m 2);
+          type = "compare";
+          lhs =
+            if isMarkerVariable lhs then {
+              type = "variable";
+              value = lhs;
+            } else unpackValue lhs;
+          op = elemAt (mAt 1) 0;
+          rhs = parseValueVersionDynamic lhs (unpackValue (stripStr (mAt 2)));
         }
       ) else {
-      # Value is an expression group
+      type = "boolOp";
       lhs = self.parseMarkers (unparen (substring 0 pos.lhs input));
       op = substring (pos.lhs + 1) (pos.rhs - pos.lhs - 2) input;
       rhs = self.parseMarkers (unparen (substring pos.rhs (stringLength input) input));
@@ -214,7 +244,14 @@ in
           conditions = [
             {
               op = ">=";
-              version = "0.13.0";
+              version = {  # Returned by pep440.parseVersion
+                dev = null;
+                epoch = 0;
+                local = null;
+                post = null;
+                pre = null;
+                release = [ 0 13 0 ];
+              };
             }
           ];
           optionals = [ "filecache" ];
@@ -282,7 +319,7 @@ in
               in
               {
                 op = elemAt m 0;
-                version = elemAt m 1;
+                version = pep440.parseVersion (elemAt m 1);
               })
             (splitComma (if m1 != null then elemAt m1 2 else elemAt m2 1));
 
@@ -336,33 +373,35 @@ in
       inherit (python) stdenv;
       targetMachine = manyLinuxTargetMachines.${stdenv.targetPlatform.parsed.cpu.name} or null;
     in
-    {
-      os_name =
-        if python.pname == "jython" then "java"
-        else "posix";
-      sys_platform =
-        if stdenv.isLinux then "linux"
-        else if stdenv.isDarwin then "darwin"
-        else throw "Unsupported platform";
-      platform_machine = targetMachine;
-      platform_python_implementation =
-        let
-          impl = python.passthru.implementation;
-        in
-        if impl == "cpython" then "CPython"
-        else if impl == "pypy" then "PyPy"
-        else throw "Unsupported implementation ${impl}";
-      platform_release = ""; # Field not reproducible
-      platform_system =
-        if stdenv.isLinux then "Linux"
-        else if stdenv.isDarwin then "Darwin"
-        else throw "Unsupported platform";
-      platform_version = ""; # Field not reproducible
-      python_version = python.passthru.pythonVersion;
-      python_full_version = python.version;
-      implementation_name = python.passthru.implementation;
-      implementation_version = python.version;
-    };
+    mapAttrs
+      parseValueVersionDynamic
+      {
+        os_name =
+          if python.pname == "jython" then "java"
+          else "posix";
+        sys_platform =
+          if stdenv.isLinux then "linux"
+          else if stdenv.isDarwin then "darwin"
+          else throw "Unsupported platform";
+        platform_machine = targetMachine;
+        platform_python_implementation =
+          let
+            impl = python.passthru.implementation;
+          in
+          if impl == "cpython" then "CPython"
+          else if impl == "pypy" then "PyPy"
+          else throw "Unsupported implementation ${impl}";
+        platform_release = ""; # Field not reproducible
+        platform_system =
+          if stdenv.isLinux then "Linux"
+          else if stdenv.isDarwin then "Darwin"
+          else throw "Unsupported platform";
+        platform_version = ""; # Field not reproducible
+        python_version = python.passthru.pythonVersion;
+        python_full_version = python.version;
+        implementation_name = python.passthru.implementation;
+        implementation_version = python.version;
+      };
 
   /* Evaluate an environment as returned by `mkEnviron` against markers as returend by `parseMarkers`.
 
@@ -372,5 +411,23 @@ in
        # evalMarkers (mkEnviron pkgs.python3) (parseMarkers "python_version < \"3.11\"")
        true
   */
-  evalMarkers = environ: marker: operations.${marker.op} (processValue marker.lhs environ) (processValue marker.rhs environ);
+  evalMarkers = environ: value: (
+    let
+      x = self.evalMarkers environ value.lhs;
+      y = self.evalMarkers environ value.rhs;
+    in
+    if value.type == "compare" then
+      (
+        compareOps.${value.op} x y
+      )
+    else if value.type == "boolOp" then
+      (
+        boolOps.${value.op} x y
+      )
+    else if value.type == "variable" then (self.evalMarkers environ environ.${value.value})
+    else if value.type == "version" then value.value
+    else if isPrimitiveType value.type then value.value
+    else throw "Unknown type '${value.type}'"
+  );
+
 })
