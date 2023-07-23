@@ -240,24 +240,24 @@ fix (self:
      Example:
        # parseString "cachecontrol[filecache]>=0.13.0"
        {
-          name = "cachecontrol";
-          conditions = [
-            {
-              op = ">=";
-              version = {  # Returned by pep440.parseVersion
-                dev = null;
-                epoch = 0;
-                local = null;
-                post = null;
-                pre = null;
-                release = [ 0 13 0 ];
-              };
-            }
-          ];
-          optionals = [ "filecache" ];
-          markers = null;
-          url = null;
-        }
+         conditions = [
+           {
+             op = ">=";
+             version = {
+               dev = null;
+               epoch = 0;
+               local = null;
+               post = null;
+               pre = null;
+               release = [ 0 13 0 ];
+             };
+           }
+         ];
+         markers = null;
+         name = "cachecontrol";
+         optionals = [ "filecache" ];
+         url = null;
+       }
   */
   parseString = input:
     let
@@ -348,24 +348,84 @@ fix (self:
      Example:
        # mkEnviron pkgs.python3
        {
-         implementation_name = "cpython";
-         implementation_version = "3.8.2";
-         os_name = "posix";
-         platform_machine = "x86_64";
-         platform_python_implementation = "CPython";
+         implementation_name = {
+           type = "string";
+           value = "cpython";
+         };
+         implementation_version = {
+           type = "version";
+           value = {
+             dev = null;
+             epoch = 0;
+             local = null;
+             post = null;
+             pre = null;
+             release = [ 3 10 12 ];
+           };
+         };
+         os_name = {
+           type = "string";
+           value = "posix";
+         };
+         platform_machine = {
+           type = "string";
+           value = "x86_64";
+         };
+         platform_python_implementation = {
+           type = "string";
+           value = "CPython";
+         };
          # platform_release maps to platform.release() which returns
          # the running kernel version on Linux.
          # Because this field is not reproducible it's left empty.
-         platform_release = "";
-         platform_system = "Linux";
+         platform_release = {
+           type = "string";
+           value = "";
+         };
+         platform_system = {
+           type = "string";
+           value = "Linux";
+         };
          # platform_version maps to platform.version() which also returns
          # the running kernel version on Linux.
          # Because this field is not reproducible it's left empty.
-         platform_version = "";
-         python_full_version = "3.8.2";
-         python_version = "3.8";
-         sys_platform = "linux";
-         # extra is unset (PEP-508 explicitly states setting extra is an error unless application defined)
+         platform_version = {
+           type = "version";
+           value = {
+             dev = null;
+             epoch = 0;
+             local = null;
+             post = null;
+             pre = null;
+             release = [ ];
+           };
+         };
+         python_full_version = {
+           type = "version";
+           value = {
+             dev = null;
+             epoch = 0;
+             local = null;
+             post = null;
+             pre = null;
+             release = [ 3 10 12 ];
+           };
+         };
+         python_version = {
+           type = "version";
+           value = {
+             dev = null;
+             epoch = 0;
+             local = null;
+             post = null;
+             pre = null;
+             release = [ 3 10 ];
+           };
+         };
+         sys_platform = {
+           type = "string";
+           value = "linux";
+         };
        }
   */
   mkEnviron = python:
