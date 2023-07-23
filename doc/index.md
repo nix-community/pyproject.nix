@@ -6,6 +6,15 @@ You can think of it as a spiritual successor to [poetry2nix](https://github.com/
 
 ```{toctree}
 ---
+caption: Contents
+maxdepth: 2
+---
+
+HACKING
+```
+
+```{toctree}
+---
 caption: Reference docs
 maxdepth: 2
 glob:
