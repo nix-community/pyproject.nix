@@ -14,6 +14,11 @@ lib.fix (self: {
     inherit lib;
   };
 
+  pep491 = import ./test_pep491.nix {
+    inherit (pyproject) pep491;
+    inherit lib;
+  };
+
   pep508 = import ./test_pep508.nix {
     inherit (pyproject) pep508;
     inherit lib;
