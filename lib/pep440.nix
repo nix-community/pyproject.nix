@@ -1,11 +1,18 @@
 { lib, ... }:
 let
-  inherit (builtins) split filter match length elemAt head tail foldl';
+  inherit (builtins) split filter match length elemAt head tail foldl' fromJSON typeOf;
   inherit (lib) fix isString toInt toLower sublist;
 
   filterNull = filter (x: x != null);
   filterEmpty = filter (x: length x > 0);
   filterEmptyStr = filter (s: s != "");
+
+  # A version of lib.toInt that supports leading zeroes
+  toIntRelease = s:
+    let
+      n = fromJSON (head (match "0?([[:digit:]]+)" s));
+    in
+    assert typeOf n == "int"; n;
 
   # Return a list elem at index with a default value if it doesn't exist
   optionalElem = list: idx: default: if length list >= idx + 1 then elemAt list idx else default;
@@ -114,7 +121,7 @@ fix (self: {
     {
       # Return epoch defaulting to 0
       epoch = toInt (optionalElem (map head (filterNull (map (match "[0-9]+!([0-9]+)") tokens))) 0 "0");
-      release = map (t: (x: if x == "*" then x else toInt x) (head t)) (filterEmpty (map (t: filterEmptyStr (match "([\\*0-9]*).*" t)) tokens));
+      release = map (t: (x: if x == "*" then x else toIntRelease x) (head t)) (filterEmpty (map (t: filterEmptyStr (match "([\\*0-9]*).*" t)) tokens));
       pre = parsePre tokens;
       post = parsePost tokens;
       dev = parseDev tokens;

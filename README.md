@@ -24,7 +24,7 @@ Any package manager that supports PEP-621 is a possible target.
   - [x] [PEP 508](https://peps.python.org/pep-0508/) – Dependency specification for Python Software Packages
   - [x] [PEP 599](https://peps.python.org/pep-0599/) – The manylinux2014 Platform Tag
   - [x] [PEP 600](https://peps.python.org/pep-0600/) - Future ‘manylinux’ Platform Tags for Portable Linux Built Distributions
-  - [ ] [PEP 621](https://peps.python.org/pep-0621/) - Storing project metadata in pyproject.toml
+  - [x] [PEP 621](https://peps.python.org/pep-0621/) - Storing project metadata in pyproject.toml
 - Lock file support
   - [ ] [PDM](https://github.com/pdm-project/pdm)
 

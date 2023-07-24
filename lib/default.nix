@@ -6,4 +6,5 @@ lib.fix (self: lib.mapAttrs (_: path: import path ({ inherit lib; } // self)) {
   pep508 = ./pep508.nix;
   pep599 = ./pep599.nix;
   pep600 = ./pep600.nix;
+  pep621 = ./pep621.nix;
 })
