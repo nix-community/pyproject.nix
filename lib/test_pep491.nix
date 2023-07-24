@@ -1,7 +1,4 @@
-{ lib
-, pep491
-,
-}:
+{ lib, pep491, ... }:
 let
   inherit (pep491) parseFileName isWheelFileName;
 in

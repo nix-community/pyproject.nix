@@ -1,4 +1,4 @@
-{ lib, pep440 }:
+{ lib, pep440, ... }:
 let
   inherit (pep440) parseVersion compareVersions comparators;
 
