@@ -16,7 +16,7 @@ in
   */
   isWheelFileName = name: matchFileName name != null;
 
-  /* Parse PEP-491 wheel file names.
+  /* Parse PEP-427 wheel file names.
 
      Type: parseFileName :: string -> AttrSet
 

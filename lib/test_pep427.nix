@@ -1,6 +1,6 @@
-{ lib, pep491, ... }:
+{ lib, pep427, ... }:
 let
-  inherit (pep491) parseFileName isWheelFileName;
+  inherit (pep427) parseFileName isWheelFileName;
 in
 lib.fix (_self: {
   parseFileName = {

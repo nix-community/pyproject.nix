@@ -11,8 +11,8 @@ in
 # Work with the tests as a tree
   # The attrpath is: module(file) -> symbol(function) -> test
 lib.fix (self: {
+  pep427 = importTests ./test_pep427.nix;
   pep440 = importTests ./test_pep440.nix;
-  pep491 = importTests ./test_pep491.nix;
   pep508 = importTests ./test_pep508.nix;
   pep599 = importTests ./test_pep599.nix;
   pep600 = importTests ./test_pep600.nix;

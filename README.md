@@ -19,8 +19,8 @@ Any package manager that supports PEP-621 is a possible target.
 ### Roadmap
 
 - Python metadata support
+  - [x] [PEP 427](https://peps.python.org/pep-0427/) – The Wheel Binary Package Format 1.0
   - [x] [PEP 440](https://peps.python.org/pep-0440/) – Version Identification and Dependency Specification
-  - [x] [PEP 491](https://peps.python.org/pep-0491/) – The Wheel Binary Package Format 1.9
   - [x] [PEP 508](https://peps.python.org/pep-0508/) – Dependency specification for Python Software Packages
   - [x] [PEP 599](https://peps.python.org/pep-0599/) – The manylinux2014 Platform Tag
   - [x] [PEP 600](https://peps.python.org/pep-0600/) - Future ‘manylinux’ Platform Tags for Portable Linux Built Distributions

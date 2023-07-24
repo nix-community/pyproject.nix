@@ -20,7 +20,7 @@ help:
 lib/%.md: %.nix
 	@./build_md.py ../lib/$*.nix lib/$*.md
 
-lib: lib/pep440.md lib/pep491.md lib/pep508.md lib/pep599.md lib/pep600.md lib/pep621.md
+lib: lib/pep427.md lib/pep440.md lib/pep508.md lib/pep599.md lib/pep600.md lib/pep621.md
 
 html: lib Makefile
 	@$(SPHINXBUILD) -M html "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS)
