@@ -15,13 +15,13 @@ lib.fix (_self: {
 
      All other fields are returned verbatim.
 
-     Type: parsePyproject :: (AttrSet | string | path) -> AttrSet
+     Type: readPyproject :: (AttrSet | string | path) -> AttrSet
 
      Example:
-       # parsePyproject ./pyproject.toml
+       # readPyproject ./pyproject.toml
        { project = { ... }; }  # Full structure omitted
   */
-  parsePyproject = pyproject:
+  readPyproject = pyproject:
     let
       inputType = typeOf pyproject;
       pyproject' =
