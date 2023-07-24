@@ -1,4 +1,4 @@
-{ lib, pep440, ... }:
+{ lib, pep440, pep599, ... }:
 
 let
   inherit (builtins) match elemAt split filter foldl' substring stringLength typeOf fromJSON isString head mapAttrs elem;
@@ -46,20 +46,6 @@ let
       m = match "\\((.+)\\)" expr;
     in
     if m != null then elemAt m 0 else expr;
-
-  # Maps Nixpkgs CPU values to target machines known to be supported for manylinux* wheels.
-  # (a.k.a. `uname -m` output from CentOS 7)
-  #
-  # This is current as of manylinux2014 (PEP-0599), and is a superset of manylinux2010 / manylinux1.
-  # s390x is not supported in Nixpkgs, so we don't map it.
-  manyLinuxTargetMachines = {
-    x86_64 = "x86_64";
-    i686 = "i686";
-    aarch64 = "aarch64";
-    armv7l = "armv7l";
-    powerpc64 = "ppc64";
-    powerpc64le = "ppc64le";
-  };
 
   isMarkerVariable =
     let
@@ -450,7 +436,7 @@ fix (self:
   mkEnviron = python:
     let
       inherit (python) stdenv;
-      targetMachine = manyLinuxTargetMachines.${stdenv.targetPlatform.parsed.cpu.name} or null;
+      targetMachine = pep599.manyLinuxTargetMachines.${stdenv.targetPlatform.parsed.cpu.name} or null;
     in
     mapAttrs
       parseValueVersionDynamic
