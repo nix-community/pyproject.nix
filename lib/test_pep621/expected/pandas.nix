@@ -18,7 +18,7 @@
         ];
         markers = null;
         name = "meson-python";
-        optionals = [ ];
+        extras = [ ];
         url = null;
       }
       {
@@ -37,14 +37,14 @@
         ];
         markers = null;
         name = "meson";
-        optionals = [ "ninja" ];
+        extras = [ "ninja" ];
         url = null;
       }
       {
         conditions = [ ];
         markers = null;
         name = "wheel";
-        optionals = [ ];
+        extras = [ ];
         url = null;
       }
       {
@@ -74,7 +74,7 @@
         ];
         markers = null;
         name = "Cython";
-        optionals = [ ];
+        extras = [ ];
         url = null;
       }
       {
@@ -93,14 +93,14 @@
         ];
         markers = null;
         name = "oldest-supported-numpy";
-        optionals = [ ];
+        extras = [ ];
         url = null;
       }
       {
         conditions = [ ];
         markers = null;
         name = "versioneer";
-        optionals = [ "toml" ];
+        extras = [ "toml" ];
         url = null;
       }
     ];
@@ -148,7 +148,7 @@
           type = "compare";
         };
         name = "numpy";
-        optionals = [ ];
+        extras = [ ];
         url = null;
       }
       {
@@ -185,7 +185,7 @@
           type = "compare";
         };
         name = "numpy";
-        optionals = [ ];
+        extras = [ ];
         url = null;
       }
       {
@@ -204,7 +204,7 @@
         ];
         markers = null;
         name = "python-dateutil";
-        optionals = [ ];
+        extras = [ ];
         url = null;
       }
       {
@@ -223,7 +223,7 @@
         ];
         markers = null;
         name = "pytz";
-        optionals = [ ];
+        extras = [ ];
         url = null;
       }
       {
@@ -242,7 +242,7 @@
         ];
         markers = null;
         name = "tzdata";
-        optionals = [ ];
+        extras = [ ];
         url = null;
       }
     ];
@@ -269,7 +269,7 @@
           ];
           markers = null;
           name = "beautifulsoup4";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
         {
@@ -288,7 +288,7 @@
           ];
           markers = null;
           name = "bottleneck";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
         {
@@ -307,7 +307,7 @@
           ];
           markers = null;
           name = "brotlipy";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
         {
@@ -326,7 +326,7 @@
           ];
           markers = null;
           name = "fastparquet";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
         {
@@ -345,7 +345,7 @@
           ];
           markers = null;
           name = "fsspec";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
         {
@@ -364,7 +364,7 @@
           ];
           markers = null;
           name = "gcsfs";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
         {
@@ -383,7 +383,7 @@
           ];
           markers = null;
           name = "html5lib";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
         {
@@ -402,7 +402,7 @@
           ];
           markers = null;
           name = "hypothesis";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
         {
@@ -421,7 +421,7 @@
           ];
           markers = null;
           name = "jinja2";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
         {
@@ -440,7 +440,7 @@
           ];
           markers = null;
           name = "lxml";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
         {
@@ -459,7 +459,7 @@
           ];
           markers = null;
           name = "matplotlib";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
         {
@@ -478,7 +478,7 @@
           ];
           markers = null;
           name = "numba";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
         {
@@ -497,7 +497,7 @@
           ];
           markers = null;
           name = "numexpr";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
         {
@@ -516,7 +516,7 @@
           ];
           markers = null;
           name = "odfpy";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
         {
@@ -535,7 +535,7 @@
           ];
           markers = null;
           name = "openpyxl";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
         {
@@ -554,7 +554,7 @@
           ];
           markers = null;
           name = "pandas-gbq";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
         {
@@ -573,7 +573,7 @@
           ];
           markers = null;
           name = "psycopg2";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
         {
@@ -592,7 +592,7 @@
           ];
           markers = null;
           name = "pyarrow";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
         {
@@ -611,7 +611,7 @@
           ];
           markers = null;
           name = "pymysql";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
         {
@@ -630,7 +630,7 @@
           ];
           markers = null;
           name = "PyQt5";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
         {
@@ -649,7 +649,7 @@
           ];
           markers = null;
           name = "pyreadstat";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
         {
@@ -668,7 +668,7 @@
           ];
           markers = null;
           name = "pytest";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
         {
@@ -687,7 +687,7 @@
           ];
           markers = null;
           name = "pytest-xdist";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
         {
@@ -706,7 +706,7 @@
           ];
           markers = null;
           name = "pytest-asyncio";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
         {
@@ -725,7 +725,7 @@
           ];
           markers = null;
           name = "python-snappy";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
         {
@@ -744,7 +744,7 @@
           ];
           markers = null;
           name = "pyxlsb";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
         {
@@ -763,7 +763,7 @@
           ];
           markers = null;
           name = "qtpy";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
         {
@@ -782,7 +782,7 @@
           ];
           markers = null;
           name = "scipy";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
         {
@@ -801,7 +801,7 @@
           ];
           markers = null;
           name = "s3fs";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
         {
@@ -820,7 +820,7 @@
           ];
           markers = null;
           name = "SQLAlchemy";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
         {
@@ -839,7 +839,7 @@
           ];
           markers = null;
           name = "tables";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
         {
@@ -858,7 +858,7 @@
           ];
           markers = null;
           name = "tabulate";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
         {
@@ -877,7 +877,7 @@
           ];
           markers = null;
           name = "xarray";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
         {
@@ -896,7 +896,7 @@
           ];
           markers = null;
           name = "xlrd";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
         {
@@ -915,7 +915,7 @@
           ];
           markers = null;
           name = "xlsxwriter";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
         {
@@ -934,7 +934,7 @@
           ];
           markers = null;
           name = "zstandard";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
       ];
@@ -955,7 +955,7 @@
           ];
           markers = null;
           name = "s3fs";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
       ];
@@ -976,7 +976,7 @@
           ];
           markers = null;
           name = "PyQt5";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
         {
@@ -995,7 +995,7 @@
           ];
           markers = null;
           name = "qtpy";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
       ];
@@ -1016,7 +1016,7 @@
           ];
           markers = null;
           name = "brotlipy";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
         {
@@ -1035,7 +1035,7 @@
           ];
           markers = null;
           name = "python-snappy";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
         {
@@ -1054,7 +1054,7 @@
           ];
           markers = null;
           name = "zstandard";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
       ];
@@ -1075,7 +1075,7 @@
           ];
           markers = null;
           name = "scipy";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
         {
@@ -1094,7 +1094,7 @@
           ];
           markers = null;
           name = "xarray";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
       ];
@@ -1115,7 +1115,7 @@
           ];
           markers = null;
           name = "odfpy";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
         {
@@ -1134,7 +1134,7 @@
           ];
           markers = null;
           name = "openpyxl";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
         {
@@ -1153,7 +1153,7 @@
           ];
           markers = null;
           name = "pyxlsb";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
         {
@@ -1172,7 +1172,7 @@
           ];
           markers = null;
           name = "xlrd";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
         {
@@ -1191,7 +1191,7 @@
           ];
           markers = null;
           name = "xlsxwriter";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
       ];
@@ -1212,7 +1212,7 @@
           ];
           markers = null;
           name = "pyarrow";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
       ];
@@ -1233,7 +1233,7 @@
           ];
           markers = null;
           name = "fsspec";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
       ];
@@ -1254,7 +1254,7 @@
           ];
           markers = null;
           name = "gcsfs";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
         {
@@ -1273,7 +1273,7 @@
           ];
           markers = null;
           name = "pandas-gbq";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
       ];
@@ -1294,7 +1294,7 @@
           ];
           markers = null;
           name = "tables";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
       ];
@@ -1315,7 +1315,7 @@
           ];
           markers = null;
           name = "beautifulsoup4";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
         {
@@ -1334,7 +1334,7 @@
           ];
           markers = null;
           name = "html5lib";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
         {
@@ -1353,7 +1353,7 @@
           ];
           markers = null;
           name = "lxml";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
       ];
@@ -1374,7 +1374,7 @@
           ];
           markers = null;
           name = "SQLAlchemy";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
         {
@@ -1393,7 +1393,7 @@
           ];
           markers = null;
           name = "pymysql";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
       ];
@@ -1414,7 +1414,7 @@
           ];
           markers = null;
           name = "jinja2";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
         {
@@ -1433,7 +1433,7 @@
           ];
           markers = null;
           name = "tabulate";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
       ];
@@ -1454,7 +1454,7 @@
           ];
           markers = null;
           name = "pyarrow";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
       ];
@@ -1475,7 +1475,7 @@
           ];
           markers = null;
           name = "bottleneck";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
         {
@@ -1494,7 +1494,7 @@
           ];
           markers = null;
           name = "numba";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
         {
@@ -1513,7 +1513,7 @@
           ];
           markers = null;
           name = "numexpr";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
       ];
@@ -1534,7 +1534,7 @@
           ];
           markers = null;
           name = "matplotlib";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
       ];
@@ -1555,7 +1555,7 @@
           ];
           markers = null;
           name = "SQLAlchemy";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
         {
@@ -1574,7 +1574,7 @@
           ];
           markers = null;
           name = "psycopg2";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
       ];
@@ -1595,7 +1595,7 @@
           ];
           markers = null;
           name = "pyreadstat";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
       ];
@@ -1616,7 +1616,7 @@
           ];
           markers = null;
           name = "SQLAlchemy";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
       ];
@@ -1637,7 +1637,7 @@
           ];
           markers = null;
           name = "hypothesis";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
         {
@@ -1656,7 +1656,7 @@
           ];
           markers = null;
           name = "pytest";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
         {
@@ -1675,7 +1675,7 @@
           ];
           markers = null;
           name = "pytest-xdist";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
         {
@@ -1694,7 +1694,7 @@
           ];
           markers = null;
           name = "pytest-asyncio";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
       ];
@@ -1715,7 +1715,7 @@
           ];
           markers = null;
           name = "lxml";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
       ];

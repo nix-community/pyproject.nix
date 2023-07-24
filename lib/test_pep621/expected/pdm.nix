@@ -6,7 +6,7 @@
         conditions = [ ];
         markers = null;
         name = "pdm-backend";
-        optionals = [ ];
+        extras = [ ];
         url = null;
       }
     ];
@@ -24,14 +24,14 @@
         conditions = [ ];
         markers = null;
         name = "blinker";
-        optionals = [ ];
+        extras = [ ];
         url = null;
       }
       {
         conditions = [ ];
         markers = null;
         name = "certifi";
-        optionals = [ ];
+        extras = [ ];
         url = null;
       }
       {
@@ -61,14 +61,14 @@
         ];
         markers = null;
         name = "packaging";
-        optionals = [ ];
+        extras = [ ];
         url = null;
       }
       {
         conditions = [ ];
         markers = null;
         name = "platformdirs";
-        optionals = [ ];
+        extras = [ ];
         url = null;
       }
       {
@@ -87,7 +87,7 @@
         ];
         markers = null;
         name = "rich";
-        optionals = [ ];
+        extras = [ ];
         url = null;
       }
       {
@@ -106,21 +106,21 @@
         ];
         markers = null;
         name = "virtualenv";
-        optionals = [ ];
+        extras = [ ];
         url = null;
       }
       {
         conditions = [ ];
         markers = null;
         name = "pyproject-hooks";
-        optionals = [ ];
+        extras = [ ];
         url = null;
       }
       {
         conditions = [ ];
         markers = null;
         name = "requests-toolbelt";
-        optionals = [ ];
+        extras = [ ];
         url = null;
       }
       {
@@ -139,7 +139,7 @@
         ];
         markers = null;
         name = "unearth";
-        optionals = [ ];
+        extras = [ ];
         url = null;
       }
       {
@@ -172,7 +172,7 @@
         ];
         markers = null;
         name = "findpython";
-        optionals = [ ];
+        extras = [ ];
         url = null;
       }
       {
@@ -202,7 +202,7 @@
         ];
         markers = null;
         name = "tomlkit";
-        optionals = [ ];
+        extras = [ ];
         url = null;
       }
       {
@@ -221,7 +221,7 @@
         ];
         markers = null;
         name = "shellingham";
-        optionals = [ ];
+        extras = [ ];
         url = null;
       }
       {
@@ -240,7 +240,7 @@
         ];
         markers = null;
         name = "python-dotenv";
-        optionals = [ ];
+        extras = [ ];
         url = null;
       }
       {
@@ -259,7 +259,7 @@
         ];
         markers = null;
         name = "resolvelib";
-        optionals = [ ];
+        extras = [ ];
         url = null;
       }
       {
@@ -289,7 +289,7 @@
         ];
         markers = null;
         name = "installer";
-        optionals = [ ];
+        extras = [ ];
         url = null;
       }
       {
@@ -308,7 +308,7 @@
         ];
         markers = null;
         name = "cachecontrol";
-        optionals = [ "filecache" ];
+        extras = [ "filecache" ];
         url = null;
       }
       {
@@ -345,7 +345,7 @@
           type = "compare";
         };
         name = "tomli";
-        optionals = [ ];
+        extras = [ ];
         url = null;
       }
       {
@@ -382,7 +382,7 @@
           type = "compare";
         };
         name = "importlib-resources";
-        optionals = [ ];
+        extras = [ ];
         url = null;
       }
       {
@@ -419,7 +419,7 @@
           type = "compare";
         };
         name = "importlib-metadata";
-        optionals = [ ];
+        extras = [ ];
         url = null;
       }
     ];
@@ -434,7 +434,7 @@
           conditions = [ ];
           markers = null;
           name = "pdm";
-          optionals = [ "keyring" "template" "truststore" ];
+          extras = [ "keyring" "template" "truststore" ];
           url = null;
         }
       ];
@@ -443,7 +443,7 @@
           conditions = [ ];
           markers = null;
           name = "cookiecutter";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
       ];
@@ -452,7 +452,7 @@
           conditions = [ ];
           markers = null;
           name = "copier";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
       ];
@@ -461,7 +461,7 @@
           conditions = [ ];
           markers = null;
           name = "keyring";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
       ];
@@ -470,14 +470,14 @@
           conditions = [ ];
           markers = null;
           name = "pytest";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
         {
           conditions = [ ];
           markers = null;
           name = "pytest-mock";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
       ];
@@ -486,7 +486,7 @@
           conditions = [ ];
           markers = null;
           name = "pdm";
-          optionals = [ "copier" "cookiecutter" ];
+          extras = [ "copier" "cookiecutter" ];
           url = null;
         }
       ];
@@ -513,7 +513,7 @@
             type = "compare";
           };
           name = "truststore";
-          optionals = [ ];
+          extras = [ ];
           url = null;
         }
       ];

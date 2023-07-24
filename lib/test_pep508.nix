@@ -22,7 +22,7 @@ lib.fix (self: {
       expected = {
         name = "blinker";
         conditions = [ ];
-        optionals = [ ];
+        extras = [ ];
         markers = null;
         url = null;
       };
@@ -45,7 +45,7 @@ lib.fix (self: {
             };
           }
         ];
-        optionals = [ ];
+        extras = [ ];
         markers = null;
         url = null;
       };
@@ -56,7 +56,7 @@ lib.fix (self: {
       expected = {
         name = "mkdocstrings";
         conditions = [ ];
-        optionals = [ "python" ];
+        extras = [ "python" ];
         markers = null;
         url = null;
       };
@@ -90,7 +90,7 @@ lib.fix (self: {
             };
           }
         ];
-        optionals = [ ];
+        extras = [ ];
         markers = null;
         url = null;
       };
@@ -113,7 +113,7 @@ lib.fix (self: {
             };
           }
         ];
-        optionals = [ "filecache" ];
+        extras = [ "filecache" ];
         markers = null;
         url = null;
       };
@@ -155,7 +155,7 @@ lib.fix (self: {
           type = "compare";
         };
         name = "tomli";
-        optionals = [ ];
+        extras = [ ];
         url = null;
       };
     };
@@ -165,7 +165,7 @@ lib.fix (self: {
       expected = {
         name = "name";
         conditions = [ ];
-        optionals = [ ];
+        extras = [ ];
         markers = null;
         url = "http://foo.com";
       };
@@ -176,7 +176,7 @@ lib.fix (self: {
       expected = {
         name = "A.B-C_D";
         conditions = [ ];
-        optionals = [ ];
+        extras = [ ];
         markers = null;
         url = null;
       };
@@ -206,7 +206,7 @@ lib.fix (self: {
           type = "compare";
         };
         name = "name";
-        optionals = [ "fred" "bar" ];
+        extras = [ "fred" "bar" ];
         url = "http://foo.com";
       };
     };
@@ -244,12 +244,12 @@ lib.fix (self: {
           type = "boolOp";
         };
         name = "name";
-        optionals = [ ];
+        extras = [ ];
         url = null;
       };
     };
 
-    testDoubleMarkersWithOptionals = {
+    testDoubleMarkersWithExtras = {
       input = "name[quux, strange];python_version<'2.7' and platform_version=='2'";
       expected = {
         conditions = [ ];
@@ -296,7 +296,7 @@ lib.fix (self: {
           type = "boolOp";
         };
         name = "name";
-        optionals = [ "quux" "strange" ];
+        extras = [ "quux" "strange" ];
         url = null;
       };
     };
@@ -351,7 +351,7 @@ lib.fix (self: {
           type = "boolOp";
         };
         name = "name";
-        optionals = [ ];
+        extras = [ ];
         url = null;
       };
     };
@@ -406,7 +406,7 @@ lib.fix (self: {
           type = "boolOp";
         };
         name = "name";
-        optionals = [ ];
+        extras = [ ];
         url = null;
       };
     };
@@ -461,7 +461,7 @@ lib.fix (self: {
           type = "boolOp";
         };
         name = "name";
-        optionals = [ ];
+        extras = [ ];
         url = null;
       };
     };
@@ -516,7 +516,7 @@ lib.fix (self: {
           type = "boolOp";
         };
         name = "name";
-        optionals = [ ];
+        extras = [ ];
         url = null;
       };
     };
@@ -807,7 +807,7 @@ lib.fix (self: {
     testDoubleMarkers = {
       input = {
         environ = self.mkEnviron.testPython38Linux.expected;
-        inherit (self.parseString.testDoubleMarkersWithOptionals.expected) markers;
+        inherit (self.parseString.testDoubleMarkersWithExtras.expected) markers;
       };
       expected = false;
     };

@@ -260,7 +260,7 @@ fix (self:
          ];
          markers = null;
          name = "cachecontrol";
-         optionals = [ "filecache" ];
+         extras = [ "filecache" ];
          url = null;
        }
   */
@@ -306,7 +306,7 @@ fix (self:
       # Extract metadata from the package segment
       package =
         let
-          # Package has either both optionals and version constraints or just optionals
+          # Package has either both extras and version constraints or just extras
           # "name [fred,bar]>=3.10"
           # "name [fred,bar]"
           m1 = match "(.+)\\[(.*)](.*)" tokens.packageSegment;
@@ -319,19 +319,19 @@ fix (self:
           # The version conditions as a list of strings
           conditions = map pep440.parseVersionCond (splitComma (if m1 != null then elemAt m1 2 else elemAt m2 1));
 
-          # Optionals as a list of strings
-          optionals = if m1 != null then splitComma (elemAt m1 1) else [ ];
+          # Extras as a list of strings
+          extras = if m1 != null then splitComma (elemAt m1 1) else [ ];
 
         in
         # Assert that either regex matched
         assert m1 != null || m2 != null; {
           name = stripStr (if m1 != null then elemAt m1 0 else elemAt m2 0);
-          inherit optionals conditions;
+          inherit extras conditions;
         };
 
     in
     {
-      inherit (package) name conditions optionals;
+      inherit (package) name conditions extras;
       inherit (tokens) url;
       markers = if tokens.markerSegment == null then null else self.parseMarkers tokens.markerSegment;
     };
