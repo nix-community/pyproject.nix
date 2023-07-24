@@ -8,7 +8,7 @@ lib.fix (self: {
 
      https://peps.python.org/pep-0600/#legacy-manylinux-tags
 
-     Type: legacyAliases.${tag} :: string -> string
+     Type: legacyAliases.${tag} :: AttrSet -> string
 
      Example:
      # legacyAliases."manylinux1_x86_64" or "manylinux1_x86_64"
