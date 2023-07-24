@@ -1721,7 +1721,17 @@
       ];
     };
     readme = "README.md";
-    requires-python = ">=3.9";
+    requires-python = {
+      op = ">=";
+      version = {
+        dev = null;
+        epoch = 0;
+        local = null;
+        post = null;
+        pre = null;
+        release = [ 3 9 ];
+      };
+    };
     urls = {
       documentation = "https://pandas.pydata.org/docs/";
       homepage = "https://pandas.pydata.org";

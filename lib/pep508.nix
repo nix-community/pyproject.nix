@@ -317,16 +317,7 @@ fix (self:
           m2 = match "([a-zA-Z0-9_\\.-]+)(.*)" tokens.packageSegment;
 
           # The version conditions as a list of strings
-          conditions = map
-            (cond:
-              let
-                m = match "${re.operators}(.+)" cond;
-              in
-              {
-                op = elemAt m 0;
-                version = pep440.parseVersion (elemAt m 1);
-              })
-            (splitComma (if m1 != null then elemAt m1 2 else elemAt m2 1));
+          conditions = map pep440.parseVersionCond (splitComma (if m1 != null then elemAt m1 2 else elemAt m2 1));
 
           # Optionals as a list of strings
           optionals = if m1 != null then splitComma (elemAt m1 1) else [ ];

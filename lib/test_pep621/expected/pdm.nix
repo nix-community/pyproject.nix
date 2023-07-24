@@ -519,7 +519,17 @@
       ];
     };
     readme = "README.md";
-    requires-python = ">=3.7";
+    requires-python = {
+      op = ">=";
+      version = {
+        dev = null;
+        epoch = 0;
+        local = null;
+        post = null;
+        pre = null;
+        release = [ 3 7 ];
+      };
+    };
     scripts = { pdm = "pdm.core:main"; };
     urls = {
       Changelog = "https://pdm.fming.dev/latest/dev/changelog/";

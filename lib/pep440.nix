@@ -128,6 +128,38 @@ fix (self: {
       local = parseLocal tokens;
     };
 
+  /* Parse a version conditional.
+
+     Type: parseVersionCond :: string -> AttrSet
+
+     Example:
+       # parseVersionCond ">=3.0.0rc1"
+       {
+         op = ">=";
+         version = {
+           dev = null;
+           epoch = 0;
+           local = null;
+           post = null;
+           pre = {
+             type = "rc";
+             value = 1;
+           };
+           release = [ 3 0 0 ];
+         };
+       }
+  */
+  parseVersionCond = cond: (
+    let
+      m = match "([=><!~^]+)(.+)" cond;
+      mAt = elemAt m;
+    in
+    {
+      op = mAt 0;
+      version = self.parseVersion (mAt 1);
+    }
+  );
+
   /* Compare two versions as parsed by `parseVersion` according to PEP-440.
 
      Returns:

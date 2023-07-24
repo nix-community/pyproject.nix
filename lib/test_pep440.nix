@@ -1,6 +1,6 @@
 { lib, pep440, ... }:
 let
-  inherit (pep440) parseVersion compareVersions comparators;
+  inherit (pep440) parseVersion parseVersionCond compareVersions comparators;
 
 in
 
@@ -219,6 +219,26 @@ lib.fix (_self: {
     testWildcardNotEq = {
       expr = compareVersions (parseVersion "1.2.0") (parseVersion "1.0.*");
       expected = 1;
+    };
+  };
+
+  parseVersionCond = {
+    testSimple = {
+      expr = parseVersionCond ">=3.0.0rc1";
+      expected = {
+        op = ">=";
+        version = {
+          dev = null;
+          epoch = 0;
+          local = null;
+          post = null;
+          pre = {
+            type = "rc";
+            value = 1;
+          };
+          release = [ 3 0 0 ];
+        };
+      };
     };
   };
 

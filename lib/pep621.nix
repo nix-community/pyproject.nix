@@ -1,4 +1,4 @@
-{ lib, pep508, ... }:
+{ lib, pep440, pep508, ... }:
 let
   inherit (builtins) typeOf fromTOML readFile mapAttrs;
   inherit (lib) isString;
@@ -11,6 +11,7 @@ lib.fix (_self: {
      Parses:
        - `project.dependencies`
        - `project.optional-dependencies`
+       - `project.requires-python`
        - `project.build-system`
 
      All other fields are returned verbatim.
@@ -39,6 +40,7 @@ lib.fix (_self: {
       project = project // {
         dependencies = map pep508.parseString (project.dependencies or [ ]);
         optional-dependencies = mapAttrs (_: map pep508.parseString) (project.optional-dependencies or { });
+        requires-python = pep440.parseVersionCond project.requires-python;
       };
     } // lib.optionalAttrs (pyproject' ? build-system) {
       # Defined by PEP-518
