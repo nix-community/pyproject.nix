@@ -16,6 +16,7 @@ lib.fix (self: {
   pep427 = importTests ./test_pep427.nix;
   pep440 = importTests ./test_pep440.nix;
   pep508 = importTests ./test_pep508.nix;
+  pep518 = importTests ./test_pep518.nix;
   pep599 = importTests ./test_pep599.nix;
   pep600 = importTests ./test_pep600.nix;
   pep621 = importTests ./test_pep621;
