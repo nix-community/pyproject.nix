@@ -1,6 +1,8 @@
 { lib }:
 
 lib.fix (self: lib.mapAttrs (_: path: import path ({ inherit lib; } // self)) {
+  pypa = ./pypa.nix;
+
   pep427 = ./pep427.nix;
   pep440 = ./pep440.nix;
   pep508 = ./pep508.nix;

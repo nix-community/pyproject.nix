@@ -11,6 +11,8 @@ in
 # Work with the tests as a tree
   # The attrpath is: module(file) -> symbol(function) -> test
 lib.fix (self: {
+  pypa = importTests ./test_pypa.nix;
+
   pep427 = importTests ./test_pep427.nix;
   pep440 = importTests ./test_pep440.nix;
   pep508 = importTests ./test_pep508.nix;
