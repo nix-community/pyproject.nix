@@ -11,7 +11,7 @@ in
      Type: isWheelFileName :: string -> bool
 
      Example:
-     # parseFileName "cryptography-41.0.1-cp37-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl"
+     # isWheelFileName "cryptography-41.0.1-cp37-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl"
      true
   */
   isWheelFileName = name: matchFileName name != null;
