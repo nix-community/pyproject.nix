@@ -79,18 +79,22 @@ lib.fix (_self: {
 
       namedDeps = pep621.getDependenciesNamesNormalized filteredDeps;
 
-      attrs =
-        lib.mapAttrs'
-          (group: deps: {
-            name = extrasAttrMappings.${group} or "propagatedBuildInputs";
-            value = map (dep: python.pkgs.${dep}) deps;
+      attrs = builtins.foldl'
+        (acc: group:
+          let
+            attr = extrasAttrMappings.${group} or "propagatedBuildInputs";
+          in
+          acc // {
+            ${attr} = acc.${attr} or [ ] ++ map (dep: python.pkgs.${dep}) namedDeps.extras.${group};
           })
-          namedDeps.extras;
+        {
+          pname = project.pyproject.project.name;
+          propagatedBuildInputs = map (dep: python.pkgs.${dep}) namedDeps.dependencies;
+        }
+        (builtins.attrNames namedDeps.extras);
+
     in
-    attrs // {
-      pname = project.pyproject.project.name;
-      propagatedBuildInputs = attrs.propagatedBuildInputs or [ ] ++ map (dep: python.pkgs.${dep}) namedDeps.dependencies;
-    } // optionalAttrs (project.pyproject.project ? version) {
+    attrs // optionalAttrs (project.pyproject.project ? version) {
       inherit (project.pyproject.project) version;
     };
 })
