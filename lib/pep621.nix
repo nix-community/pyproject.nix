@@ -1,52 +1,46 @@
 { lib, pep440, pep508, ... }:
 let
-  inherit (builtins) typeOf fromTOML readFile mapAttrs;
+  inherit (builtins) mapAttrs foldl' split filter;
   inherit (lib) isString;
 
 in
 lib.fix (_self: {
+  /* Parse dependencies from pyproject.toml.
 
-  /* Parse fields defined by PEP-621 from pyproject.toml.
-
-     Parses:
-       - `project.dependencies`
-       - `project.optional-dependencies`
-       - `project.requires-python`
-       - `project.build-system`
-
-     All other fields are returned verbatim.
-
-     Type: readPyproject :: (AttrSet | string | path) -> AttrSet
+     Type: parseDependencies :: AttrSet -> AttrSet
 
      Example:
-       # readPyproject ./pyproject.toml
-       { project = { ... }; }  # Full structure omitted
+       # parseDependencies {
+       #
+       #   pyproject = (lib.importTOML ./pyproject.toml);
+       #   # Don't just look at `project.optional-dependencies` for groups, also look at these:
+       #   extrasAttrPaths = [ "tool.pdm.dev-dependencies" ];
+       # }
+       {
+         dependencies = [ ];  # List of parsed PEP-508 strings (lib.pep508.parseString)
+         extras = {
+           dev = [ ];  # List of parsed PEP-508 strings (lib.pep508.parseString)
+         };
+       }
   */
-  readPyproject = pyproject:
+  parseDependencies = { pyproject, extrasAttrPaths ? [ ] }:
     let
-      inputType = typeOf pyproject;
-      pyproject' =
-        if inputType == "path" then fromTOML (readFile pyproject)
-        else if inputType == "string" then fromTOML pyproject
-        else if inputType == "set" then pyproject
-        else throw "Unsupported input type: ${inputType}";
-
-      inherit (pyproject') project build-system;
-
+      # Fold extras from all considered attributes into one set
+      extras' = foldl' (acc: attr: acc // pyproject.${attr} or { }) (pyproject.project.optional-dependencies or { }) extrasAttrPaths;
     in
-    assert isString project.name;
-    (pyproject' // lib.optionalAttrs (pyproject' ? project) {
-      # Defined by PEP-621
-      project = project // {
-        dependencies = map pep508.parseString (project.dependencies or [ ]);
-        optional-dependencies = mapAttrs (_: map pep508.parseString) (project.optional-dependencies or { });
-        requires-python = pep440.parseVersionCond project.requires-python;
-      };
-    } // lib.optionalAttrs (pyproject' ? build-system) {
-      # Defined by PEP-518
-      build-system = build-system // {
-        requires = map pep508.parseString build-system.requires;
-      };
-    });
+    {
+      dependencies = map pep508.parseString (pyproject.project.dependencies or [ ]);
+      extras = mapAttrs (_: map pep508.parseString) extras';
+    };
+
+  /* Parse project.python-requires from pyproject.toml
+
+     Type: parseRequiresPython :: AttrSet -> list
+
+     Example:
+       #  parseRequiresPython (lib.importTOML ./pyproject.toml)
+       [ ]  # List of conditions as returned by `lib.pep440.parseVersionCond`
+  */
+  parseRequiresPython = pyproject: map pep440.parseVersionCond (filter isString (split "," (pyproject.project.requires-python or "")));
 
 })
