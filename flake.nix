@@ -60,7 +60,7 @@
             treefmt.imports = [ ./dev/treefmt.nix ];
 
             proc.groups.run.processes = {
-              nix-unittest.command = "${lib.getExe pkgs.reflex} -r '\.(nix)$' -- ${lib.getExe nixUnit} --flake '.#libTests'";
+              nix-unittest.command = "${lib.getExe pkgs.reflex} -r '\.(nix)$' -- ${lib.getExe nixUnit} --quiet --flake '.#libTests'";
             };
 
             devShells.default = pkgs.mkShell {
