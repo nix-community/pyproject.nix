@@ -21,12 +21,11 @@ lib.fix (_self: {
   withPackages =
     {
       # Project metadata as returned by `lib.project.loadPyproject`
-      project
-    , # Python derivation
-      python
-    , # Python extras (optionals) to enable
-      extras ? [ ]
-    ,
+      project,
+    # Python derivation
+      python,
+    # Python extras (optionals) to enable
+      extras ? [ ],
     }:
     let
       filteredDeps = filter.filterDependencies {
@@ -52,7 +51,7 @@ lib.fix (_self: {
     {
       # Project metadata as returned by `lib.project.loadPyproject`
       project
-    , # Pytho derivation
+    , # Python derivation
       python
     , # Python extras (optionals) to enable
       extras ? [ ]

@@ -255,8 +255,6 @@ fix (self: {
     ">=" = a: b: self.compareVersions a b >= 0;
     "<" = a: b: self.compareVersions a b < 0;
     ">" = a: b: self.compareVersions a b > 0;
-
-    /* [Arbitrary equality clause](https://peps.python.org/pep-0440/#arbitrary-equality) */
     "===" = throw "Arbitrary equality clause not supported";
   };
 

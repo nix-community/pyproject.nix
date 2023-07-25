@@ -59,9 +59,10 @@ lib.fix (self: {
   filterDependencies =
     {
       # Dependencies as parsed by `lib.pep621.parseDependencies`
-      dependencies
+      dependencies,
       # Environ as created by `lib.pep508.mkEnviron`
-    , environ
-    , extras ? [ ]
+      environ,
+      # Extras as a list of strings
+      extras ? [ ],
     }: self.filterDependenciesByEnviron environ (self.filterDependenciesByExtras extras dependencies);
 })
