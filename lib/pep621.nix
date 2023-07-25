@@ -1,4 +1,4 @@
-{ lib, pep440, pep508, ... }:
+{ lib, pep440, pep508, pypa, ... }:
 let
   inherit (builtins) mapAttrs foldl' split filter;
   inherit (lib) isString;
@@ -43,4 +43,25 @@ lib.fix (_self: {
   */
   parseRequiresPython = pyproject: map pep440.parseVersionCond (filter isString (split "," (pyproject.project.requires-python or "")));
 
+  /* Takes a dependency structure as returned by `lib.pep621.parseDependencies` and transforms it into
+     a structure with it's normalized names as normalized by `lib.pypa.normalizePackageName`.
+
+     Type: getDependenciesNamesNormalized :: AttrSet -> AttrSet
+
+     Example:
+     #  getDependenciesNamesNormalized (pep621.parseDependencies { pyproject = (lib.importTOML ./pyproject.toml); })
+     {
+       dependencies = [ "requests" ]
+       extras = {
+         "dev": [ "pytest" ]
+       };
+  */
+  getDependenciesNamesNormalized =
+    let
+      normalizeList = map (dep: pypa.normalizePackageName dep.name);
+    in
+    dependencies: {
+      dependencies = normalizeList dependencies.dependencies;
+      extras = mapAttrs (_: normalizeList) dependencies.extras;
+    };
 })
