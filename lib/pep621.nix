@@ -49,12 +49,12 @@ lib.fix (_self: {
      Type: getDependenciesNamesNormalized :: AttrSet -> AttrSet
 
      Example:
-     #  getDependenciesNamesNormalized (pep621.parseDependencies { pyproject = (lib.importTOML ./pyproject.toml); })
-     {
-       dependencies = [ "requests" ]
-       extras = {
-         "dev": [ "pytest" ]
-       };
+       # getDependenciesNamesNormalized (pep621.parseDependencies { pyproject = (lib.importTOML ./pyproject.toml); })
+       {
+         dependencies = [ "requests" ]
+         extras = {
+           "dev": [ "pytest" ]
+         };
   */
   getDependenciesNamesNormalized =
     let
