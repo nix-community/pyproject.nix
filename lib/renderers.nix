@@ -2,11 +2,15 @@
 , filter
 , pep508
 , pep621
+, pypa
 , ...
 }:
 let
   inherit (builtins) attrValues;
   inherit (lib) optionalAttrs flatten;
+
+  getBuildSystems = project: map (dep: pypa.normalizePackageName dep.name) project.build-systems;
+
 in
 lib.fix (_self: {
   /*
@@ -21,11 +25,12 @@ lib.fix (_self: {
   withPackages =
     {
       # Project metadata as returned by `lib.project.loadPyproject`
-      project,
-    # Python derivation
-      python,
-    # Python extras (optionals) to enable
-      extras ? [ ],
+      project
+    , # Python derivation
+      python
+    , # Python extras (optionals) to enable
+      extras ? [ ]
+    ,
     }:
     let
       filteredDeps = filter.filterDependencies {
@@ -34,7 +39,7 @@ lib.fix (_self: {
         inherit extras;
       };
       namedDeps = pep621.getDependenciesNamesNormalized filteredDeps;
-      flatDeps = flatten ([ namedDeps.dependencies ] ++ attrValues namedDeps.extras);
+      flatDeps = flatten ([ namedDeps.dependencies ] ++ attrValues namedDeps.extras) ++ getBuildSystems project;
     in
     ps: map (dep: ps.${dep}) flatDeps;
 
@@ -81,6 +86,7 @@ lib.fix (_self: {
         {
           pname = project.pyproject.project.name;
           propagatedBuildInputs = map (dep: python.pkgs.${dep}) namedDeps.dependencies;
+          nativeBuildInputs = getBuildSystems project;
         }
         (builtins.attrNames namedDeps.extras);
 
