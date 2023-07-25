@@ -16,6 +16,9 @@ lib.fix (_self: {
   /*
     Renders a project as an argument that can be passed to withPackages
 
+    Evaluates PEP-508 environment markers to select correct dependencies for the platform but does not validate version constraints.
+    For validation see `lib.validators`.
+
     Type: withPackages :: AttrSet -> lambda
 
     Example:
@@ -44,7 +47,10 @@ lib.fix (_self: {
     ps: map (dep: ps.${dep}) flatDeps;
 
   /*
-    Renders a project as an argument that can be passed to buildPythonPackage/buildPythonApplication
+    Renders a project as an argument that can be passed to buildPythonPackage/buildPythonApplication.
+
+    Evaluates PEP-508 environment markers to select correct dependencies for the platform but does not validate version constraints.
+    For validation see `lib.validators`.
 
     Type: withPackages :: AttrSet -> AttrSet
 
