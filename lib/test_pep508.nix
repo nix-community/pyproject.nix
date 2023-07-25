@@ -1,5 +1,6 @@
 { lib
 , pep508
+, mocks
 , ...
 }:
 
@@ -522,278 +523,241 @@ lib.fix (self: {
     };
   };
 
-  mkEnviron = mapAttrs (_: case: case // { expr = pep508.mkEnviron case.input; }) (
-    let
-      # Mock python derivations so we don't have to keep a pkgs reference
-      mkPython =
-        { pname ? "python"
-        , version
-        , pythonVersion ? version
-        , implementation ? "cpython"
-        , isLinux ? false
-        , isDarwin ? false
-        ,
-        }: {
-          inherit pname version;
-          passthru = {
-            inherit pythonVersion implementation;
-          };
-          stdenv = {
-            inherit isLinux isDarwin;
-            targetPlatform.parsed.cpu.name = "x86_64";
+  mkEnviron = mapAttrs (_: case: case // { expr = pep508.mkEnviron case.input; }) {
+    testPython38Linux = {
+      input = mocks.cpythonLinux38;
+      expected = {
+        implementation_name = {
+          type = "string";
+          value = "cpython";
+        };
+        implementation_version = {
+          type = "version";
+          value = {
+            dev = null;
+            epoch = 0;
+            local = null;
+            post = null;
+            pre = null;
+            release = [ 3 8 2 ];
           };
         };
-    in
-    {
-      testPython38Linux = {
-        input = mkPython {
-          version = "3.8.2";
-          pythonVersion = "3.8";
-          isLinux = true;
+        os_name = {
+          type = "string";
+          value = "posix";
         };
-        expected = {
-          implementation_name = {
-            type = "string";
-            value = "cpython";
+        platform_machine = {
+          type = "string";
+          value = "x86_64";
+        };
+        platform_python_implementation = {
+          type = "string";
+          value = "CPython";
+        };
+        platform_release = {
+          type = "string";
+          value = "";
+        };
+        platform_system = {
+          type = "string";
+          value = "Linux";
+        };
+        platform_version = {
+          type = "version";
+          value = {
+            dev = null;
+            epoch = 0;
+            local = null;
+            post = null;
+            pre = null;
+            release = [ ];
           };
-          implementation_version = {
-            type = "version";
-            value = {
-              dev = null;
-              epoch = 0;
-              local = null;
-              post = null;
-              pre = null;
-              release = [ 3 8 2 ];
-            };
+        };
+        python_full_version = {
+          type = "version";
+          value = {
+            dev = null;
+            epoch = 0;
+            local = null;
+            post = null;
+            pre = null;
+            release = [ 3 8 2 ];
           };
-          os_name = {
-            type = "string";
-            value = "posix";
+        };
+        python_version = {
+          type = "version";
+          value = {
+            dev = null;
+            epoch = 0;
+            local = null;
+            post = null;
+            pre = null;
+            release = [ 3 8 ];
           };
-          platform_machine = {
-            type = "string";
-            value = "x86_64";
-          };
-          platform_python_implementation = {
-            type = "string";
-            value = "CPython";
-          };
-          platform_release = {
-            type = "string";
-            value = "";
-          };
-          platform_system = {
-            type = "string";
-            value = "Linux";
-          };
-          platform_version = {
-            type = "version";
-            value = {
-              dev = null;
-              epoch = 0;
-              local = null;
-              post = null;
-              pre = null;
-              release = [ ];
-            };
-          };
-          python_full_version = {
-            type = "version";
-            value = {
-              dev = null;
-              epoch = 0;
-              local = null;
-              post = null;
-              pre = null;
-              release = [ 3 8 2 ];
-            };
-          };
-          python_version = {
-            type = "version";
-            value = {
-              dev = null;
-              epoch = 0;
-              local = null;
-              post = null;
-              pre = null;
-              release = [ 3 8 ];
-            };
-          };
-          sys_platform = {
-            type = "string";
-            value = "linux";
-          };
+        };
+        sys_platform = {
+          type = "string";
+          value = "linux";
         };
       };
+    };
 
-      testPython311Darwin = {
-        input = mkPython {
-          version = "3.11.4";
-          pythonVersion = "3.11";
-          isDarwin = true;
+    testPython311Darwin = {
+      input = mocks.cpythonDarwin311;
+      expected = {
+        implementation_name = {
+          type = "string";
+          value = "cpython";
         };
-        expected = {
-          implementation_name = {
-            type = "string";
-            value = "cpython";
+        implementation_version = {
+          type = "version";
+          value = {
+            dev = null;
+            epoch = 0;
+            local = null;
+            post = null;
+            pre = null;
+            release = [ 3 11 4 ];
           };
-          implementation_version = {
-            type = "version";
-            value = {
-              dev = null;
-              epoch = 0;
-              local = null;
-              post = null;
-              pre = null;
-              release = [ 3 11 4 ];
-            };
+        };
+        os_name = {
+          type = "string";
+          value = "posix";
+        };
+        platform_machine = {
+          type = "string";
+          value = "x86_64";
+        };
+        platform_python_implementation = {
+          type = "string";
+          value = "CPython";
+        };
+        platform_release = {
+          type = "string";
+          value = "";
+        };
+        platform_system = {
+          type = "string";
+          value = "Darwin";
+        };
+        platform_version = {
+          type = "version";
+          value = {
+            dev = null;
+            epoch = 0;
+            local = null;
+            post = null;
+            pre = null;
+            release = [ ];
           };
-          os_name = {
-            type = "string";
-            value = "posix";
+        };
+        python_full_version = {
+          type = "version";
+          value = {
+            dev = null;
+            epoch = 0;
+            local = null;
+            post = null;
+            pre = null;
+            release = [ 3 11 4 ];
           };
-          platform_machine = {
-            type = "string";
-            value = "x86_64";
+        };
+        python_version = {
+          type = "version";
+          value = {
+            dev = null;
+            epoch = 0;
+            local = null;
+            post = null;
+            pre = null;
+            release = [ 3 11 ];
           };
-          platform_python_implementation = {
-            type = "string";
-            value = "CPython";
-          };
-          platform_release = {
-            type = "string";
-            value = "";
-          };
-          platform_system = {
-            type = "string";
-            value = "Darwin";
-          };
-          platform_version = {
-            type = "version";
-            value = {
-              dev = null;
-              epoch = 0;
-              local = null;
-              post = null;
-              pre = null;
-              release = [ ];
-            };
-          };
-          python_full_version = {
-            type = "version";
-            value = {
-              dev = null;
-              epoch = 0;
-              local = null;
-              post = null;
-              pre = null;
-              release = [ 3 11 4 ];
-            };
-          };
-          python_version = {
-            type = "version";
-            value = {
-              dev = null;
-              epoch = 0;
-              local = null;
-              post = null;
-              pre = null;
-              release = [ 3 11 ];
-            };
-          };
-          sys_platform = {
-            type = "string";
-            value = "darwin";
-          };
+        };
+        sys_platform = {
+          type = "string";
+          value = "darwin";
         };
       };
+    };
 
-      testPypy3Linux = {
-        input = mkPython {
-          pname = "pypy";
-          version = "7.3.11";
-          pythonVersion = "3.9";
-          isLinux = true;
-          implementation = "pypy";
+    testPypy3Linux = {
+      input = mocks.pypy39Linux;
+      expected = {
+        implementation_name = {
+          type = "string";
+          value = "pypy";
         };
-        expected = {
-          implementation_name = {
-            type = "string";
-            value = "pypy";
+        implementation_version = {
+          type = "version";
+          value = {
+            dev = null;
+            epoch = 0;
+            local = null;
+            post = null;
+            pre = null;
+            release = [ 7 3 11 ];
           };
-          implementation_version = {
-            type = "version";
-            value = {
-              dev = null;
-              epoch = 0;
-              local = null;
-              post = null;
-              pre = null;
-              release = [ 7 3 11 ];
-            };
+        };
+        os_name = {
+          type = "string";
+          value = "posix";
+        };
+        platform_machine = {
+          type = "string";
+          value = "x86_64";
+        };
+        platform_python_implementation = {
+          type = "string";
+          value = "PyPy";
+        };
+        platform_release = {
+          type = "string";
+          value = "";
+        };
+        platform_system = {
+          type = "string";
+          value = "Linux";
+        };
+        platform_version = {
+          type = "version";
+          value = {
+            dev = null;
+            epoch = 0;
+            local = null;
+            post = null;
+            pre = null;
+            release = [ ];
           };
-          os_name = {
-            type = "string";
-            value = "posix";
+        };
+        python_full_version = {
+          type = "version";
+          value = {
+            dev = null;
+            epoch = 0;
+            local = null;
+            post = null;
+            pre = null;
+            release = [ 7 3 11 ];
           };
-          platform_machine = {
-            type = "string";
-            value = "x86_64";
+        };
+        python_version = {
+          type = "version";
+          value = {
+            dev = null;
+            epoch = 0;
+            local = null;
+            post = null;
+            pre = null;
+            release = [ 3 9 ];
           };
-          platform_python_implementation = {
-            type = "string";
-            value = "PyPy";
-          };
-          platform_release = {
-            type = "string";
-            value = "";
-          };
-          platform_system = {
-            type = "string";
-            value = "Linux";
-          };
-          platform_version = {
-            type = "version";
-            value = {
-              dev = null;
-              epoch = 0;
-              local = null;
-              post = null;
-              pre = null;
-              release = [ ];
-            };
-          };
-          python_full_version = {
-            type = "version";
-            value = {
-              dev = null;
-              epoch = 0;
-              local = null;
-              post = null;
-              pre = null;
-              release = [ 7 3 11 ];
-            };
-          };
-          python_version = {
-            type = "version";
-            value = {
-              dev = null;
-              epoch = 0;
-              local = null;
-              post = null;
-              pre = null;
-              release = [ 3 9 ];
-            };
-          };
-          sys_platform = {
-            type = "string";
-            value = "linux";
-          };
+        };
+        sys_platform = {
+          type = "string";
+          value = "linux";
         };
       };
-    }
-  );
+    };
+  };
 
   evalMarkers = mapAttrs (_: case: case // { expr = pep508.evalMarkers case.input.environ case.input.markers; }) {
     testTrivial = {

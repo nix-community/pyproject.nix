@@ -1,11 +1,9 @@
-{ lib, pep621, ... }:
+{ lib, pep621, fixtures, ... }:
 
 let
   inherit (builtins) mapAttrs;
-  inherit (lib) importTOML;
   inherit (pep621) parseDependencies parseRequiresPython getDependenciesNamesNormalized;
 
-  fixtures = mapAttrs (name: _: importTOML ./fixtures/${name}) (builtins.readDir ./fixtures);
   expected = mapAttrs (name: _: import ./expected/${name}) (builtins.readDir ./expected);
 in
 lib.fix (self: {

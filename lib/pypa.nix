@@ -6,6 +6,7 @@ let
 in
 {
   /* Normalize package name as documented in https://packaging.python.org/en/latest/specifications/name-normalization/#normalization
+
      Type: normalizePackageName :: string -> string
 
      Example:
