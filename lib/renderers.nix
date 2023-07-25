@@ -16,11 +16,7 @@ lib.fix (_self: {
 
     Example:
     # withPackages (lib.project.loadPyproject { ... })
-      {
-        dependencies = { }; # Parsed dependency structure in the schema of `lib.pep621.parseDependencies`
-        build-systems = [ ];  # Returned by `lib.pep518.parseBuildSystems`
-        pyproject = { }; # The unmarshaled contents of pyproject.toml
-      }
+      «lambda @ «string»:1:1»
     */
   withPackages =
     {
@@ -46,15 +42,11 @@ lib.fix (_self: {
   /*
     Renders a project as an argument that can be passed to buildPythonPackage/buildPythonApplication
 
-    Type: withPackages :: AttrSet -> lambda
+    Type: withPackages :: AttrSet -> AttrSet
 
     Example:
-    # withPackages (lib.project.loadPyproject { ... })
-      {
-        dependencies = { }; # Parsed dependency structure in the schema of `lib.pep621.parseDependencies`
-        build-systems = [ ];  # Returned by `lib.pep518.parseBuildSystems`
-        pyproject = { }; # The unmarshaled contents of pyproject.toml
-      }
+      # withPackages (lib.project.loadPyproject { ... })
+      { pname = "blinker"; version = "1.3.3.7"; propagatedBuildInputs = [ ]; }
     */
   buildPythonPackage =
     {
