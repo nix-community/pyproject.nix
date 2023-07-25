@@ -60,6 +60,7 @@ in
 lib.fix (self: {
   pypa = importTests ./test_pypa.nix;
   filter = importTests ./test_filter.nix;
+  project = importTests ./test_project.nix;
 
   pep427 = importTests ./test_pep427.nix;
   pep440 = importTests ./test_pep440.nix;

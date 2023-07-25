@@ -3,6 +3,9 @@ let
   inherit (builtins) mapAttrs foldl' split filter;
   inherit (lib) isString;
 
+  splitAttrPath = path: filter isString (split "\\." path);
+  getAttrPath = path: lib.getAttrFromPath (splitAttrPath path);
+
 in
 lib.fix (_self: {
   /* Parse dependencies from pyproject.toml.
@@ -26,7 +29,7 @@ lib.fix (_self: {
   parseDependencies = { pyproject, extrasAttrPaths ? [ ] }:
     let
       # Fold extras from all considered attributes into one set
-      extras' = foldl' (acc: attr: acc // pyproject.${attr} or { }) (pyproject.project.optional-dependencies or { }) extrasAttrPaths;
+      extras' = foldl' (acc: attr: acc // getAttrPath attr pyproject) (pyproject.project.optional-dependencies or { }) extrasAttrPaths;
     in
     {
       dependencies = map pep508.parseString (pyproject.project.dependencies or [ ]);
