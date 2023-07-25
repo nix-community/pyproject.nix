@@ -54,10 +54,11 @@ lib.fix (_self: {
      Example:
        # getDependenciesNamesNormalized (pep621.parseDependencies { pyproject = (lib.importTOML ./pyproject.toml); })
        {
-         dependencies = [ "requests" ]
+         dependencies = [ "requests" ];
          extras = {
-           "dev": [ "pytest" ]
+           dev = [ "pytest" ];
          };
+       }
   */
   getDependenciesNamesNormalized =
     let

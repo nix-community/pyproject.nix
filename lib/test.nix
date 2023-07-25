@@ -1,4 +1,4 @@
-{ lib, pyproject }:
+{ lib, pyproject, pkgs }:
 let
   inherit (builtins) mapAttrs attrNames length substring stringLength;
   inherit (lib) mapAttrs';
@@ -20,6 +20,10 @@ let
           inherit pname version;
           passthru = {
             inherit pythonVersion implementation;
+          };
+          # Generate a dummy package set based on the real python one
+          pkgs = lib.mapAttrs (n: _: n) pkgs.python3.pkgs // {
+            tox-pdm = "tox-pdm";
           };
           stdenv = {
             inherit isLinux isDarwin;
@@ -61,6 +65,7 @@ lib.fix (self: {
   pypa = importTests ./test_pypa.nix;
   filter = importTests ./test_filter.nix;
   project = importTests ./test_project.nix;
+  renderers = importTests ./test_renderers.nix;
 
   pep427 = importTests ./test_pep427.nix;
   pep440 = importTests ./test_pep440.nix;

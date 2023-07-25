@@ -45,7 +45,12 @@
         flake.lib = import ./lib { inherit lib; };
 
         # Expose unit tests for external discovery
-        flake.libTests = import ./lib/test.nix { inherit lib; pyproject = self.lib; };
+        flake.libTests = {
+          lib = import ./lib/test.nix {
+            inherit lib; pyproject = self.lib;
+            pkgs = nixpkgs.legacyPackages.x86_64-linux;
+          };
+        };
 
         perSystem = { pkgs, config, system, ... }:
           let

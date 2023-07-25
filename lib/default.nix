@@ -4,6 +4,7 @@ lib.fix (self: lib.mapAttrs (_: path: import path ({ inherit lib; } // self)) {
   pypa = ./pypa.nix;
   filter = ./filter.nix;
   project = ./project.nix;
+  renderers = ./renderers.nix;
 
   pep427 = ./pep427.nix;
   pep440 = ./pep440.nix;
