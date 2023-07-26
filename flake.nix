@@ -45,11 +45,9 @@
         flake.lib = import ./lib { inherit lib; };
 
         # Expose unit tests for external discovery
-        flake.libTests = {
-          lib = import ./lib/test.nix {
-            inherit lib; pyproject = self.lib;
-            pkgs = nixpkgs.legacyPackages.x86_64-linux;
-          };
+        flake.libTests = import ./lib/test.nix {
+          inherit lib; pyproject = self.lib;
+          pkgs = nixpkgs.legacyPackages.x86_64-linux;
         };
 
         perSystem = { pkgs, config, system, ... }:
@@ -58,6 +56,8 @@
           in
           {
             treefmt.imports = [ ./dev/treefmt.nix ];
+
+            checks = pkgs.callPackages ./test { pyproject = self.lib; };
 
             proc.groups.run.processes = {
               nix-unittest.command = "${lib.getExe pkgs.reflex} -r '\.(nix)$' -- ${lib.getExe nixUnit} --quiet --flake '.#libTests'";
