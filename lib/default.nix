@@ -2,7 +2,6 @@
 
 lib.fix (self: lib.mapAttrs (_: path: import path ({ inherit lib; } // self)) {
   pypa = ./pypa.nix;
-  filter = ./filter.nix;
   project = ./project.nix;
   renderers = ./renderers.nix;
   validators = ./validators.nix;

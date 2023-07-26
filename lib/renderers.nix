@@ -1,5 +1,4 @@
 { lib
-, filter
 , pep508
 , pep621
 , ...
@@ -41,7 +40,7 @@ in
     ,
     }:
     let
-      filteredDeps = filter.filterDependencies {
+      filteredDeps = pep621.filterDependencies {
         inherit (project) dependencies;
         environ = pep508.mkEnviron python;
         inherit extras;
@@ -80,7 +79,7 @@ in
       format ? "pyproject"
     }:
     let
-      filteredDeps = filter.filterDependencies {
+      filteredDeps = pep621.filterDependencies {
         inherit (project) dependencies;
         environ = pep508.mkEnviron python;
         inherit extras;

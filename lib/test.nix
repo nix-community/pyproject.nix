@@ -85,7 +85,6 @@ in
   # The attrpath is: module(file) -> symbol(function) -> test
 lib.fix (self: {
   pypa = importTests ./test_pypa.nix;
-  filter = importTests ./test_filter.nix;
   project = importTests ./test_project.nix;
   renderers = importTests ./test_renderers.nix;
   validators = importTests ./test_validators.nix;
