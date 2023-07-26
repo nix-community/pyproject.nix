@@ -10,7 +10,7 @@ Nixpkgs also uses the same normalization [but has some legacy package names](htt
 Pyproject.nix makes no attempt at parsing dynamic fields as it does not have the required knowledge to infer these.
 
 When using the `withPackages` renderer most fields that may be dynamic are not even relevant and won't cause issues.
-At other times, like when using the `buildPythonPackage` renderer it is a problem as there is no way for the renderer to create the version attribute.
+At other times, like when using the `buildPythonPackage` renderer problems occur as there is no way for the renderer to create the version attribute.
 
 In these cases you can manually add attributes to the attribute set returned by the renderer:
 

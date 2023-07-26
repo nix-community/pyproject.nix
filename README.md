@@ -6,13 +6,13 @@ You can think of it as a spiritual successor to [poetry2nix](https://github.com/
 
 ### Design goals
 
-- Provide low level plumbing that can be reused in other projects like [poetry2nix](https://github.com/nix-community/poetry2nix) & [dream2nix](https://github.com/nix-community/dream2nix).
+- Provide low level plumbing that is useful in other projects like [poetry2nix](https://github.com/nix-community/poetry2nix) & [dream2nix](https://github.com/nix-community/dream2nix).
 
 - Flexible overlays
 
 Mix packages from nixpkgs & package manager lock files à la carte.
 
-- Multiple package manager support
+- Suport for many package managers
 
 Any package manager that supports PEP-621 is a possible target.
 
