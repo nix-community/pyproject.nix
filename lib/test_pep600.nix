@@ -1,4 +1,4 @@
-{ lib, pep600, ... }:
+{ pep600, ... }:
 let
   inherit (pep600) legacyAliases manyLinuxTagCompatible;
 
@@ -22,7 +22,7 @@ let
     };
 
 in
-lib.fix (_self: {
+{
   legacyAliases = {
     testSimple = {
       expr = legacyAliases."manylinux1_x86_64" or "manylinux1_x86_64";
@@ -56,4 +56,4 @@ lib.fix (_self: {
       expected = false;
     };
   };
-})
+}

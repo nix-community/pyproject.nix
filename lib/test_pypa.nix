@@ -5,7 +5,7 @@ let
 
 in
 
-lib.fix (_self: {
+{
   normalizePackageName = mapAttrs'
     (n: _: {
       name = "testNormalize${n}";
@@ -20,4 +20,4 @@ lib.fix (_self: {
       "friendly--bard" = { };
       "FrIeNdLy-._.-bArD" = { };
     };
-})
+}

@@ -1,5 +1,4 @@
-{ lib
-, project
+{ project
 , fixtures
 , ...
 }:
@@ -11,7 +10,7 @@ let
   isList = l: typeOf l == "list";
 
 in
-lib.fix (_self: {
+{
   loadPyproject = {
     testPdm = {
       expr =
@@ -37,4 +36,4 @@ lib.fix (_self: {
       expected = null;
     };
   };
-})
+}

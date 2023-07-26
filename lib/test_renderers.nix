@@ -26,7 +26,7 @@ let
   };
 
 in
-lib.fix (_self: {
+{
   withPackages = {
     testPdm = {
       expr =
@@ -85,4 +85,4 @@ lib.fix (_self: {
       };
     };
   };
-})
+}

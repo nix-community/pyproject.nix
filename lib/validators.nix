@@ -10,7 +10,7 @@ let
   inherit (lib) flatten;
 
 in
-lib.fix (_self: {
+{
   /*
     Validates the Python package set held by Python (`python.pkgs`) against the parsed project.
 
@@ -68,4 +68,4 @@ lib.fix (_self: {
       })
       { }
       flatDeps;
-})
+}

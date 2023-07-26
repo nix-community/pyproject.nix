@@ -1,5 +1,4 @@
-{ lib
-, project
+{ project
 , fixtures
 , validators
 , mocks
@@ -17,8 +16,7 @@ let
   };
 
 in
-lib.fix (_self: {
-
+{
   validateVersionConstraints = {
     testPdm = {
       expr = validators.validateVersionConstraints {
@@ -37,5 +35,4 @@ lib.fix (_self: {
       };
     };
   };
-
-})
+}

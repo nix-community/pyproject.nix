@@ -1,7 +1,6 @@
-{ lib, pep518, pep621, ... }:
+{ pep518, pep621, ... }:
 
-lib.fix (_self: {
-
+{
   /* Load dependencies from a pyproject.toml.
 
      Type: pyproject :: AttrSet -> AttrSet
@@ -26,4 +25,4 @@ lib.fix (_self: {
       inherit pyproject;
     };
 
-})
+}

@@ -7,7 +7,7 @@ let
   getAttrPath = path: lib.getAttrFromPath (splitAttrPath path);
 
 in
-lib.fix (_self: {
+{
   /* Parse dependencies from pyproject.toml.
 
      Type: parseDependencies :: AttrSet -> AttrSet
@@ -72,4 +72,4 @@ lib.fix (_self: {
       extras = mapAttrs (_: normalizeList) dependencies.extras;
       build-systems = normalizeList dependencies.build-systems;
     };
-})
+}

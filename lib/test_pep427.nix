@@ -1,8 +1,8 @@
-{ lib, pep427, ... }:
+{ pep427, ... }:
 let
   inherit (pep427) parseFileName isWheelFileName;
 in
-lib.fix (_self: {
+{
   parseFileName = {
     testSimple = {
       expr = parseFileName "distribution-1.0-1-py27-none-any.whl";
@@ -50,6 +50,4 @@ lib.fix (_self: {
       expected = false;
     };
   };
-
-
-})
+}

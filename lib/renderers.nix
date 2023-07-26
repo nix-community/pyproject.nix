@@ -17,7 +17,7 @@ let
     (filterAttrs (_: license: license ? spdxId) lib.licenses);
 
 in
-lib.fix (_self: {
+{
   /*
     Renders a project as an argument that can be passed to withPackages
 
@@ -144,4 +144,4 @@ lib.fix (_self: {
         inherit (pyproject.project) version;
       })
       (builtins.attrNames namedDeps.extras);
-})
+}

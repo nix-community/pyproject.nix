@@ -1,10 +1,10 @@
-{ lib, pep440, ... }:
+{ pep440, ... }:
 let
   inherit (pep440) parseVersion parseVersionCond compareVersions comparators;
 
 in
 
-lib.fix (_self: {
+{
 
   parseVersion = {
     testSimple = {
@@ -319,4 +319,4 @@ lib.fix (_self: {
     };
   };
 
-})
+}

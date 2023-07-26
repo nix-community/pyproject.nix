@@ -1,5 +1,4 @@
-{ lib
-, filter
+{ filter
 , fixtures
 , mocks
 , pep508
@@ -10,7 +9,7 @@ let
   inherit (filter) filterDependenciesByEnviron filterDependenciesByExtras;
 
 in
-lib.fix (_self: {
+{
   # Note that we're not strictly using the supported data structure here just to make the tests smaller.
   # It's just a special case application of filterAttrs anyway so it's a simple function.
   filterDependenciesByExtras = {
@@ -90,4 +89,4 @@ lib.fix (_self: {
       };
     };
   };
-})
+}
