@@ -6,10 +6,18 @@
 , ...
 }:
 let
-  inherit (builtins) attrValues;
-  inherit (lib) optionalAttrs flatten;
+  inherit (builtins) attrValues length attrNames head;
+  inherit (lib) optionalAttrs flatten mapAttrs' filterAttrs;
 
   getBuildSystems = project: map (dep: pypa.normalizePackageName dep.name) project.build-systems;
+
+  # Group licenses by their SPDX IDs for easy lookup
+  licensesBySpdxId = mapAttrs'
+    (_: license: {
+      name = license.spdxId;
+      value = license;
+    })
+    (filterAttrs (_: license: license ? spdxId) lib.licenses);
 
 in
 lib.fix (_self: {
@@ -70,7 +78,9 @@ lib.fix (_self: {
       # This is intended to be used with optionals such as test dependencies that you might
       # want to add to checkInputs instead of propagatedBuildInputs
       extrasAttrMappings ? { }
-    ,
+    , # Which package format to pass to buildPythonPackage
+      # If the format is "wheel" PEP-518 build-systems are excluded from the build.
+      format ? "pyproject"
     }:
     let
       filteredDeps = filter.filterDependencies {
@@ -81,23 +91,60 @@ lib.fix (_self: {
 
       namedDeps = pep621.getDependenciesNamesNormalized filteredDeps;
 
-      attrs = builtins.foldl'
-        (acc: group:
+      inherit (project) pyproject;
+
+      meta =
+        let
+          project' = project.pyproject.project;
+        in
+        # Optional changelog
+        optionalAttrs (project'.urls ? changelog)
+          {
+            inherit (project'.urls) changelog;
+          } //
+        # Optional description
+        optionalAttrs (project' ? description) {
+          inherit (project') description;
+        } //
+        # Optional license
+        optionalAttrs (project'.license ? text) (
+          assert !(project'.license ? file); {
+            # From PEP-621:
+            # "The text key has a string value which is the license of the project whose meaning is that of the License field from the core metadata.
+            # These keys are mutually exclusive, so a tool MUST raise an error if the metadata specifies both keys."
+            # Hence the assert above.
+            license = licensesBySpdxId.${project'.license.text};
+          }
+        ) //
+        # Only set mainProgram if we only have one script, otherwise it's ambigious which one is main
+        (
           let
-            attr = extrasAttrMappings.${group} or "propagatedBuildInputs";
+            scriptNames = attrNames project'.scripts;
           in
-          acc // {
-            ${attr} = acc.${attr} or [ ] ++ map (dep: python.pkgs.${dep}) namedDeps.extras.${group};
-          })
-        {
-          pname = project.pyproject.project.name;
-          propagatedBuildInputs = map (dep: python.pkgs.${dep}) namedDeps.dependencies;
-          nativeBuildInputs = getBuildSystems project;
-        }
-        (builtins.attrNames namedDeps.extras);
+          optionalAttrs (project' ? scripts && length scriptNames == 1) {
+            mainProgram = head scriptNames;
+          }
+        );
 
     in
-    attrs // optionalAttrs (project.pyproject.project ? version) {
-      inherit (project.pyproject.project) version;
-    };
+    builtins.foldl'
+      (attrs: group:
+      let
+        attr = extrasAttrMappings.${group} or "propagatedBuildInputs";
+      in
+      attrs // {
+        ${attr} = attrs.${attr} or [ ] ++ map (dep: python.pkgs.${dep}) namedDeps.extras.${group};
+      })
+      ({
+        propagatedBuildInputs = map (dep: python.pkgs.${dep}) namedDeps.dependencies;
+        inherit format meta;
+      } // optionalAttrs (format != "wheel") {
+        nativeBuildInputs = getBuildSystems project;
+      } // optionalAttrs (pyproject.project ? name) {
+        pname = pyproject.project.name;
+      }
+      // optionalAttrs (pyproject.project ? version) {
+        inherit (pyproject.project) version;
+      })
+      (builtins.attrNames namedDeps.extras);
 })

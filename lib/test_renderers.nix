@@ -39,6 +39,12 @@ lib.fix (_self: {
         python = mocks.cpythonLinux38;
       };
       expected = {
+        format = "pyproject";
+        meta = {
+          description = "A modern Python package and dependency manager supporting the latest PEP standards";
+          license = lib.licenses.mit;
+          mainProgram = "pdm";
+        };
         nativeBuildInputs = [ "pdm-backend" ];
         pname = "pdm";
         propagatedBuildInputs = [ "blinker" "certifi" "packaging" "platformdirs" "rich" "virtualenv" "pyproject-hooks" "requests-toolbelt" "unearth" "findpython" "tomlkit" "shellingham" "python-dotenv" "resolvelib" "installer" "cachecontrol" "tomli" "importlib-resources" "importlib-metadata" ];
@@ -56,6 +62,12 @@ lib.fix (_self: {
       };
       expected = {
         checkInputs = [ "tox" "tox-pdm" ];
+        format = "pyproject";
+        meta = {
+          description = "A modern Python package and dependency manager supporting the latest PEP standards";
+          license = lib.licenses.mit;
+          mainProgram = "pdm";
+        };
         nativeBuildInputs = [ "pdm-backend" ];
         pname = "pdm";
         propagatedBuildInputs = [ "blinker" "certifi" "packaging" "platformdirs" "rich" "virtualenv" "pyproject-hooks" "requests-toolbelt" "unearth" "findpython" "tomlkit" "shellingham" "python-dotenv" "resolvelib" "installer" "cachecontrol" "tomli" "importlib-resources" "importlib-metadata" ];
