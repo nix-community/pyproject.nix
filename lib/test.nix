@@ -22,8 +22,30 @@ let
             inherit pythonVersion implementation;
           };
           # Generate a dummy package set based on the real python one
-          pkgs = lib.mapAttrs (n: _: n) pkgs.python3.pkgs // {
-            tox-pdm = "tox-pdm";
+          # Note that inheriting from nixpkgs like this _will_ break tests
+          # when updating nixpkgs.
+          #
+          # When that happens add another override to the attrset below.
+          pkgs = lib.mapAttrs
+            (_n: drv: {
+              inherit (drv) pname version;
+            })
+            pkgs.python3.pkgs // {
+
+            tox-pdm = {
+              pname = "tox-pdm";
+              version = "0.1.0";
+            };
+
+            resolvelib = {
+              pname = "resolvelib";
+              version = "0.5.5";
+            };
+
+            unearth = {
+              pname = "unearth";
+              version = "0.9.1";
+            };
           };
           stdenv = {
             inherit isLinux isDarwin;
@@ -66,6 +88,7 @@ lib.fix (self: {
   filter = importTests ./test_filter.nix;
   project = importTests ./test_project.nix;
   renderers = importTests ./test_renderers.nix;
+  validators = importTests ./test_validators.nix;
 
   pep427 = importTests ./test_pep427.nix;
   pep440 = importTests ./test_pep440.nix;

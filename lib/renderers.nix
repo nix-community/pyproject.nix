@@ -2,7 +2,6 @@
 , filter
 , pep508
 , pep621
-, pypa
 , ...
 }:
 let
