@@ -9,8 +9,6 @@ let
   inherit (builtins) attrValues length attrNames head;
   inherit (lib) optionalAttrs flatten mapAttrs' filterAttrs;
 
-  getBuildSystems = project: map (dep: pypa.normalizePackageName dep.name) project.build-systems;
-
   # Group licenses by their SPDX IDs for easy lookup
   licensesBySpdxId = mapAttrs'
     (_: license: {
@@ -50,7 +48,7 @@ lib.fix (_self: {
         inherit extras;
       };
       namedDeps = pep621.getDependenciesNamesNormalized filteredDeps;
-      flatDeps = flatten ([ namedDeps.dependencies ] ++ attrValues namedDeps.extras) ++ getBuildSystems project;
+      flatDeps = namedDeps.dependencies ++ flatten (attrValues namedDeps.extras) ++ namedDeps.build-systems;
     in
     ps: map (dep: ps.${dep}) flatDeps;
 
@@ -139,7 +137,7 @@ lib.fix (_self: {
         propagatedBuildInputs = map (dep: python.pkgs.${dep}) namedDeps.dependencies;
         inherit format meta;
       } // optionalAttrs (format != "wheel") {
-        nativeBuildInputs = getBuildSystems project;
+        nativeBuildInputs = map (dep: python.pkgs.${dep}) namedDeps.build-systems;
       } // optionalAttrs (pyproject.project ? name) {
         pname = pyproject.project.name;
       }

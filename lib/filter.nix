@@ -2,6 +2,9 @@
 let
   inherit (builtins) elem filter mapAttrs;
   inherit (lib) filterAttrs;
+
+  filterList = environ: filter (dep: dep.markers == null || pep508.evalMarkers environ dep.markers);
+
 in
 
 lib.fix (self: {
@@ -18,12 +21,10 @@ lib.fix (self: {
     environ:
     # Dependencies as parsed by `lib.pep621.parseDependencies`.
     dependencies:
-    let
-      filterList = filter (dep: dep.markers == null || pep508.evalMarkers environ dep.markers);
-    in
     {
-      dependencies = filterList dependencies.dependencies;
-      extras = mapAttrs (_: filterList) dependencies.extras;
+      dependencies = filterList environ dependencies.dependencies;
+      extras = mapAttrs (_: filterList environ) dependencies.extras;
+      build-systems = filterList environ dependencies.build-systems;
     };
 
   /* Filter dependencies by their extras groups.
@@ -39,8 +40,7 @@ lib.fix (self: {
     extras:
     # Dependencies as parsed by `lib.pep621.parseDependencies`.
     dependencies:
-    {
-      inherit (dependencies) dependencies;
+    dependencies // {
       extras = filterAttrs (group: _: elem group extras) dependencies.extras;
     };
 

@@ -1,5 +1,8 @@
-{ lib, pep621, fixtures, ... }:
-
+{ lib
+, pep621
+, fixtures
+, ...
+}:
 let
   inherit (builtins) mapAttrs;
   inherit (pep621) parseDependencies parseRequiresPython getDependenciesNamesNormalized;
@@ -63,6 +66,7 @@ lib.fix (self: {
     testPandas = {
       expr = getDependenciesNamesNormalized self.parseDependencies.testPandas.expr;
       expected = {
+        build-systems = [ "meson-python" "meson" "wheel" "cython" "oldest-supported-numpy" "versioneer" ];
         dependencies = [ "numpy" "numpy" "python-dateutil" "pytz" "tzdata" ];
         extras = {
           all = [ "beautifulsoup4" "bottleneck" "brotlipy" "fastparquet" "fsspec" "gcsfs" "html5lib" "hypothesis" "jinja2" "lxml" "matplotlib" "numba" "numexpr" "odfpy" "openpyxl" "pandas-gbq" "psycopg2" "pyarrow" "pymysql" "pyqt5" "pyreadstat" "pytest" "pytest-xdist" "pytest-asyncio" "python-snappy" "pyxlsb" "qtpy" "scipy" "s3fs" "sqlalchemy" "tables" "tabulate" "xarray" "xlrd" "xlsxwriter" "zstandard" ];
@@ -93,6 +97,7 @@ lib.fix (self: {
     testPdm = {
       expr = getDependenciesNamesNormalized self.parseDependencies.testPdm.expr;
       expected = {
+        build-systems = [ "pdm-backend" ];
         dependencies = [ "blinker" "certifi" "packaging" "platformdirs" "rich" "virtualenv" "pyproject-hooks" "requests-toolbelt" "unearth" "findpython" "tomlkit" "shellingham" "python-dotenv" "resolvelib" "installer" "cachecontrol" "tomli" "importlib-resources" "importlib-metadata" ];
         extras = {
           all = [ "pdm" ];

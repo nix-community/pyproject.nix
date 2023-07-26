@@ -1,4 +1,4 @@
-{ lib, pep440, pep508, pypa, ... }:
+{ lib, pep440, pep508, pep518, pypa, ... }:
 let
   inherit (builtins) mapAttrs foldl' split filter;
   inherit (lib) isString;
@@ -24,6 +24,7 @@ lib.fix (_self: {
          extras = {
            dev = [ ];  # List of parsed PEP-508 strings (lib.pep508.parseString)
          };
+         build-systems = [ ];  # PEP-518 build-systems (List of parsed PEP-508 strings)
        }
   */
   parseDependencies = { pyproject, extrasAttrPaths ? [ ] }:
@@ -34,6 +35,7 @@ lib.fix (_self: {
     {
       dependencies = map pep508.parseString (pyproject.project.dependencies or [ ]);
       extras = mapAttrs (_: map pep508.parseString) extras';
+      build-systems = pep518.parseBuildSystems pyproject;
     };
 
   /* Parse project.python-requires from pyproject.toml
@@ -58,6 +60,7 @@ lib.fix (_self: {
          extras = {
            dev = [ "pytest" ];
          };
+         build-systems = [ "poetry-core" ];
        }
   */
   getDependenciesNamesNormalized =
@@ -67,5 +70,6 @@ lib.fix (_self: {
     dependencies: {
       dependencies = normalizeList dependencies.dependencies;
       extras = mapAttrs (_: normalizeList) dependencies.extras;
+      build-systems = normalizeList dependencies.build-systems;
     };
 })
