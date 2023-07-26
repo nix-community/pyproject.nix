@@ -17,6 +17,7 @@ let
       "findpython"
       "tomlkit"
       "installer"
+      "pdm.backend" # PEP-518 build system
     ];
   };
 
