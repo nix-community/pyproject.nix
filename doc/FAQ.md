@@ -16,8 +16,8 @@ At other times, like when using the `buildPythonPackage` renderer problems occur
 let
   project = pyproject.project.loadPyproject { pyproject = lib.importTOML ./pyproject.toml; };
   python = pkgs.python3;
-  attrs = pyproject.renderers.withPackages { inherit python project; };
-in python.pkgs.buildPythonPackage(attrs)
+  attrs = pyproject.renderers.buildPythonPackage { inherit python project; };
+in python.pkgs.buildPythonPackage attrs
 ```
 
 Will result in an error from `buildPythonpackage` because `version` is missing:
@@ -39,8 +39,8 @@ In these cases you can manually add attributes to the attribute set returned by 
 let
   project = pyproject.project.loadPyproject { pyproject = lib.importTOML ./pyproject.toml; };
   python = pkgs.python3;
-  attrs = pyproject.renderers.withPackages { inherit python project; };
-in python.pkgs.buildPythonPackage(attrs // {
+  attrs = pyproject.renderers.buildPythonPackage { inherit python project; };
+in python.pkgs.buildPythonPackage (attrs // {
   version = "1.0";  # Not dynamically inferred
 })
 ```
