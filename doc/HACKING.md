@@ -11,13 +11,18 @@ The attribute path to a an attribute `parseVersion` in `lib/pep440.nix` would be
 
 A function in `lib/test.nix` maps over the public interface of the library and the test suite to generate coverage tests, ensuring that every exported symbol has at least one test covering it.
 
+Integration tests meaning tests that perform environment constructions & builds lives in `test/` and are exposed through Flake checks.
+
 ## Running tests
 
-- Run the entire test suite
+- Run the entire unit test suite
   `$ nix-unit --flake .#libTests`
 
-- Run tests for an individual function
+- Run unit tests for an individual function
   `$ nix-unit --flake .#libTests.pep440.parseVersion`
+
+- Run integration tests
+  `$ nix flake check`
 
 ## Formatter
 
