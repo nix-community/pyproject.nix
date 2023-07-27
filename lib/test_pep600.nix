@@ -52,7 +52,7 @@ in
     };
 
     testSimpleArchIncompatible = {
-      expr = manyLinuxTagCompatible mockStdenvs.x86_64-linux.glibc_2_5 "manylinux1_armv7l";
+      expr = manyLinuxTagCompatible mockStdenvs.x86_64-linux.glibc_2_5 "manylinux2014_armv7l";
       expected = false;
     };
   };

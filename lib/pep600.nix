@@ -49,7 +49,7 @@ fix (self: {
       sysMajor = sysVersion' 0;
       sysMinor = sysVersion' 1;
     in
-    if m == null then false
+    if m == null then throw "'${tag'}' is not a valid manylinux tag."
     else if stdenv.cc.libc.pname != "glibc" then false
     else if compareVersions "${sysMajor}.${sysMinor}" "${tagMajor}.${tagMinor}" < 0 then false
     else if pep599.manyLinuxTargetMachines.${tagArch} != stdenv.targetPlatform.parsed.cpu.name then false
