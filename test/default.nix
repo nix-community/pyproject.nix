@@ -5,85 +5,102 @@
 let
   fixtures = import ./fixtures { inherit lib; };
 
-  projects = lib.mapAttrs
-    (_: pyprojectTOML: pyproject.project.loadPyproject {
-      pyproject = pyprojectTOML;
-    })
-    fixtures;
+  projects = {
+    pdm-2_8_1 = {
+      project = pyproject.project.loadPyproject { pyproject = fixtures."pdm-2_8_1.toml"; };
 
-  assertImports = {
-    "pdm-2_8_1.toml" = [
-      "unearth"
-      "findpython"
-      "tomlkit"
-      "installer"
-      "pdm.backend" # PEP-518 build system
-    ];
-  };
+      src = pkgs.fetchFromGitHub {
+        owner = "pdm-project";
+        repo = "pdm";
+        rev = "2.8.1";
+        sha256 = "sha256-/w74XmP1Che6BOE82klgzhwBx0nzAcw2aVyeWs+o3MA=";
+      };
 
-  srcs = {
-    "pdm-2_8_1.toml" = pkgs.fetchFromGitHub {
-      owner = "pdm-project";
-      repo = "pdm";
-      rev = "2.8.1";
-      sha256 = "sha256-/w74XmP1Che6BOE82klgzhwBx0nzAcw2aVyeWs+o3MA=";
+      buildPythonPackage.version = "2.8.1";
+
+      # Assert these imports
+      withPackages.imports = [
+        "unearth"
+        "findpython"
+        "tomlkit"
+        "installer"
+        "pdm.backend" # PEP-518 build system
+      ];
+    };
+
+    poetry-1_5_1 = {
+      project = pyproject.project.loadPoetryPyproject { pyproject = fixtures."poetry-1_5_1.toml"; };
+
+      src = pkgs.fetchFromGitHub {
+        owner = "python-poetry";
+        repo = "poetry";
+        rev = "1.5.1";
+        sha256 = "sha256-1zqfGzSI5RDACSNcz0tLA4VKMFwE5uD/YqOkgpzg2nQ=";
+      };
+
+      buildPythonPackage.pipInstallFlags = "--no-deps";
+
+      # Assert these imports
+      withPackages.imports = [
+        "tomlkit"
+        "installer"
+        "poetry.core" # PEP-518 build system
+      ];
     };
   };
 
-  versions = {
-    "pdm-2_8_1.toml" = "2.8.1";
+  python = pkgs.python3.override {
+    self = python;
+    # Poetry plugins aren't exposed in the Python set
+    packageOverrides = _self: _super: (pkgs.poetry.override { python3 = python; }).plugins;
   };
-
-  python = pkgs.python3;
-
-  stripTomlSuffix = s: builtins.head (builtins.match "^(.+).toml$" s);
 
 in
 # Construct withPackages environments and assert modules can be imported
-(lib.mapAttrs'
+lib.mapAttrs'
   (
     n: project:
       {
-        name = "withPackages-${stripTomlSuffix n}";
+        name = "withPackages-${n}";
         value =
           let
-            withFunc = pyproject.renderers.withPackages { inherit python project; };
+            withFunc = pyproject.renderers.withPackages { inherit python; inherit (project) project; };
             pythonEnv = python.withPackages withFunc;
           in
           pkgs.runCommand "withPackages-${n}" { } (lib.concatStringsSep "\n"
             (
-              map (mod: "${pythonEnv.interpreter} -c 'import ${mod}'") assertImports.${n}
+              map (mod: "${pythonEnv.interpreter} -c 'import ${mod}'") project.withPackages.imports
             ) + "\n" + "touch $out");
       }
   )
   projects
-)
   //
 (
   lib.mapAttrs'
     (
       n: project:
         {
-          name = "buildPythonPackage-${stripTomlSuffix n}";
+          name = "buildPythonPackage-${n}";
           value =
             let
-              attrs = pyproject.renderers.buildPythonPackage { inherit python project; };
+              attrs = pyproject.renderers.buildPythonPackage { inherit python; inherit (project) project; };
             in
             python.pkgs.buildPythonPackage (attrs // {
-              src = srcs.${n};
+              inherit (project) src;
               # Add relax deps since we don't assert versions
-              nativeBuildInputs = attrs.nativeBuildInputs or [ ]; # ++ [ python.pkgs.pythonRelaxDepsHook ];
+              nativeBuildInputs = attrs.nativeBuildInputs or [ ] ++ [ python.pkgs.pythonRelaxDepsHook ];
 
               # HACK: Relax deps hook is not sufficient
               postPatch = ''
                 substituteInPlace pyproject.toml \
                   --replace '"unearth>=0.10.0"' '"unearth"' \
                   --replace '"resolvelib>=1.0.1"' '"resolvelib"' \
+                  --replace 'poetry-core = "1.6.1"' 'poetry-core = "^1.5.0"' \
+                  --replace 'cachecontrol = { version = "^0.12.9", extras = ["filecache"] }' 'cachecontrol = { version = "*", extras = ["filecache"] }' \
+                  --replace 'virtualenv = "^20.22.0"' 'virtualenv = "*"'
               '';
 
-            } // lib.optionalAttrs (!(attrs ? version)) {
-              version = versions.${n};
-            });
+            } // project.buildPythonPackage or { });
         }
     )
     projects

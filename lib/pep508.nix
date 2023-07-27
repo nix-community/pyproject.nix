@@ -1,8 +1,9 @@
 { lib, pep440, pep599, ... }:
 
 let
-  inherit (builtins) match elemAt split filter foldl' substring stringLength typeOf fromJSON isString head mapAttrs elem;
+  inherit (builtins) match elemAt split foldl' substring stringLength typeOf fromJSON isString head mapAttrs elem;
   inherit (lib) stringToCharacters fix;
+  inherit (import ./util.nix { inherit lib; }) splitComma;
 
   re = {
     operators = "([=><!~^]+)";
@@ -17,8 +18,6 @@ let
     "" = -1;
   };
   condGt = l: r: if l == "" then false else condPrio.${l} >= condPrio.${r};
-
-  isEmptyStr = s: isString s && match " *" s == null;
 
   # Parse a value into an attrset of { type = "valueType"; value = ...; }
   # Will parse any field name suffixed with "version" as a PEP-440 version, otherwise
@@ -35,9 +34,6 @@ let
 
   # Strip leading/trailing whitespace from string
   stripStr = s: let t = match "[\t ]*(.*[^\t ])[\t ]*" s; in if t == null then "" else head t;
-
-  # Split a comma separated string
-  splitComma = s: if s == "" then [ ] else filter isEmptyStr (split " *, *" s);
 
   # Remove groupings ( ) from expression
   unparen = expr':
@@ -90,6 +86,7 @@ let
         "int"
         "float"
         "string"
+        "bool"
       ];
     in
     type: elem type primitives;

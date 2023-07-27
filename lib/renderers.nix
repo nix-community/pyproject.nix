@@ -26,8 +26,8 @@ in
     Type: withPackages :: AttrSet -> lambda
 
     Example:
-    # withPackages (lib.project.loadPyproject { ... })
-      «lambda @ «string»:1:1»
+      # withPackages (lib.project.loadPyproject { ... })
+        «lambda @ «string»:1:1»
     */
   withPackages =
     {
@@ -56,11 +56,11 @@ in
     Evaluates PEP-508 environment markers to select correct dependencies for the platform but does not validate version constraints.
     For validation see `lib.validators`.
 
-    Type: withPackages :: AttrSet -> AttrSet
+    Type: buildPythonPackage :: AttrSet -> AttrSet
 
     Example:
-      # withPackages (lib.project.loadPyproject { ... })
-      { pname = "blinker"; version = "1.3.3.7"; propagatedBuildInputs = [ ]; }
+      # buildPythonPackage { project = lib.project.loadPyproject ...; python = pkgs.python3;  }
+        { pname = "blinker"; version = "1.3.3.7"; propagatedBuildInputs = [ ]; }
     */
   buildPythonPackage =
     {

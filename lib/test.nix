@@ -42,9 +42,24 @@ let
               version = "0.5.5";
             };
 
+            oldest-supported-numpy = {
+              pname = "oldest-supported-numpy";
+              version = "1.0.0";
+            };
+
             unearth = {
               pname = "unearth";
               version = "0.9.1";
+            };
+
+            pre-commit = {
+              pname = "pre-commit";
+              version = "3.3.3";
+            };
+
+            poetry-plugin-export = {
+              pname = "poetry-plugin-export";
+              version = "1.4.0";
             };
           };
           stdenv = {
@@ -88,6 +103,7 @@ lib.fix (self: {
   project = importTests ./test_project.nix;
   renderers = importTests ./test_renderers.nix;
   validators = importTests ./test_validators.nix;
+  poetry = importTests ./test_poetry.nix;
 
   pep427 = importTests ./test_pep427.nix;
   pep440 = importTests ./test_pep440.nix;

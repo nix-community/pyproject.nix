@@ -5,6 +5,7 @@ lib.fix (self: lib.mapAttrs (_: path: import path ({ inherit lib; } // self)) {
   project = ./project.nix;
   renderers = ./renderers.nix;
   validators = ./validators.nix;
+  poetry = ./poetry.nix;
 
   pep427 = ./pep427.nix;
   pep440 = ./pep440.nix;
