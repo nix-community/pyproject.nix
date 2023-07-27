@@ -30,10 +30,10 @@ Any package manager that supports PEP-621 is a possible target.
   - [ ] [PDM](https://github.com/pdm-project/pdm)
   - [ ] [Poetry](https://github.com/python-poetry/poetry)
 
-### Docs
-
-https://adisbladis.github.io/pyproject.nix/
-
 ### Matrix chat
 
 https://matrix.to/#/#pyproject.nix:blad.is
+
+### Docs
+
+https://adisbladis.github.io/pyproject.nix/
