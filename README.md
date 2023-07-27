@@ -28,6 +28,7 @@ Any package manager that supports PEP-621 is a possible target.
   - [x] [PEP 621](https://peps.python.org/pep-0621/) - Storing project metadata in pyproject.toml
 - Lock file support
   - [ ] [PDM](https://github.com/pdm-project/pdm)
+  - [ ] [Poetry](https://github.com/python-poetry/poetry)
 
 ### Docs
 
