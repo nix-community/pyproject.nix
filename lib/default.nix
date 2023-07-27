@@ -1,6 +1,10 @@
 { lib }:
+let
+  inherit (builtins) mapAttrs;
+  inherit (lib) fix;
+in
 
-lib.fix (self: lib.mapAttrs (_: path: import path ({ inherit lib; } // self)) {
+fix (self: mapAttrs (_: path: import path ({ inherit lib; } // self)) {
   pypa = ./pypa.nix;
   project = ./project.nix;
   renderers = ./renderers.nix;

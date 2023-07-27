@@ -4,7 +4,7 @@
 , ...
 }:
 let
-  inherit (builtins) attrValues length attrNames head;
+  inherit (builtins) attrValues length attrNames head foldl';
   inherit (lib) optionalAttrs flatten mapAttrs' filterAttrs;
 
   # Group licenses by their SPDX IDs for easy lookup
@@ -123,7 +123,7 @@ in
         );
 
     in
-    builtins.foldl'
+    foldl'
       (attrs: group:
       let
         attr = extrasAttrMappings.${group} or "propagatedBuildInputs";
@@ -142,5 +142,5 @@ in
       // optionalAttrs (pyproject.project ? version) {
         inherit (pyproject.project) version;
       })
-      (builtins.attrNames namedDeps.extras);
+      (attrNames namedDeps.extras);
 }

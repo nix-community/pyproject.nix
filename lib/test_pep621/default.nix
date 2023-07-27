@@ -6,12 +6,13 @@
 , ...
 }:
 let
-  inherit (builtins) mapAttrs;
+  inherit (builtins) mapAttrs readDir;
   inherit (pep621) parseDependencies parseRequiresPython getDependenciesNamesNormalized filterDependenciesByExtras filterDependenciesByEnviron;
+  inherit (lib) fix;
 
-  expected = mapAttrs (name: _: import ./expected/${name}) (builtins.readDir ./expected);
+  expected = mapAttrs (name: _: import ./expected/${name}) (readDir ./expected);
 in
-lib.fix (self: {
+fix (self: {
   parseDependencies = {
     testPandas = {
       expr = parseDependencies {

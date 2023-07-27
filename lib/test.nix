@@ -1,9 +1,9 @@
 { lib, pyproject, pkgs }:
 let
   inherit (builtins) mapAttrs attrNames length substring stringLength;
-  inherit (lib) mapAttrs';
+  inherit (lib) mapAttrs' toUpper fix;
 
-  capitalise = s: lib.toUpper (substring 0 1 s) + (substring 1 (stringLength s) s);
+  capitalise = s: toUpper (substring 0 1 s) + (substring 1 (stringLength s) s);
 
   mocks =
     let
@@ -26,7 +26,7 @@ let
           # when updating nixpkgs.
           #
           # When that happens add another override to the attrset below.
-          pkgs = lib.mapAttrs
+          pkgs = mapAttrs
             (_n: drv: {
               inherit (drv) pname version;
             })
@@ -98,7 +98,7 @@ let
 in
 # Work with the tests as a tree
   # The attrpath is: module(file) -> symbol(function) -> test
-lib.fix (self: {
+fix (self: {
   pypa = importTests ./test_pypa.nix;
   project = importTests ./test_project.nix;
   renderers = importTests ./test_renderers.nix;

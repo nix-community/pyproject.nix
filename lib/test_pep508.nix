@@ -6,9 +6,10 @@
 
 let
   inherit (builtins) mapAttrs;
+  inherit (lib) fix;
 
 in
-lib.fix (self: {
+fix (self: {
   # parseMarkers is implicitly covered by parseString but would fail coverage checks otherwise
   parseMarkers = {
     testDummyCoverage = {

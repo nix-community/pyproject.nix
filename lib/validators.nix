@@ -6,7 +6,7 @@
 , ...
 }:
 let
-  inherit (builtins) attrValues;
+  inherit (builtins) attrValues foldl' filter;
   inherit (lib) flatten;
 
 in
@@ -52,13 +52,13 @@ in
       flatDeps = filteredDeps.dependencies ++ flatten (attrValues filteredDeps.extras) ++ filteredDeps.build-systems;
 
     in
-    builtins.foldl'
+    foldl'
       (acc: dep:
       let
         pname = pypa.normalizePackageName dep.name;
         pversion = python.pkgs.${pname}.version;
         version = pep440.parseVersion python.pkgs.${pname}.version;
-        incompatible = builtins.filter (cond: ! pep440.comparators.${cond.op} version cond.version) dep.conditions;
+        incompatible = filter (cond: ! pep440.comparators.${cond.op} version cond.version) dep.conditions;
       in
       if incompatible == [ ] then acc else acc // {
         ${pname} = {

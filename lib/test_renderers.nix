@@ -7,6 +7,7 @@
 }:
 let
   inherit (project) loadPyproject;
+  inherit (lib) optionalAttrs;
 
   projects = {
     pdm = loadPyproject {
@@ -21,7 +22,7 @@ let
   clearDrvInputs = attrs: attrs // {
     propagatedBuildInputs = map (drv: drv.pname) attrs.propagatedBuildInputs;
     nativeBuildInputs = map (drv: drv.pname) attrs.nativeBuildInputs;
-  } // lib.optionalAttrs (attrs ? checkInputs) {
+  } // optionalAttrs (attrs ? checkInputs) {
     checkInputs = map (drv: drv.pname) attrs.checkInputs;
   };
 

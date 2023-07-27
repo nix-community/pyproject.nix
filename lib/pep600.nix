@@ -1,9 +1,10 @@
 { lib, pep599, ... }:
 let
-  inherit (builtins) match elemAt compareVersions;
+  inherit (builtins) match elemAt compareVersions splitVersion;
+  inherit (lib) fix;
 
 in
-lib.fix (self: {
+fix (self: {
   /* Map legacy (pre PEP-600) platform tags to PEP-600 compliant ones.
 
      https://peps.python.org/pep-0600/#legacy-manylinux-tags
@@ -44,7 +45,7 @@ lib.fix (self: {
       tagMajor = mAt 0;
       tagMinor = mAt 1;
       tagArch = mAt 2;
-      sysVersion' = elemAt (builtins.splitVersion stdenv.cc.libc.version);
+      sysVersion' = elemAt (splitVersion stdenv.cc.libc.version);
       sysMajor = sysVersion' 0;
       sysMinor = sysVersion' 1;
     in

@@ -1,13 +1,13 @@
 { lib, pep440, pep508, pep518, pypa, ... }:
 let
   inherit (builtins) mapAttrs foldl' split filter elem;
-  inherit (lib) isString filterAttrs;
+  inherit (lib) isString filterAttrs fix;
 
   splitAttrPath = path: filter isString (split "\\." path);
   getAttrPath = path: lib.getAttrFromPath (splitAttrPath path);
 
 in
-lib.fix (self: {
+fix (self: {
   /* Parse dependencies from pyproject.toml.
 
      Type: parseDependencies :: AttrSet -> AttrSet
