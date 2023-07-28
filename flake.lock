@@ -1,5 +1,21 @@
 {
   "nodes": {
+    "flake-compat": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1673956053,
+        "narHash": "sha256-4gtG9iQuiKITOjNQQeQIpoIB6b16fm+504Ch3sNKLd8=",
+        "owner": "edolstra",
+        "repo": "flake-compat",
+        "rev": "35bb57c0c8d8b62bbfd284272c928ceb64ddbde9",
+        "type": "github"
+      },
+      "original": {
+        "owner": "edolstra",
+        "repo": "flake-compat",
+        "type": "github"
+      }
+    },
     "flake-parts": {
       "inputs": {
         "nixpkgs-lib": [
@@ -53,6 +69,21 @@
       "original": {
         "owner": "srid",
         "repo": "flake-root",
+        "type": "github"
+      }
+    },
+    "flake-utils": {
+      "locked": {
+        "lastModified": 1678901627,
+        "narHash": "sha256-U02riOqrKKzwjsxc/400XnElV+UtPUQWpANPlyazjH0=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "93a2b84fc4b70d9e089d029deacc3583435c2ed6",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "flake-utils",
         "type": "github"
       }
     },
@@ -120,6 +151,29 @@
         "type": "github"
       }
     },
+    "nixdoc": {
+      "inputs": {
+        "flake-compat": "flake-compat",
+        "flake-utils": "flake-utils",
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1689882312,
+        "narHash": "sha256-MBDbiLTheoCzZLNUnCPN8Yh7Jt64IZAQ5i0EVL2cxTc=",
+        "owner": "tweag",
+        "repo": "nixdoc",
+        "rev": "fe8c78b36685d3ab99879bb91c6cd128dd9ee738",
+        "type": "github"
+      },
+      "original": {
+        "owner": "tweag",
+        "ref": "indentation",
+        "repo": "nixdoc",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1689444953,
@@ -157,6 +211,7 @@
         "flake-root": "flake-root",
         "nix-github-actions": "nix-github-actions",
         "nix-unit": "nix-unit",
+        "nixdoc": "nixdoc",
         "nixpkgs": "nixpkgs",
         "proc-flake": "proc-flake",
         "treefmt-nix": "treefmt-nix_2"

@@ -16,9 +16,12 @@
 
     nix-unit.url = "github:adisbladis/nix-unit";
     nix-unit.inputs.nixpkgs.follows = "nixpkgs";
+
+    nixdoc.url = "github:tweag/nixdoc/indentation";
+    nixdoc.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { self, nixpkgs, nix-github-actions, flake-parts, treefmt-nix, nix-unit, ... }@inputs:
+  outputs = { self, nixpkgs, nix-github-actions, flake-parts, treefmt-nix, nix-unit, nixdoc, ... }@inputs:
     let
       inherit (nixpkgs) lib;
 
@@ -61,6 +64,7 @@
 
             proc.groups.run.processes = {
               nix-unittest.command = "${lib.getExe pkgs.reflex} -r '\.(nix)$' -- ${lib.getExe nixUnit} --quiet --flake '.#libTests'";
+              mdbook.command = "(cd doc && mdbook serve)";
             };
 
             devShells.default = pkgs.mkShell {
@@ -68,6 +72,9 @@
               packages = [
                 config.proc.groups.run.package
                 nixUnit
+                pkgs.mdbook
+                nixdoc.packages.${system}.default
+                pkgs.python3
               ];
             };
 

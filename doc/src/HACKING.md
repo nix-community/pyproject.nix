@@ -2,7 +2,12 @@
 
 ## Getting started
 
-To start hacking run `nix develop -c run` to run the project with a file watcher running the unit test suite.
+To start hacking run `nix develop -c run` to run the project in watch mode.
+
+This will start up two processes:
+
+- A [Nix-unit](https://github.com/adisbladis/nix-unit) test runner
+- A [documentation server](https://rust-lang.github.io/mdBook/) available at http://localhost:3000
 
 ## Project structure & testing
 

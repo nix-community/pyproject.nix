@@ -1,0 +1,9 @@
+[book]
+authors = ["adisbladis"]
+language = "en"
+multilingual = false
+src = "src"
+title = "Pyproject.nix"
+
+[preprocessor.env]
+command = "python nixdoc.py"

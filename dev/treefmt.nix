@@ -24,7 +24,9 @@
       excludes = [ ];
     };
 
-    prettier = { };
+    prettier = {
+      excludes = [ "highlight.js" ];
+    };
 
     python = {
       command = "sh";
