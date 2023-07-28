@@ -18,6 +18,9 @@ A function in `lib/test.nix` maps over the public interface of the library and t
 
 Integration tests meaning tests that perform environment constructions & builds lives in `test/` and are exposed through Flake checks.
 
+The manual you are reading right now is built from the `doc/` directory.
+To edit a specific page see the "Edit this page on GitHub" link in the footer for each respective page.
+
 ## Running tests
 
 - Run the entire unit test suite
