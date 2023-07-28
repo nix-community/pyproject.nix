@@ -4,6 +4,7 @@
 , python3
 , mdbook
 , mdbook-open-on-gh
+, git
 }:
 
 stdenv.mkDerivation {
@@ -16,13 +17,17 @@ stdenv.mkDerivation {
     nixdoc
     mdbook
     mdbook-open-on-gh
+    git
   ];
 
   dontConfigure = true;
   dontFixup = true;
 
+  env.RUST_BACKTRACE = 1;
+
   buildPhase = ''
     runHook preBuild
+    chmod +w ../ && mkdir ../.git  # Trick open-on-gh to find the git root
     mdbook build
     runHook postBuild
   '';

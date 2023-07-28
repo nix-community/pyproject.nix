@@ -38,11 +38,7 @@
         ];
 
         flake.githubActions = nix-github-actions.lib.mkGithubMatrix {
-          checks = lib.recursiveUpdate { inherit (self.checks) x86_64-linux; } {
-            x86_64-linux = {
-              inherit (self.packages.x86_64-linux) doc;
-            };
-          };
+          checks = { inherit (self.checks) x86_64-linux; };
         };
 
         flake.lib = import ./lib { inherit lib; };
@@ -60,7 +56,7 @@
           {
             treefmt.imports = [ ./dev/treefmt.nix ];
 
-            checks = pkgs.callPackages ./test { pyproject = self.lib; };
+            checks = pkgs.callPackages ./test { pyproject = self.lib; } // self.packages.${system};
 
             proc.groups.run.processes = {
               nix-unittest.command = "${lib.getExe pkgs.reflex} -r '\.(nix)$' -- ${lib.getExe nixUnit} --quiet --flake '.#libTests'";
