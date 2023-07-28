@@ -3,6 +3,7 @@
 , self
 , python3
 , mdbook
+, mdbook-open-on-gh
 }:
 
 stdenv.mkDerivation {
@@ -10,7 +11,12 @@ stdenv.mkDerivation {
   version = "0.1";
   src = self;
   sourceRoot = "source/doc";
-  nativeBuildInputs = [ python3 nixdoc mdbook ];
+  nativeBuildInputs = [
+    python3
+    nixdoc
+    mdbook
+    mdbook-open-on-gh
+  ];
 
   dontConfigure = true;
   dontFixup = true;

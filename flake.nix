@@ -72,10 +72,7 @@
               packages = [
                 config.proc.groups.run.package
                 nixUnit
-                pkgs.mdbook
-                nixdoc.packages.${system}.default
-                pkgs.python3
-              ];
+              ] ++ self.packages.${system}.doc.nativeBuildInputs;
             };
 
             packages.doc = pkgs.callPackage ./doc {

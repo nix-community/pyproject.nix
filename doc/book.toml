@@ -7,3 +7,12 @@ title = "Pyproject.nix"
 
 [preprocessor.env]
 command = "python nixdoc.py"
+
+[preprocessor.open-on-gh]
+command = "mdbook-open-on-gh"
+renderer = ["html"]
+
+[output.html]
+git-repository-url = "https://github.com/adisbladis/pyproject.nix"
+git-branch = "master"
+open-on-text = "Found an issue? [Edit this page on GitHub.]"
