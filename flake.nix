@@ -78,7 +78,10 @@
               ];
             };
 
-            packages.doc = pkgs.callPackage ./doc { inherit self; };
+            packages.doc = pkgs.callPackage ./doc {
+              inherit self;
+              nixdoc = nixdoc.packages.${system}.default;
+            };
           };
       };
 }

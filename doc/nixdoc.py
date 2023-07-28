@@ -36,6 +36,9 @@ if __name__ == "__main__":
             stdout=subprocess.PIPE,
             input=chapter["content"].encode(),
         )
-        chapter["content"] = proc.stdout.decode()
+
+        # HACK: Strip away unsupported :::
+        content = "\n".join(line for line in proc.stdout.decode().split("\n") if not line.startswith(":::"))
+        chapter["content"] = content
 
     print(json.dumps(book))
