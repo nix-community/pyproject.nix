@@ -184,6 +184,9 @@ in
   /*
     Translate a Pyproject.toml from Poetry to PEP-621 project metadata.
     This function transposes a PEP-621 project table on top of an existing Pyproject.toml populated with data from `tool.poetry`.
+    Notably does not translate dependencies/optional-dependencies.
+
+    For parsing dependencies from Poetry see `lib.poetry.parseDependencies`.
 
     Type: translatePoetryProject :: AttrSet -> lambda
 
