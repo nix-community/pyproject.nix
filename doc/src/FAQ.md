@@ -1,11 +1,11 @@
 # FAQ
 
-- How does package name mapping from Python to Nixpkgs work?
+## How does package name mapping from Python to Nixpkgs work?
 
 Package names are normalized according to the [PyPA normalization specification](https://packaging.python.org/en/latest/specifications/name-normalization/#normalization).
 Nixpkgs also uses the same normalization [but has some legacy package names](https://github.com/NixOS/nixpkgs/issues/245383) that do not follow normalization guidelines.
 
-- What do you do with `dynamic` attributes?
+## How do you treat `dynamic` attributes?
 
 Pyproject.nix makes no attempt at parsing dynamic fields as it does not have the required knowledge to infer these.
 

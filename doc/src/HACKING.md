@@ -1,5 +1,7 @@
 # Hacking
 
+This document outlines hacking on `pyproject.nix` itself, and lays out it's project structure.
+
 ## Getting started
 
 To start hacking run `nix develop -c run` to run the project in watch mode.
