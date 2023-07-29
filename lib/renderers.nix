@@ -92,11 +92,12 @@ in
       meta =
         let
           project' = project.pyproject.project;
+          urls = project'.urls or { };
         in
         # Optional changelog
-        optionalAttrs (project'.urls ? changelog)
+        optionalAttrs (urls ? changelog)
           {
-            inherit (project'.urls) changelog;
+            inherit (urls) changelog;
           } //
         # Optional description
         optionalAttrs (project' ? description) {
