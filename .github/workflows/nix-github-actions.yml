@@ -15,7 +15,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install Nix
-        uses: DeterminateSystems/nix-installer-action@v4
+        uses: DeterminateSystems/nix-installer-action@main
+      - uses: DeterminateSystems/magic-nix-cache-action@main
       - id: set-matrix
         name: Generate Nix Matrix
         run: |
@@ -30,7 +31,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install Nix
-        uses: DeterminateSystems/nix-installer-action@v4
+        uses: DeterminateSystems/nix-installer-action@main
+      - uses: DeterminateSystems/magic-nix-cache-action@main
       - run: nix build -L ".#${{ matrix.attr }}"
 
   nix-unit:
@@ -38,7 +40,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install Nix
-        uses: DeterminateSystems/nix-installer-action@v4
+        uses: DeterminateSystems/nix-installer-action@main
+      - uses: DeterminateSystems/magic-nix-cache-action@main
       - name: Build shell
         run: nix develop -c true
       - name: Run tests
@@ -51,7 +54,8 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Install Nix
-      uses: DeterminateSystems/nix-installer-action@v4
+      uses: DeterminateSystems/nix-installer-action@main
+    - uses: DeterminateSystems/magic-nix-cache-action@main
     - name: Run build
       run: nix build -L .#doc
     - name: Deploy
