@@ -1,8 +1,8 @@
 { stdenv
 , nixdoc
 , self
-, python3
 , mdbook
+, mdbook-nixdoc
 , mdbook-open-on-gh
 , git
 }:
@@ -13,10 +13,10 @@ stdenv.mkDerivation {
   src = self;
   sourceRoot = "source/doc";
   nativeBuildInputs = [
-    python3
     nixdoc
     mdbook
     mdbook-open-on-gh
+    mdbook-nixdoc
     git
   ];
 

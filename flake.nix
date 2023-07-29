@@ -17,8 +17,10 @@
     nix-unit.url = "github:adisbladis/nix-unit";
     nix-unit.inputs.nixpkgs.follows = "nixpkgs";
 
-    nixdoc.url = "github:tweag/nixdoc/indentation";
+    nixdoc.url = "github:nix-community/nixdoc";
     nixdoc.inputs.nixpkgs.follows = "nixpkgs";
+    mdbook-nixdoc.url = "github:adisbladis/mdbook-nixdoc";
+    mdbook-nixdoc.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs = { self, nixpkgs, nix-github-actions, flake-parts, treefmt-nix, nix-unit, nixdoc, ... }@inputs:
@@ -68,12 +70,14 @@
               packages = [
                 config.proc.groups.run.package
                 nixUnit
+                inputs.mdbook-nixdoc.packages.${system}.default
               ] ++ self.packages.${system}.doc.nativeBuildInputs;
             };
 
             packages.doc = pkgs.callPackage ./doc {
               inherit self;
               nixdoc = nixdoc.packages.${system}.default;
+              mdbook-nixdoc = inputs.mdbook-nixdoc.packages.${system}.default;
             };
           };
       };

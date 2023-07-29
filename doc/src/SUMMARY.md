@@ -1,16 +1,16 @@
 # Contents
 
-- [Getting started](getting-started.md)
+- [Getting started](./getting-started.md)
 - [Hacking](./HACKING.md)
 - [FAQ](./FAQ.md)
 
 # Reference
 
-- [User facing APIs](./reference.md))
+- [User facing APIs](./reference.md)
   - [project](./lib/project.nix)
   - [renderers](./lib/renderers.nix)
   - [validators](./lib/validators.nix)
-- [Standards APIs](./reference.md))
+- [Standards APIs](./reference.md)
   - [pep427](./lib/pep427.nix)
   - [pep440](./lib/pep440.nix)
   - [pep508](./lib/pep508.nix)

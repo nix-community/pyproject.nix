@@ -5,8 +5,8 @@ multilingual = false
 src = "src"
 title = "Pyproject.nix"
 
-[preprocessor.env]
-command = "python nixdoc.py"
+[preprocessor.nixdoc]
+command = "mdbook-nixdoc"
 
 [preprocessor.open-on-gh]
 command = "mdbook-open-on-gh"
