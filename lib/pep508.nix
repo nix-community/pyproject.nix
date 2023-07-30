@@ -73,6 +73,7 @@ let
 
   compareOps = pep440.comparators // {
     "==" = x: y: x == y; # Simple equality
+    "!=" = x: y: x != y;
   };
 
   boolOps = {

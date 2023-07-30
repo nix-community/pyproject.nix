@@ -64,6 +64,28 @@ fix (self: {
       };
     };
 
+    testInequalityMarker = {
+      input = "brotlicffi; platform_python_implementation != \"CPython\"";
+      expected = {
+        name = "brotlicffi";
+        conditions = [ ];
+        extras = [ ];
+        markers = {
+          op = "!=";
+          type = "compare";
+          lhs = {
+            type = "variable";
+            value = "platform_python_implementation";
+          };
+          rhs = {
+            type = "string";
+            value = "CPython";
+          };
+        };
+        url = null;
+      };
+    };
+
     testVersionedWithDoubleConditions = {
       input = "packaging>=20.9,!=22.0";
       expected = {
@@ -775,6 +797,14 @@ fix (self: {
         inherit (self.parseString.testDoubleMarkersWithExtras.expected) markers;
       };
       expected = false;
+    };
+
+    testRepro = {
+      input = {
+        environ = self.mkEnviron.testPypy3Linux.expected;
+        inherit (self.parseString.testInequalityMarker.expected) markers;
+      };
+      expected = true;
     };
   };
 })
