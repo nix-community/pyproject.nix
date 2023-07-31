@@ -71,6 +71,8 @@ let
     if isMarkerVariable value then value
     else fromJSON (if singleTicked != null then "\"" + head singleTicked + "\"" else value);
 
+  # Comparators for simple equality
+  # For versions see pep440.comparators
   comparators = {
     "==" = a: b: a == b;
     "!=" = a: b: a != b;
@@ -78,7 +80,14 @@ let
     ">=" = a: b: a >= b;
     "<" = a: b: a < b;
     ">" = a: b: a > b;
-    "===" = throw "Arbitrary equality clause not supported";
+    "===" = a: b: a == b;
+  };
+
+  # Special case comparators for the `extra` environment field
+  extraComparators = {
+    # Check for member in list if list, otherwise simply compare.
+    "==" = extras: extra: if typeOf extras == "list" then elem extra extras else extras == extra;
+    "!=" = extras: extra: if typeOf extras == "list" then !(elem extra extras) else extras != extra;
   };
 
   boolOps = {
@@ -477,20 +486,21 @@ fix (self:
     in
     if value.type == "compare" then
       (
-        if value.lhs.type == "version" || value.rhs.type == "version" then
-          (
-            pep440.comparators.${value.op} x y
-          ) else
-          (
-            comparators.${value.op} x y
-          )
+        (
+          # Version comparison
+          if value.lhs.type == "version" || value.rhs.type == "version" then pep440.comparators.${value.op}
+          # `Extra` environment marker comparison requires special casing because it's equality checks can
+          # == can be considered a `"key" in set` comparison when multiple extras are activated for a dependency.
+          # If we didn't treat it this way the check would become quadratic as `evalMarkers` only could check one extra at a time.
+          else if value.lhs.type == "variable" || value.lhs.value == "extra" then extraComparators.${value.op}
+          # Simple equality
+          else comparators.${value.op}
+        ) x
+          y
       )
-    else if value.type == "boolOp" then
-      (
-        boolOps.${value.op} x y
-      )
+    else if value.type == "boolOp" then boolOps.${value.op} x y
     else if value.type == "variable" then (self.evalMarkers environ environ.${value.value})
-    else if value.type == "version" then value.value
+    else if value.type == "version" || value.type == "extra" then value.value
     else if isPrimitiveType value.type then value.value
     else throw "Unknown type '${value.type}'"
   );
