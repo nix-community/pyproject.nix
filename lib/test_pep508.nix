@@ -776,5 +776,71 @@ fix (self: {
       };
       expected = false;
     };
+
+    testMarkerWithExtra = {
+      input = {
+        environ = self.mkEnviron.testPython38Linux.expected // {
+          extra = {
+            type = "extra";
+            value = "socks";
+          };
+        };
+        markers = pep508.parseMarkers "extra == 'socks'";
+      };
+      expected = true;
+    };
+
+    testMarkerWithExtraNe = {
+      input = {
+        environ = self.mkEnviron.testPython38Linux.expected // {
+          extra = {
+            type = "extra";
+            value = "socks";
+          };
+        };
+        markers = pep508.parseMarkers "extra != 'socks'";
+      };
+      expected = false;
+    };
+
+    testMarkerWithMultipleExtra = {
+      input = {
+        environ = self.mkEnviron.testPython38Linux.expected // {
+          extra = {
+            type = "extra";
+            value = [ "socks" ];
+          };
+        };
+        markers = pep508.parseMarkers "extra == 'socks'";
+      };
+      expected = true;
+    };
+
+    testMarkerWithoutExtra = {
+      input = {
+        environ = self.mkEnviron.testPython38Linux.expected // {
+          extra = {
+            type = "extra";
+            value = "pants";
+          };
+        };
+        markers = pep508.parseMarkers "extra == 'socks'";
+      };
+      expected = false;
+    };
+
+    testMarkerWithoutMultipleExtra = {
+      input = {
+        environ = self.mkEnviron.testPython38Linux.expected // {
+          extra = {
+            type = "extra";
+            value = [ "pants" ];
+          };
+        };
+        markers = pep508.parseMarkers "extra == 'socks'";
+      };
+      expected = false;
+    };
+
   };
 })
