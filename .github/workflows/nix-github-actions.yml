@@ -47,10 +47,18 @@ jobs:
       - name: Run tests
         run: nix develop -c nix-unit --flake .#libTests
 
+  collect:
+    runs-on: ubuntu-latest
+    needs:
+      - nix-unit
+      - nix-build
+    steps:
+      - run: true
+
   deploy-pages:
     if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
-    needs: [nix-build, nix-unit]
+    needs: collect
     steps:
     - uses: actions/checkout@v3
     - name: Install Nix
