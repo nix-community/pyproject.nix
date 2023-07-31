@@ -71,8 +71,14 @@ let
     if isMarkerVariable value then value
     else fromJSON (if singleTicked != null then "\"" + head singleTicked + "\"" else value);
 
-  compareOps = pep440.comparators // {
-    "==" = x: y: x == y; # Simple equality
+  comparators = {
+    "==" = a: b: a == b;
+    "!=" = a: b: a != b;
+    "<=" = a: b: a <= b;
+    ">=" = a: b: a >= b;
+    "<" = a: b: a < b;
+    ">" = a: b: a > b;
+    "===" = throw "Arbitrary equality clause not supported";
   };
 
   boolOps = {
@@ -471,7 +477,13 @@ fix (self:
     in
     if value.type == "compare" then
       (
-        compareOps.${value.op} x y
+        if value.lhs.type == "version" || value.rhs.type == "version" then
+          (
+            pep440.comparators.${value.op} x y
+          ) else
+          (
+            comparators.${value.op} x y
+          )
       )
     else if value.type == "boolOp" then
       (
