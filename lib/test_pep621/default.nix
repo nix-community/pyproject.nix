@@ -152,6 +152,7 @@ fix (self: {
       expr = pep621.getDependenciesNamesNormalized (
         filterDependenciesByEnviron
           (pep508.mkEnviron mocks.cpythonLinux38)
+          [ ]
           (pep621.parseDependencies {
             pyproject = fixtures."pdm.toml";
           })
@@ -175,6 +176,7 @@ fix (self: {
       expr = pep621.getDependenciesNamesNormalized (
         filterDependenciesByEnviron
           (pep508.mkEnviron mocks.cpythonDarwin311)
+          [ ]
           (pep621.parseDependencies {
             pyproject = fixtures."pdm.toml";
           })

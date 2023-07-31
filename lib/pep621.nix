@@ -81,18 +81,29 @@ fix (self: {
        { }  # Structure omitted in docs
   */
   filterDependenciesByEnviron =
-    let
-      filterList = environ: filter (dep: dep.markers == null || pep508.evalMarkers environ dep.markers);
-    in
     # Environ as created by `lib.pep508.mkEnviron`.
     environ:
+    # Extras as a list of strings
+    extras:
     # Dependencies as parsed by `lib.pep621.parseDependencies`.
     dependencies:
-    {
-      dependencies = filterList environ dependencies.dependencies;
-      extras = mapAttrs (_: filterList environ) dependencies.extras;
-      build-systems = filterList environ dependencies.build-systems;
-    };
+    (
+      let
+        filterList = environ: filter (dep: dep.markers == null || pep508.evalMarkers
+          (environ // {
+            extra = {
+              type = "extra";
+              value = extras;
+            };
+          })
+          dep.markers);
+      in
+      {
+        dependencies = filterList environ dependencies.dependencies;
+        extras = mapAttrs (_: filterList environ) dependencies.extras;
+        build-systems = filterList environ dependencies.build-systems;
+      }
+    );
 
   /* Filter dependencies by their extras groups.
 
@@ -132,5 +143,5 @@ fix (self: {
     , # Extras as a list of strings
       extras ? [ ]
     ,
-    }: self.filterDependenciesByEnviron environ (self.filterDependenciesByExtras extras dependencies);
+    }: self.filterDependenciesByEnviron environ extras (self.filterDependenciesByExtras extras dependencies);
 })
