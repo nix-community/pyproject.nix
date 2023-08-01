@@ -5,7 +5,7 @@
 ### Flakes
 
 [Nix Flakes](https://nix.dev/concepts/flakes) has many different opinionated ways to manage it's outputs.
-This is the absolute a example of a Flake containing a pyproject.nix installation to show you the essence of how to install pyproject.nix.
+This is the a minimal example of a Flake containing a pyproject.nix installation to show you the essence of how to install pyproject.nix.
 
 ```nix
 {
