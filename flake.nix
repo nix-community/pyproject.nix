@@ -66,7 +66,7 @@
             checks = pkgs.callPackages ./test { pyproject = self.lib; } // self.packages.${system};
 
             proc.groups.run.processes = {
-              nix-unittest.command = "${lib.getExe pkgs.reflex} -r '\.(nix)$' -- ${lib.getExe nixUnit} --quiet --flake '.#libTests'";
+              nix-unittest.command = "${lib.getExe' pkgs.reflex "reflex"} -r '\.(nix)$' -- ${lib.getExe' nixUnit "nix-unit"} --quiet --flake '.#libTests'";
               mdbook.command = "(cd doc && mdbook serve)";
             };
 
