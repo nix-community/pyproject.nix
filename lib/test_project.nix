@@ -36,7 +36,7 @@ in
         nativeBuildInputs = [
           {
             pname = "pdm-backend";
-            version = "2.1.1";
+            version = "2.1.4";
           }
         ];
         pname = "pdm";
@@ -47,15 +47,15 @@ in
           }
           {
             pname = "certifi";
-            version = "2022.12.07";
+            version = "2023.05.07";
           }
           {
             pname = "packaging";
-            version = "23.0";
+            version = "23.1";
           }
           {
             pname = "platformdirs";
-            version = "3.5.1";
+            version = "3.9.1";
           }
           {
             pname = "rich";
@@ -63,7 +63,7 @@ in
           }
           {
             pname = "virtualenv";
-            version = "20.19.0";
+            version = "20.24.0";
           }
           {
             pname = "pyproject-hooks";
@@ -71,7 +71,7 @@ in
           }
           {
             pname = "requests-toolbelt";
-            version = "0.10.1";
+            version = "1.0.0";
           }
           {
             pname = "unearth";
@@ -79,11 +79,11 @@ in
           }
           {
             pname = "findpython";
-            version = "0.3.0";
+            version = "0.3.1";
           }
           {
             pname = "tomlkit";
-            version = "0.11.6";
+            version = "0.12.1";
           }
           {
             pname = "shellingham";
@@ -115,7 +115,7 @@ in
           }
           {
             pname = "importlib-metadata";
-            version = "6.0.0";
+            version = "6.8.0";
           }
         ];
       };
@@ -136,19 +136,19 @@ in
         nativeBuildInputs = [
           {
             pname = "meson-python";
-            version = "0.12.1";
+            version = "0.13.1";
           }
           {
             pname = "meson";
-            version = "1.1.1";
+            version = "1.2.0";
           }
           {
             pname = "wheel";
-            version = "0.38.4";
+            version = "0.41.1";
           }
           {
             pname = "cython";
-            version = "0.29.34";
+            version = "0.29.36";
           }
           {
             pname = "oldest-supported-numpy";
@@ -156,14 +156,14 @@ in
           }
           {
             pname = "versioneer";
-            version = "0.28";
+            version = "0.29";
           }
         ];
         pname = "pandas";
         propagatedBuildInputs = [
           {
             pname = "numpy";
-            version = "1.24.2";
+            version = "1.25.1";
           }
           {
             pname = "python-dateutil";
@@ -210,7 +210,7 @@ in
         nativeBuildInputs = [
           {
             pname = "poetry-core";
-            version = "1.5.1";
+            version = "1.6.1";
           }
         ];
         pname = "poetry";
@@ -237,7 +237,7 @@ in
           }
           {
             pname = "filelock";
-            version = "3.12.0";
+            version = "3.12.2";
           }
           {
             pname = "html5lib";
@@ -245,7 +245,7 @@ in
           }
           {
             pname = "importlib-metadata";
-            version = "6.0.0";
+            version = "6.8.0";
           }
           {
             pname = "installer";
@@ -253,11 +253,11 @@ in
           }
           {
             pname = "jsonschema";
-            version = "4.17.3";
+            version = "4.18.4";
           }
           {
             pname = "keyring";
-            version = "23.13.1";
+            version = "24.2.0";
           }
           {
             pname = "lockfile";
@@ -265,7 +265,7 @@ in
           }
           {
             pname = "packaging";
-            version = "23.0";
+            version = "23.1";
           }
           {
             pname = "pexpect";
@@ -277,11 +277,11 @@ in
           }
           {
             pname = "platformdirs";
-            version = "3.5.1";
+            version = "3.9.1";
           }
           {
             pname = "poetry-core";
-            version = "1.5.1";
+            version = "1.6.1";
           }
           {
             pname = "poetry-plugin-export";
@@ -301,7 +301,7 @@ in
           }
           {
             pname = "requests-toolbelt";
-            version = "0.10.1";
+            version = "1.0.0";
           }
           {
             pname = "shellingham";
@@ -313,19 +313,19 @@ in
           }
           {
             pname = "tomlkit";
-            version = "0.11.6";
+            version = "0.12.1";
           }
           {
             pname = "trove-classifiers";
-            version = "2023.5.24";
+            version = "2023.7.6";
           }
           {
             pname = "urllib3";
-            version = "1.26.14";
+            version = "1.26.16";
           }
           {
             pname = "virtualenv";
-            version = "20.19.0";
+            version = "20.24.0";
           }
           {
             pname = "pre-commit";
