@@ -5,6 +5,7 @@ let
 in
 
 fix (self: mapAttrs (_: path: import path ({ inherit lib; } // self)) {
+  pip = ./pip.nix;
   pypa = ./pypa.nix;
   project = ./project.nix;
   renderers = ./renderers.nix;

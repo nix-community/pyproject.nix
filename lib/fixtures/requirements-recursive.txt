@@ -1,0 +1,2 @@
+pillow == 10.1.0
+-r requirements.txt

@@ -336,4 +336,61 @@ in
       };
     };
   };
+
+  loadRequirementsTxt = {
+    testRecursive = {
+      expr = project.loadRequirementsTxt {
+        requirements = builtins.readFile ./fixtures/requirements-recursive.txt;
+        root = ./fixtures;
+      };
+      expected = {
+        build-systems = [ ];
+        dependencies = {
+          build-systems = [ ];
+          dependencies = [
+            {
+              conditions = [
+                {
+                  op = "==";
+                  version = {
+                    dev = null;
+                    epoch = 0;
+                    local = null;
+                    post = null;
+                    pre = null;
+                    release = [ 10 1 0 ];
+                  };
+                }
+              ];
+              extras = [ ];
+              markers = null;
+              name = "pillow";
+              url = null;
+            }
+            {
+              conditions = [
+                {
+                  op = "==";
+                  version = {
+                    dev = null;
+                    epoch = 0;
+                    local = null;
+                    post = null;
+                    pre = null;
+                    release = [ 2 31 0 ];
+                  };
+                }
+              ];
+              extras = [ ];
+              markers = null;
+              name = "requests";
+              url = null;
+            }
+          ];
+          extras = { };
+        };
+        pyproject = null;
+      };
+    };
+  };
 }

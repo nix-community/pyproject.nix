@@ -1,4 +1,4 @@
-{ pep518, pep621, poetry, ... }:
+{ pep518, pep621, poetry, pip, ... }:
 
 {
   /* Load dependencies from a pyproject.toml.
@@ -52,4 +52,36 @@
       pyproject-poetry = pyproject;
     };
 
+  /* Load dependencies from a requirements.txt.
+
+     Note that as requirements.txt is lacking important project metadata this is incompatible with some renderers.
+
+     Type: loadRequirementsTxt :: AttrSet -> AttrSet
+
+     Example:
+       # loadRequirementstxt { requirements = builtins.readFile ./requirements.txt; root = ./.; }
+       {
+         dependencies = { }; # Parsed dependency structure in the schema of `lib.pep621.parseDependencies`
+         build-systems = [ ];  # Returned by `lib.pep518.parseBuildSystems`
+         pyproject = null; # The unmarshaled contents of pyproject.toml
+       }
+  */
+  loadRequirementsTxt =
+    {
+      # The contents of requirements.txt
+      requirements
+    , # Root directory for recursive traversal
+      root ? null
+    ,
+    }: {
+      dependencies = {
+        dependencies = map (x: x.requirement) (pip.parseRequirementsTxt {
+          inherit requirements root;
+        });
+        extras = { };
+        build-systems = [ ];
+      };
+      build-systems = [ ];
+      pyproject = null;
+    };
 }

@@ -151,7 +151,7 @@ fix (self: {
   */
   parseVersionCond = cond: (
     let
-      m = match "([=><!~^]+)(.+)" cond;
+      m = match " *([=><!~^]+) *(.+)" cond;
       mAt = elemAt m;
     in
     {

@@ -20,3 +20,4 @@
   - [pep621](./lib/pep621.nix)
   - [poetry](./lib/poetry.nix)
   - [pypa](./lib/pypa.nix)
+  - [pip](./lib/pip.nix)

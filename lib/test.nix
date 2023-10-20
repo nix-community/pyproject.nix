@@ -99,6 +99,7 @@ in
 # Work with the tests as a tree
   # The attrpath is: module(file) -> symbol(function) -> test
 fix (self: {
+  pip = importTests ./test_pip.nix;
   pypa = importTests ./test_pypa.nix;
   project = importTests ./test_project.nix;
   renderers = importTests ./test_renderers.nix;
