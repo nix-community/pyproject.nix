@@ -213,6 +213,28 @@ fix (self: {
       };
     };
 
+    testBareURL = {
+      input = "http://wxpython.org/Phoenix/snapshot-builds/wxPython_Phoenix-3.0.3.dev1820+49a8884-cp34-none-win_amd64.whl";
+      expected = {
+        name = null;
+        conditions = [ ];
+        extras = [ ];
+        markers = null;
+        url = "http://wxpython.org/Phoenix/snapshot-builds/wxPython_Phoenix-3.0.3.dev1820+49a8884-cp34-none-win_amd64.whl";
+      };
+    };
+
+    testBareLocalPath = {
+      input = "./downloads/numpy-1.9.2-cp34-none-win32.whl";
+      expected = {
+        name = null;
+        conditions = [ ];
+        extras = [ ];
+        markers = null;
+        url = "./downloads/numpy-1.9.2-cp34-none-win32.whl";
+      };
+    };
+
     testDoubleMarkers = {
       input = "name; os_name=='a' or os_name=='b'";
       expected = {

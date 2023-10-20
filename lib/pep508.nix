@@ -309,11 +309,22 @@ fix (self:
           url = stripStr (elemAt m3 1);
           markerSegment = null;
         }
-        else {
-          packageSegment = input;
-          url = null;
-          markerSegment = null;
-        };
+        else
+          (
+            if match ".+\/.+" input != null then
+            # Input is a bare URL
+              {
+                packageSegment = null;
+                url = input;
+                markerSegment = null;
+              } else
+            # Input is a package name
+              {
+                packageSegment = input;
+                url = null;
+                markerSegment = null;
+              }
+          );
 
       # Extract metadata from the package segment
       package =
@@ -335,11 +346,16 @@ fix (self:
           extras = if m1 != null then splitComma (elemAt m1 1) else [ ];
 
         in
+        if tokens.packageSegment == null then {
+          name = null;
+          conditions = [ ];
+          extras = [ ];
+        } else
         # Assert that either regex matched
-        assert m1 != null || m2 != null; {
-          name = stripStr (if m1 != null then elemAt m1 0 else elemAt m2 0);
-          inherit extras conditions;
-        };
+          assert m1 != null || m2 != null; {
+            name = stripStr (if m1 != null then elemAt m1 0 else elemAt m2 0);
+            inherit extras conditions;
+          };
 
     in
     {
