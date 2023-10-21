@@ -3,7 +3,7 @@
 , ...
 }:
 let
-  inherit (builtins) match head tail typeOf split filter foldl' readFile dirOf;
+  inherit (builtins) match head tail typeOf split filter foldl' readFile dirOf hasContext unsafeDiscardStringContext;
 
   stripStr = s:
     let
@@ -31,11 +31,21 @@ lib.fix (self: {
     # The contents of or path to requirements.txt
     requirements:
     let
-      isPath = typeOf requirements == "path";
-      root = if isPath then dirOf requirements else null;
+      # Paths are either paths or strings with context.
+      # Preferably we'd just use paths but because of
+      #
+      # $ ./. + requirements
+      # "a string that refers to a store path cannot be appended to a path"
+      #
+      # We also need to support stringly paths...
+      isPath = typeOf requirements == "path" || hasContext requirements;
+      path' =
+        if typeOf requirements == "path" then requirements else
+        /. + unsafeDiscardStringContext requirements;
+      root = dirOf path';
 
       # Requirements without comments and no empty strings
-      requirements' = if isPath then readFile requirements else requirements;
+      requirements' = if isPath then readFile path' else requirements;
       lines' = filter (l: l != "") (map uncomment (filter (l: typeOf l == "string") (split "\n" requirements')));
       # Fold line continuations
       inherit ((foldl'
