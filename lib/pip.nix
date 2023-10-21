@@ -3,7 +3,7 @@
 , ...
 }:
 let
-  inherit (builtins) match head tail typeOf split filter foldl' readFile;
+  inherit (builtins) match head tail typeOf split filter foldl' readFile dirOf;
 
   stripStr = s:
     let
@@ -28,15 +28,15 @@ lib.fix (self: {
   */
 
   parseRequirementsTxt =
-    {
-      # The contents of requirements.txt
-      requirements
-    , # Root directory for further recursive traversal
-      root ? null
-    }:
+    # The contents of or path to requirements.txt
+    requirements:
     let
+      isPath = typeOf requirements == "path";
+      root = if isPath then dirOf requirements else null;
+
       # Requirements without comments and no empty strings
-      lines' = filter (l: l != "") (map uncomment (filter (l: typeOf l == "string") (split "\n" requirements)));
+      requirements' = if isPath then readFile requirements else requirements;
+      lines' = filter (l: l != "") (map uncomment (filter (l: typeOf l == "string") (split "\n" requirements')));
       # Fold line continuations
       inherit ((foldl'
         (
@@ -85,10 +85,10 @@ lib.fix (self: {
 
         # Recursive requirements.txt
         else
-          (self.parseRequirementsTxt {
-            requirements = readFile ("${toString root}/" + (head (tail m)));
-            inherit root;
-          })
+          (self.parseRequirementsTxt (
+            if root == null then throw "When importing recursive requirements.txt requirements needs to be passed as a path"
+            else root + "/${head (tail m)}"
+          ))
       ))
       [ ]
       lines;

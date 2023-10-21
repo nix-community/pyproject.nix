@@ -3,23 +3,20 @@
 }:
 let
   inherit (pip) parseRequirementsTxt;
-  inherit (builtins) readFile;
 
 in
 {
   parseRequirementsTxt = {
     testBasic = {
-      expr = parseRequirementsTxt {
-        requirements = ''
-          FooProject == 1.2 \
-            --hash=sha256:2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824 \
-            --hash=sha256:486ea46224d1bb4fb680f34f7c9ad96a8f24ec88be73ea8e5a6c65260e9cb8a7
+      expr = parseRequirementsTxt ''
+        FooProject == 1.2 \
+          --hash=sha256:2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824 \
+          --hash=sha256:486ea46224d1bb4fb680f34f7c9ad96a8f24ec88be73ea8e5a6c65260e9cb8a7
 
-          Bar == 3.2 \
-            --hash=sha256:2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824 \
-            --hash=sha256:486ea46224d1bb4fb680f34f7c9ad96a8f24ec88be73ea8e5a6c65260e9cb8a7
-        '';
-      };
+        Bar == 3.2 \
+          --hash=sha256:2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824 \
+          --hash=sha256:486ea46224d1bb4fb680f34f7c9ad96a8f24ec88be73ea8e5a6c65260e9cb8a7
+      '';
       expected = [
         {
           flags = [
@@ -75,10 +72,7 @@ in
     };
 
     testRecursive = {
-      expr = parseRequirementsTxt {
-        requirements = readFile ./fixtures/requirements-recursive.txt;
-        root = ./fixtures;
-      };
+      expr = parseRequirementsTxt ./fixtures/requirements-recursive.txt;
       expected = [
         {
           flags = [ ];

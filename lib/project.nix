@@ -70,14 +70,9 @@
     {
       # The contents of requirements.txt
       requirements
-    , # Root directory for recursive traversal
-      root ? null
-    ,
     }: {
       dependencies = {
-        dependencies = map (x: x.requirement) (pip.parseRequirementsTxt {
-          inherit requirements root;
-        });
+        dependencies = map (x: x.requirement) (pip.parseRequirementsTxt requirements);
         extras = { };
         build-systems = [ ];
       };

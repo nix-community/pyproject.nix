@@ -340,8 +340,7 @@ in
   loadRequirementsTxt = {
     testRecursive = {
       expr = project.loadRequirementsTxt {
-        requirements = builtins.readFile ./fixtures/requirements-recursive.txt;
-        root = ./fixtures;
+        requirements = ./fixtures/requirements-recursive.txt;
       };
       expected = {
         build-systems = [ ];
