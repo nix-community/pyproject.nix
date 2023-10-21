@@ -23,7 +23,7 @@ lib.fix (self: {
      Type: parseRequirementsTxt :: AttrSet -> list
 
      Example:
-     # parseRequirements { requirements = builtins.readFile ./requirements.txt; root = ./.; }
+     # parseRequirements ./requirements.txt
      [ { flags = []; requirement = {}; # Returned by pep508.parseString } ]
   */
 
