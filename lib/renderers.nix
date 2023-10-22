@@ -45,7 +45,7 @@ in
         environ = pep508.mkEnviron python;
         inherit extras;
       };
-      namedDeps = pep621.getDependenciesNamesNormalized filteredDeps;
+      namedDeps = pep621.getDependenciesNames filteredDeps;
       flatDeps = namedDeps.dependencies ++ flatten (attrValues namedDeps.extras) ++ namedDeps.build-systems;
     in
     ps: map (dep: ps.${dep}) flatDeps;
@@ -85,7 +85,7 @@ in
         inherit extras;
       };
 
-      namedDeps = pep621.getDependenciesNamesNormalized filteredDeps;
+      namedDeps = pep621.getDependenciesNames filteredDeps;
 
       inherit (project) pyproject;
 

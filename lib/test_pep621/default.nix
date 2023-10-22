@@ -7,7 +7,7 @@
 }:
 let
   inherit (builtins) mapAttrs readDir;
-  inherit (pep621) parseDependencies parseRequiresPython getDependenciesNamesNormalized filterDependenciesByExtras filterDependenciesByEnviron;
+  inherit (pep621) parseDependencies parseRequiresPython getDependenciesNames filterDependenciesByExtras filterDependenciesByEnviron;
   inherit (lib) fix;
 
   expected = mapAttrs (name: _: import ./expected/${name}) (readDir ./expected);
@@ -65,9 +65,9 @@ fix (self: {
     };
   };
 
-  getDependenciesNamesNormalized = {
+  getDependenciesNames = {
     testPandas = {
-      expr = getDependenciesNamesNormalized self.parseDependencies.testPandas.expr;
+      expr = getDependenciesNames self.parseDependencies.testPandas.expr;
       expected = {
         build-systems = [ "meson-python" "meson" "wheel" "cython" "oldest-supported-numpy" "versioneer" ];
         dependencies = [ "numpy" "numpy" "python-dateutil" "pytz" "tzdata" ];
@@ -98,7 +98,7 @@ fix (self: {
     };
 
     testPdm = {
-      expr = getDependenciesNamesNormalized self.parseDependencies.testPdm.expr;
+      expr = getDependenciesNames self.parseDependencies.testPdm.expr;
       expected = {
         build-systems = [ "pdm-backend" ];
         dependencies = [ "blinker" "certifi" "packaging" "platformdirs" "rich" "virtualenv" "pyproject-hooks" "requests-toolbelt" "unearth" "findpython" "tomlkit" "shellingham" "python-dotenv" "resolvelib" "installer" "cachecontrol" "tomli" "importlib-resources" "importlib-metadata" ];
@@ -149,7 +149,7 @@ fix (self: {
   # Use name normalization in tests to ensure we don't have huge expected outputs
   filterDependenciesByEnviron = {
     testPdmCpythonLinux38 = {
-      expr = pep621.getDependenciesNamesNormalized (
+      expr = pep621.getDependenciesNames (
         filterDependenciesByEnviron
           (pep508.mkEnviron mocks.cpythonLinux38)
           [ ]
@@ -173,7 +173,7 @@ fix (self: {
     };
 
     testPdmDarwin311 = {
-      expr = pep621.getDependenciesNamesNormalized (
+      expr = pep621.getDependenciesNames (
         filterDependenciesByEnviron
           (pep508.mkEnviron mocks.cpythonDarwin311)
           [ ]

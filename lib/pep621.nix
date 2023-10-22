@@ -1,4 +1,4 @@
-{ lib, pep440, pep508, pep518, pypa, ... }:
+{ lib, pep440, pep508, pep518, ... }:
 let
   inherit (builtins) mapAttrs foldl' split filter elem;
   inherit (lib) isString filterAttrs fix;
@@ -49,12 +49,12 @@ fix (self: {
   parseRequiresPython = pyproject: map pep440.parseVersionCond (filter isString (split "," (pyproject.project.requires-python or "")));
 
   /* Takes a dependency structure as returned by `lib.pep621.parseDependencies` and transforms it into
-     a structure with it's normalized names as normalized by `lib.pypa.normalizePackageName`.
+     a structure with it's package names.
 
-     Type: getDependenciesNamesNormalized :: AttrSet -> AttrSet
+     Type: getDependenciesNames :: AttrSet -> AttrSet
 
      Example:
-       # getDependenciesNamesNormalized (pep621.parseDependencies { pyproject = (lib.importTOML ./pyproject.toml); })
+       # getDependenciesNames (pep621.parseDependencies { pyproject = (lib.importTOML ./pyproject.toml); })
        {
          dependencies = [ "requests" ];
          extras = {
@@ -63,14 +63,14 @@ fix (self: {
          build-systems = [ "poetry-core" ];
        }
   */
-  getDependenciesNamesNormalized =
+  getDependenciesNames =
     let
-      normalizeList = map (dep: pypa.normalizePackageName dep.name);
+      getNames = map (dep: dep.name);
     in
     dependencies: {
-      dependencies = normalizeList dependencies.dependencies;
-      extras = mapAttrs (_: normalizeList) dependencies.extras;
-      build-systems = normalizeList dependencies.build-systems;
+      dependencies = getNames dependencies.dependencies;
+      extras = mapAttrs (_: getNames) dependencies.extras;
+      build-systems = getNames dependencies.build-systems;
     };
   /* Filter dependencies not relevant for this environment.
 
