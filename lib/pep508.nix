@@ -1,4 +1,4 @@
-{ lib, pep440, pep599, ... }:
+{ lib, pep440, pep599, pypa, ... }:
 
 let
   inherit (builtins) match elemAt split foldl' substring stringLength typeOf fromJSON isString head mapAttrs elem;
@@ -343,7 +343,11 @@ fix (self:
           conditions = map pep440.parseVersionCond (splitComma (if m1 != null then elemAt m1 2 else elemAt m2 1));
 
           # Extras as a list of strings
-          extras = if m1 != null then splitComma (elemAt m1 1) else [ ];
+          #
+          # Based on PEP-508 alone it's not clear whether extras should be normalized or not.
+          # From discussion in https://github.com/pypa/packaging-problems/issues/230
+          # missing normalization seems like an oversight.
+          extras = if m1 != null then map pypa.normalizePackageName (splitComma (elemAt m1 1)) else [ ];
 
         in
         if tokens.packageSegment == null then {
@@ -353,7 +357,10 @@ fix (self:
         } else
         # Assert that either regex matched
           assert m1 != null || m2 != null; {
-            name = stripStr (if m1 != null then elemAt m1 0 else elemAt m2 0);
+            # Based on PEP-508 alone it's not clear whether names should be normalized or not.
+            # From discussion in https://github.com/pypa/packaging-problems/issues/230
+            # this seems like an oversight and we _should_ actually canonicalize names at parse time.
+            name = pypa.normalizePackageName (stripStr (if m1 != null then elemAt m1 0 else elemAt m2 0));
             inherit extras conditions;
           };
 

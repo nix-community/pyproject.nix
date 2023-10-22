@@ -176,7 +176,7 @@ fix (self: {
     testDottedNames = {
       input = "A.B-C_D";
       expected = {
-        name = "A.B-C_D";
+        name = "a-b-c-d";
         conditions = [ ];
         extras = [ ];
         markers = null;

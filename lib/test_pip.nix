@@ -39,7 +39,7 @@ in
             ];
             extras = [ ];
             markers = null;
-            name = "FooProject";
+            name = "fooproject";
             url = null;
           };
         }
@@ -64,7 +64,7 @@ in
             ];
             extras = [ ];
             markers = null;
-            name = "Bar";
+            name = "bar";
             url = null;
           };
         }
