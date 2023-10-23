@@ -79,7 +79,7 @@ in
           }
           {
             pname = "findpython";
-            version = "0.3.1";
+            version = "0.4.0";
           }
           {
             pname = "tomlkit";
@@ -233,7 +233,7 @@ in
           }
           {
             pname = "dulwich";
-            version = "0.21.5";
+            version = "0.21.6";
           }
           {
             pname = "filelock";
