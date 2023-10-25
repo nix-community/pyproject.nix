@@ -3,7 +3,7 @@
 , ...
 }:
 let
-  inherit (poetry) translatePoetryProject parseDependencies;
+  inherit (poetry) translatePoetryProject parseDependencies parseVersionCond;
 in
 {
   translatePoetryProject = {
@@ -66,6 +66,64 @@ in
     };
   };
 
+  parseVersionCond = {
+    testTilde = {
+      expr = parseVersionCond "~3.2.1";
+      expected = [
+        {
+          op = ">=";
+          version = {
+            dev = null;
+            epoch = 0;
+            local = null;
+            post = null;
+            pre = null;
+            release = [ 3 2 1 ];
+          };
+        }
+        {
+          op = "<";
+          version = {
+            dev = null;
+            epoch = 0;
+            local = null;
+            post = null;
+            pre = null;
+            release = [ 3 3 0 ];
+          };
+        }
+      ];
+    };
+
+    testCaret = {
+      expr = parseVersionCond "^3.2.1";
+      expected = [
+        {
+          op = ">=";
+          version = {
+            dev = null;
+            epoch = 0;
+            local = null;
+            post = null;
+            pre = null;
+            release = [ 3 2 1 ];
+          };
+        }
+        {
+          op = "<";
+          version = {
+            dev = null;
+            epoch = 0;
+            local = null;
+            post = null;
+            pre = null;
+            release = [ 4 0 0 ];
+          };
+        }
+      ];
+    };
+  };
+
   parseDependencies = {
     testParseDeps = {
       expr = parseDependencies fixtures."poetry.toml";
@@ -95,7 +153,7 @@ in
           {
             conditions = [
               {
-                cond = ">=";
+                op = ">=";
                 version = {
                   dev = null;
                   epoch = 0;
@@ -106,7 +164,7 @@ in
                 };
               }
               {
-                cond = "<";
+                op = "<";
                 version = {
                   dev = null;
                   epoch = 0;
@@ -151,7 +209,7 @@ in
           {
             conditions = [
               {
-                cond = ">=";
+                op = ">=";
                 version = {
                   dev = null;
                   epoch = 0;
@@ -162,7 +220,7 @@ in
                 };
               }
               {
-                cond = "<";
+                op = "<";
                 version = {
                   dev = null;
                   epoch = 0;
@@ -181,7 +239,7 @@ in
           {
             conditions = [
               {
-                cond = ">=";
+                op = ">=";
                 version = {
                   dev = null;
                   epoch = 0;
@@ -192,7 +250,7 @@ in
                 };
               }
               {
-                cond = "<";
+                op = "<";
                 version = {
                   dev = null;
                   epoch = 0;
@@ -211,7 +269,7 @@ in
           {
             conditions = [
               {
-                cond = ">=";
+                op = ">=";
                 version = {
                   dev = null;
                   epoch = 0;
@@ -222,7 +280,7 @@ in
                 };
               }
               {
-                cond = "<";
+                op = "<";
                 version = {
                   dev = null;
                   epoch = 0;
@@ -241,7 +299,7 @@ in
           {
             conditions = [
               {
-                cond = ">=";
+                op = ">=";
                 version = {
                   dev = null;
                   epoch = 0;
@@ -252,7 +310,7 @@ in
                 };
               }
               {
-                cond = "<";
+                op = "<";
                 version = {
                   dev = null;
                   epoch = 0;
@@ -271,7 +329,7 @@ in
           {
             conditions = [
               {
-                cond = ">=";
+                op = ">=";
                 version = {
                   dev = null;
                   epoch = 0;
@@ -282,7 +340,7 @@ in
                 };
               }
               {
-                cond = "<";
+                op = "<";
                 version = {
                   dev = null;
                   epoch = 0;
@@ -301,7 +359,7 @@ in
           {
             conditions = [
               {
-                cond = ">=";
+                op = ">=";
                 version = {
                   dev = null;
                   epoch = 0;
@@ -312,7 +370,7 @@ in
                 };
               }
               {
-                cond = "<";
+                op = "<";
                 version = {
                   dev = null;
                   epoch = 0;
@@ -331,7 +389,7 @@ in
           {
             conditions = [
               {
-                cond = ">=";
+                op = ">=";
                 version = {
                   dev = null;
                   epoch = 0;
@@ -342,7 +400,7 @@ in
                 };
               }
               {
-                cond = "<";
+                op = "<";
                 version = {
                   dev = null;
                   epoch = 0;
@@ -406,7 +464,7 @@ in
           {
             conditions = [
               {
-                cond = ">=";
+                op = ">=";
                 version = {
                   dev = null;
                   epoch = 0;
@@ -417,7 +475,7 @@ in
                 };
               }
               {
-                cond = "<";
+                op = "<";
                 version = {
                   dev = null;
                   epoch = 0;
@@ -436,7 +494,7 @@ in
           {
             conditions = [
               {
-                cond = ">=";
+                op = ">=";
                 version = {
                   dev = null;
                   epoch = 0;
@@ -447,7 +505,7 @@ in
                 };
               }
               {
-                cond = "<";
+                op = "<";
                 version = {
                   dev = null;
                   epoch = 0;
@@ -466,7 +524,7 @@ in
           {
             conditions = [
               {
-                cond = ">=";
+                op = ">=";
                 version = {
                   dev = null;
                   epoch = 0;
@@ -477,7 +535,7 @@ in
                 };
               }
               {
-                cond = "<";
+                op = "<";
                 version = {
                   dev = null;
                   epoch = 0;
@@ -496,7 +554,7 @@ in
           {
             conditions = [
               {
-                cond = ">=";
+                op = ">=";
                 version = {
                   dev = null;
                   epoch = 0;
@@ -507,7 +565,7 @@ in
                 };
               }
               {
-                cond = "<";
+                op = "<";
                 version = {
                   dev = null;
                   epoch = 0;
@@ -545,7 +603,7 @@ in
           {
             conditions = [
               {
-                cond = ">=";
+                op = ">=";
                 version = {
                   dev = null;
                   epoch = 0;
@@ -556,7 +614,7 @@ in
                 };
               }
               {
-                cond = "<";
+                op = "<";
                 version = {
                   dev = null;
                   epoch = 0;
@@ -575,7 +633,7 @@ in
           {
             conditions = [
               {
-                cond = ">=";
+                op = ">=";
                 version = {
                   dev = null;
                   epoch = 0;
@@ -586,7 +644,7 @@ in
                 };
               }
               {
-                cond = "<";
+                op = "<";
                 version = {
                   dev = null;
                   epoch = 0;
@@ -605,7 +663,7 @@ in
           {
             conditions = [
               {
-                cond = ">=";
+                op = ">=";
                 version = {
                   dev = null;
                   epoch = 0;
@@ -616,7 +674,7 @@ in
                 };
               }
               {
-                cond = "<";
+                op = "<";
                 version = {
                   dev = null;
                   epoch = 0;
@@ -635,7 +693,7 @@ in
           {
             conditions = [
               {
-                cond = "==";
+                op = "==";
                 version = {
                   dev = null;
                   epoch = 0;
@@ -654,7 +712,7 @@ in
           {
             conditions = [
               {
-                cond = ">=";
+                op = ">=";
                 version = {
                   dev = null;
                   epoch = 0;
@@ -665,7 +723,7 @@ in
                 };
               }
               {
-                cond = "<";
+                op = "<";
                 version = {
                   dev = null;
                   epoch = 0;
@@ -684,7 +742,7 @@ in
           {
             conditions = [
               {
-                cond = ">=";
+                op = ">=";
                 version = {
                   dev = null;
                   epoch = 0;
@@ -695,7 +753,7 @@ in
                 };
               }
               {
-                cond = "<";
+                op = "<";
                 version = {
                   dev = null;
                   epoch = 0;
@@ -714,7 +772,7 @@ in
           {
             conditions = [
               {
-                cond = ">=";
+                op = ">=";
                 version = {
                   dev = null;
                   epoch = 0;
@@ -725,7 +783,7 @@ in
                 };
               }
               {
-                cond = "<";
+                op = "<";
                 version = {
                   dev = null;
                   epoch = 0;
@@ -744,7 +802,7 @@ in
           {
             conditions = [
               {
-                cond = ">=";
+                op = ">=";
                 version = {
                   dev = null;
                   epoch = 0;
@@ -755,7 +813,7 @@ in
                 };
               }
               {
-                cond = "<";
+                op = "<";
                 version = {
                   dev = null;
                   epoch = 0;
@@ -804,7 +862,7 @@ in
           {
             conditions = [
               {
-                cond = ">=";
+                op = ">=";
                 version = {
                   dev = null;
                   epoch = 0;
@@ -815,7 +873,7 @@ in
                 };
               }
               {
-                cond = "<";
+                op = "<";
                 version = {
                   dev = null;
                   epoch = 0;
@@ -834,7 +892,7 @@ in
           {
             conditions = [
               {
-                cond = ">=";
+                op = ">=";
                 version = {
                   dev = null;
                   epoch = 0;
@@ -845,7 +903,7 @@ in
                 };
               }
               {
-                cond = "<";
+                op = "<";
                 version = {
                   dev = null;
                   epoch = 0;
@@ -961,7 +1019,7 @@ in
           {
             conditions = [
               {
-                cond = ">=";
+                op = ">=";
                 version = {
                   dev = null;
                   epoch = 0;
@@ -972,7 +1030,7 @@ in
                 };
               }
               {
-                cond = "<";
+                op = "<";
                 version = {
                   dev = null;
                   epoch = 0;
@@ -991,7 +1049,7 @@ in
           {
             conditions = [
               {
-                cond = ">=";
+                op = ">=";
                 version = {
                   dev = null;
                   epoch = 0;
@@ -1002,7 +1060,7 @@ in
                 };
               }
               {
-                cond = "<";
+                op = "<";
                 version = {
                   dev = null;
                   epoch = 0;
@@ -1096,7 +1154,7 @@ in
           {
             conditions = [
               {
-                cond = ">=";
+                op = ">=";
                 version = {
                   dev = null;
                   epoch = 0;
@@ -1107,7 +1165,7 @@ in
                 };
               }
               {
-                cond = "<";
+                op = "<";
                 version = {
                   dev = null;
                   epoch = 0;
@@ -1140,7 +1198,7 @@ in
             {
               conditions = [
                 {
-                  cond = ">=";
+                  op = ">=";
                   version = {
                     dev = null;
                     epoch = 0;
@@ -1151,7 +1209,7 @@ in
                   };
                 }
                 {
-                  cond = "<";
+                  op = "<";
                   version = {
                     dev = null;
                     epoch = 0;
@@ -1172,7 +1230,7 @@ in
             {
               conditions = [
                 {
-                  cond = ">=";
+                  op = ">=";
                   version = {
                     dev = null;
                     epoch = 0;
@@ -1183,7 +1241,7 @@ in
                   };
                 }
                 {
-                  cond = "<";
+                  op = "<";
                   version = {
                     dev = null;
                     epoch = 0;
@@ -1204,7 +1262,7 @@ in
             {
               conditions = [
                 {
-                  cond = "==";
+                  op = "==";
                   version = {
                     dev = null;
                     epoch = 0;
@@ -1223,7 +1281,7 @@ in
             {
               conditions = [
                 {
-                  cond = ">=";
+                  op = ">=";
                   version = {
                     dev = null;
                     epoch = 0;
@@ -1234,7 +1292,7 @@ in
                   };
                 }
                 {
-                  cond = "<";
+                  op = "<";
                   version = {
                     dev = null;
                     epoch = 0;
@@ -1283,7 +1341,7 @@ in
             {
               conditions = [
                 {
-                  cond = ">=";
+                  op = ">=";
                   version = {
                     dev = null;
                     epoch = 0;
@@ -1294,7 +1352,7 @@ in
                   };
                 }
                 {
-                  cond = "<";
+                  op = "<";
                   version = {
                     dev = null;
                     epoch = 0;
@@ -1313,7 +1371,7 @@ in
             {
               conditions = [
                 {
-                  cond = ">=";
+                  op = ">=";
                   version = {
                     dev = null;
                     epoch = 0;
@@ -1324,7 +1382,7 @@ in
                   };
                 }
                 {
-                  cond = "<";
+                  op = "<";
                   version = {
                     dev = null;
                     epoch = 0;
@@ -1343,7 +1401,7 @@ in
             {
               conditions = [
                 {
-                  cond = ">=";
+                  op = ">=";
                   version = {
                     dev = null;
                     epoch = 0;
@@ -1354,7 +1412,7 @@ in
                   };
                 }
                 {
-                  cond = "<";
+                  op = "<";
                   version = {
                     dev = null;
                     epoch = 0;
@@ -1373,7 +1431,7 @@ in
             {
               conditions = [
                 {
-                  cond = ">=";
+                  op = ">=";
                   version = {
                     dev = null;
                     epoch = 0;
@@ -1384,7 +1442,7 @@ in
                   };
                 }
                 {
-                  cond = "<";
+                  op = "<";
                   version = {
                     dev = null;
                     epoch = 0;
@@ -1403,7 +1461,7 @@ in
             {
               conditions = [
                 {
-                  cond = ">=";
+                  op = ">=";
                   version = {
                     dev = null;
                     epoch = 0;
@@ -1414,7 +1472,7 @@ in
                   };
                 }
                 {
-                  cond = "<";
+                  op = "<";
                   version = {
                     dev = null;
                     epoch = 0;
@@ -1433,7 +1491,7 @@ in
             {
               conditions = [
                 {
-                  cond = ">=";
+                  op = ">=";
                   version = {
                     dev = null;
                     epoch = 0;
@@ -1444,7 +1502,7 @@ in
                   };
                 }
                 {
-                  cond = "<";
+                  op = "<";
                   version = {
                     dev = null;
                     epoch = 0;
@@ -1463,7 +1521,7 @@ in
             {
               conditions = [
                 {
-                  cond = ">=";
+                  op = ">=";
                   version = {
                     dev = null;
                     epoch = 0;
@@ -1474,7 +1532,7 @@ in
                   };
                 }
                 {
-                  cond = "<";
+                  op = "<";
                   version = {
                     dev = null;
                     epoch = 0;
@@ -1597,7 +1655,7 @@ in
             {
               conditions = [
                 {
-                  cond = ">=";
+                  op = ">=";
                   version = {
                     dev = null;
                     epoch = 0;
@@ -1608,7 +1666,7 @@ in
                   };
                 }
                 {
-                  cond = "<";
+                  op = "<";
                   version = {
                     dev = null;
                     epoch = 0;
