@@ -240,6 +240,21 @@ in
         };
       };
     };
+
+    testNoOp = {
+      expr = parseVersionCond "*";
+      expected = {
+        op = "";
+        version = {
+          dev = null;
+          epoch = 0;
+          local = null;
+          post = null;
+          pre = null;
+          release = [ "*" ];
+        };
+      };
+    };
   };
 
   comparators = {
