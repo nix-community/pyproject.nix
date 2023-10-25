@@ -61,6 +61,11 @@ let
               pname = "poetry-plugin-export";
               version = "1.4.0";
             };
+
+            python3 = {
+              pname = "python3";
+              inherit (pkgs.python3) version;
+            };
           };
           stdenv = {
             inherit isLinux isDarwin;
