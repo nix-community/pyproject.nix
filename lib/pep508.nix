@@ -1,7 +1,7 @@
 { lib, pep440, pep599, pypa, ... }:
 
 let
-  inherit (builtins) match elemAt split foldl' substring stringLength typeOf fromJSON isString head mapAttrs elem;
+  inherit (builtins) match elemAt split foldl' substring stringLength typeOf fromJSON isString head mapAttrs elem length;
   inherit (lib) stringToCharacters fix;
   inherit (import ./util.nix { inherit lib; }) splitComma;
 
@@ -15,6 +15,8 @@ let
     and = 5;
     or = 10;
     not = 1;
+    "in" = -1;
+    "not in" = -1;
     "" = -1;
   };
   condGt = l: r: if l == "" then false else condPrio.${l} >= condPrio.${r};
@@ -93,6 +95,7 @@ let
   boolOps = {
     "and" = x: y: x && y;
     "or" = x: y: x || y;
+    "in" = x: y: lib.strings.hasInfix x y;
   };
 
   isPrimitiveType =
@@ -172,6 +175,8 @@ fix (self:
               if self.openP > 0 || acc.inString then ""
               else if substring acc.pos 5 input == " and " then "and"
               else if substring acc.pos 4 input == " or " then "or"
+              else if substring acc.pos 4 input == " in " then "in"
+              else if substring acc.pos 8 input == " not in " then "not in"
               else if substring acc.pos 5 input == " not " then "not"
               else "";
 
@@ -180,7 +185,8 @@ fix (self:
               if cond != "" && condGt cond acc.cond then
                 (
                   if (cond == "and" || cond == "not") then 5
-                  else if (cond == "or") then 4
+                  else if (cond == "or" || cond == "in") then 4
+                  else if cond == "not in" then 8
                   else throw "Unknown cond: ${cond}"
                 ) else -1;
 
@@ -226,14 +232,15 @@ fix (self:
         (stringToCharacters input);
 
     in
-    if pos.lhs == -1 then
+    if pos.lhs == -1 then # No right hand value to extract
       (
         let
           m = split re.operators (unparen input);
+          mLength = length m;
           mAt = elemAt m;
           lhs = stripStr (mAt 0);
         in
-        {
+        if (mLength > 1) then assert mLength == 3; {
           type = "compare";
           lhs =
             if isMarkerVariable lhs then {
@@ -242,6 +249,12 @@ fix (self:
             } else unpackValue lhs;
           op = elemAt (mAt 1) 0;
           rhs = parseValueVersionDynamic lhs (unpackValue (stripStr (mAt 2)));
+        } else if isMarkerVariable input then {
+          type = "variable";
+          value = input;
+        } else rec {
+          value = unpackValue input;
+          type = typeOf value;
         }
       ) else {
       type = "boolOp";

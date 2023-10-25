@@ -16,6 +16,45 @@ fix (self: {
       expected = true;
       expr = true;
     };
+
+    testInOperator = {
+      expr = pep508.parseMarkers "python_version >= \"3\" and platform_machine in \"x86_64 X86_64 aarch64 AARCH64 ppc64le PPC64LE amd64 AMD64 win32 WIN32\"";
+      expected = {
+        lhs = {
+          lhs = {
+            type = "variable";
+            value = "python_version";
+          };
+          op = ">=";
+          rhs = {
+            type = "version";
+            value = {
+              dev = null;
+              epoch = 0;
+              local = null;
+              post = null;
+              pre = null;
+              release = [ 3 ];
+            };
+          };
+          type = "compare";
+        };
+        op = "and";
+        rhs = {
+          lhs = {
+            type = "variable";
+            value = "platform_machine";
+          };
+          op = "in";
+          rhs = {
+            type = "string";
+            value = "x86_64 X86_64 aarch64 AARCH64 ppc64le PPC64LE amd64 AMD64 win32 WIN32";
+          };
+          type = "boolOp";
+        };
+        type = "boolOp";
+      };
+    };
   };
 
   parseString = mapAttrs (_: case: case // { expr = pep508.parseString case.input; }) {
