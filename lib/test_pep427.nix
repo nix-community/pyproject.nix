@@ -10,7 +10,7 @@ in
         abiTag = "none";
         buildTag = "1";
         distribution = "distribution";
-        languageTag = "py27";
+        languageTags = [ "py27" ];
         platformTags = [ "any" ];
         version = "1.0";
       };
@@ -22,9 +22,21 @@ in
         abiTag = "abi3";
         buildTag = null;
         distribution = "cryptography";
-        languageTag = "cp37";
+        languageTags = [ "cp37" ];
         platformTags = [ "manylinux_2_17_aarch64" "manylinux2014_aarch64" ];
         version = "41.0.1";
+      };
+    };
+
+    testMultipleLanguageTags = {
+      expr = parseFileName "Werkzeug-1.0.0-py2.py3-none-any.whl";
+      expected = {
+        abiTag = "none";
+        buildTag = null;
+        distribution = "Werkzeug";
+        languageTags = [ "py2" "py3" ];
+        platformTags = [ "any" ];
+        version = "1.0.0";
       };
     };
   };

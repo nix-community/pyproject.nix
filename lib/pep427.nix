@@ -42,7 +42,7 @@ in
       distribution = mAt 0;
       version = mAt 1;
       buildTag = mAt 3;
-      languageTag = mAt 4;
+      languageTags = filter isString (split "\\." (mAt 4));
       abiTag = mAt 5;
       platformTags = filter isString (split "\\." (mAt 6));
     };
