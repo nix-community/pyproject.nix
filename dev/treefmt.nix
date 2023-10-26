@@ -4,6 +4,8 @@
 
   programs.prettier.enable = true;
 
+  programs.shellcheck.enable = true;
+
   settings.formatter = {
     nix = {
       command = "sh";
