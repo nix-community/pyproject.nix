@@ -10,6 +10,7 @@
   - [project](./lib/project.nix)
   - [renderers](./lib/renderers.nix)
   - [validators](./lib/validators.nix)
+  - [fetchers](./fetchers/default.nix)
 - [Standards APIs](./reference.md)
   - [pep427](./lib/pep427.nix)
   - [pep440](./lib/pep440.nix)

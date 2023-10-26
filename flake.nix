@@ -42,6 +42,7 @@
           inputs.treefmt-nix.flakeModule
           inputs.flake-root.flakeModule
           inputs.proc-flake.flakeModule
+          ./flake-module.nix
         ];
 
         flake.githubActions = nix-github-actions.lib.mkGithubMatrix {
@@ -63,7 +64,17 @@
           {
             treefmt.imports = [ ./dev/treefmt.nix ];
 
-            checks = pkgs.callPackages ./test { pyproject = self.lib; } // self.packages.${system};
+            checks = pkgs.callPackages ./test
+              {
+                pyproject = import ./default.nix { inherit pkgs lib; };
+              } // self.packages.${system} // {
+              mypy = pkgs.runCommand "pyproject.nix-mypy" { nativeBuildInputs = [ pkgs.python3.pkgs.mypy ]; } ''
+                mypy --exclude doc --strict ${self}
+                touch $out
+              '';
+            };
+
+            fetchers = import ./fetchers { inherit pkgs lib; };
 
             proc.groups.run.processes = {
               nix-unittest.command = "${lib.getExe' pkgs.reflex "reflex"} -r '\.(nix)$' -- ${lib.getExe' nixUnit "nix-unit"} --quiet --flake '.#libTests'";
