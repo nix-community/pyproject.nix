@@ -100,13 +100,7 @@ lib.mapAttrs (_: func: lib.makeOverridable func) {
     ,
     }:
     let
-      pathParts =
-        filter
-          ({ prefix
-           ,
-           }:
-            "NETRC" == prefix)
-          nixPath;
+      pathParts = filter ({ prefix, path }: "NETRC" == prefix) nixPath; # deadnix: skip
       netrc_file =
         if (pathParts != [ ])
         then (head pathParts).path
