@@ -36,4 +36,4 @@ https://matrix.to/#/#pyproject.nix:blad.is
 
 ### Docs
 
-https://adisbladis.github.io/pyproject.nix/
+https://nix-community.github.io/pyproject.nix/

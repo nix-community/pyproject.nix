@@ -9,7 +9,7 @@ This is the a minimal example of a Flake containing a pyproject.nix installation
 
 ```nix
 {
-  inputs.pyproject.url = "github:adisbladis/pyproject.nix";
+  inputs.pyproject.url = "github:nix-community/pyproject.nix";
   inputs.pyproject.inputs.nixpkgs.follows = "nixpkgs";
 
   outputs = { self, nixpkgs, pyproject }: let
