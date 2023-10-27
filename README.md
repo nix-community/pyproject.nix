@@ -1,20 +1,17 @@
 # Pyproject.nix - Nix tooling for pyproject.toml projects
 
-Pyproject.nix is a collection of Nix utilities to work with [PEP-621](https://peps.python.org/pep-0621/) compliant `pyproject.toml` files and data formats.
+Pyproject.nix is a collection of Nix utilities to work with Python project metadata in Nix.
+It mainly targets [PEP-621](https://peps.python.org/pep-0621/) compliant `pyproject.toml` files and data formats, but also implement support for legacy formats such as `requirements.txt`.
 
-You can think of it as a spiritual successor to [poetry2nix](https://github.com/nix-community/poetry2nix) that puts more of a focus on lower level plumbing and that aims to work with a plethora of package managers.
+Pyproject.nix aims to be a swiss army knife of unopinionated utilities to build opinionated higher level & more opinionated tooling on top off.
+
+Pyproject.nix is currently in use in [poetry2nix](https://github.com/nix-community/poetry2nix) & [dream2nix](https://github.com/nix-community/dream2nix).
 
 ### Design goals
 
 - Provide low level plumbing that is useful in other projects like [poetry2nix](https://github.com/nix-community/poetry2nix) & [dream2nix](https://github.com/nix-community/dream2nix).
 
-- Flexible overlays
-
-Mix packages from nixpkgs & package manager lock files à la carte.
-
 - Suport for many package managers
-
-Any package manager that supports PEP-621 is a possible target.
 
 ### Roadmap
 
@@ -26,9 +23,6 @@ Any package manager that supports PEP-621 is a possible target.
   - [x] [PEP 599](https://peps.python.org/pep-0599/) – The manylinux2014 Platform Tag
   - [x] [PEP 600](https://peps.python.org/pep-0600/) - Future ‘manylinux’ Platform Tags for Portable Linux Built Distributions
   - [x] [PEP 621](https://peps.python.org/pep-0621/) - Storing project metadata in pyproject.toml
-- Lock file support
-  - [ ] [PDM](https://github.com/pdm-project/pdm)
-  - [ ] [Poetry](https://github.com/python-poetry/poetry)
 
 ### Matrix chat
 
