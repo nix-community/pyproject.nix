@@ -3,6 +3,8 @@ let
   inherit (builtins) concatStringsSep filter split match elemAt;
   inherit (lib) isString toLower;
 
+  matchWheelFileName = match "([^-]+)-([^-]+)(-([[:digit:]][^-]*))?-([^-]+)-([^-]+)-(.+).whl";
+
   # Tag normalization documented in
   # https://packaging.python.org/en/latest/specifications/platform-compatibility-tags/#details
   normalizedImpls = {
@@ -17,7 +19,7 @@ let
   optionalString = s: if s != "" then s else null;
 
 in
-{
+lib.fix (self: {
   /* Normalize package name as documented in https://packaging.python.org/en/latest/specifications/name-normalization/#normalization
 
      Type: normalizePackageName :: string -> string
@@ -82,4 +84,50 @@ in
       version = optionalString (mAt 1);
       flags = lib.stringToCharacters (mAt 2);
     };
-}
+
+  /* Check whether string is a wheel file or not.
+
+     Type: isWheelFileName :: string -> bool
+
+     Example:
+     # isWheelFileName "cryptography-41.0.1-cp37-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl"
+     true
+  */
+  isWheelFileName = name: matchWheelFileName name != null;
+
+  /* Parse PEP-427 wheel file names.
+
+     Type: parseFileName :: string -> AttrSet
+
+     Example:
+     # parseFileName "cryptography-41.0.1-cp37-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl"
+     {
+      abiTag = "abi3";
+      buildTag = null;
+      distribution = "cryptography";
+      languageTags = [  # Parsed by pypa.parsePythonTag
+        {
+          implementation = "cpython";
+          version = "37";
+        }
+      ];
+      platformTags = [ "manylinux_2_17_aarch64" "manylinux2014_aarch64" ];
+      version = "41.0.1";
+    }
+  */
+  parseWheelFileName =
+    # The wheel filename is `{distribution}-{version}(-{build tag})?-{python tag}-{abi tag}-{platform tag}.whl`.
+    name:
+    let
+      m = matchWheelFileName name;
+      mAt = elemAt m;
+    in
+    assert m != null; {
+      distribution = mAt 0;
+      version = mAt 1;
+      buildTag = mAt 3;
+      languageTags = map self.parsePythonTag (filter isString (split "\\." (mAt 4)));
+      abiTag = self.parseABITag (mAt 5);
+      platformTags = filter isString (split "\\." (mAt 6));
+    };
+})

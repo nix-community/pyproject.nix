@@ -111,7 +111,6 @@ fix (self: {
   validators = importTests ./test_validators.nix;
   poetry = importTests ./test_poetry.nix;
 
-  pep427 = importTests ./test_pep427.nix;
   pep440 = importTests ./test_pep440.nix;
   pep508 = importTests ./test_pep508.nix;
   pep518 = importTests ./test_pep518.nix;

@@ -12,7 +12,6 @@
   - [validators](./lib/validators.nix)
   - [fetchers](./fetchers/default.nix)
 - [Standards APIs](./reference.md)
-  - [pep427](./lib/pep427.nix)
   - [pep440](./lib/pep440.nix)
   - [pep508](./lib/pep508.nix)
   - [pep518](./lib/pep518.nix)
