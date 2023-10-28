@@ -11,6 +11,7 @@
     { nixpkgs
     , flake-utils
     , pyproject-nix
+    , ...
     }:
     let
       pyproject = import (pyproject-nix + "/lib") { inherit (nixpkgs) lib; };
