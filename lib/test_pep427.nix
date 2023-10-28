@@ -7,10 +7,19 @@ in
     testSimple = {
       expr = parseFileName "distribution-1.0-1-py27-none-any.whl";
       expected = {
-        abiTag = "none";
+        abiTag = {
+          implementation = "none";
+          version = null;
+          flags = [ ];
+        };
         buildTag = "1";
         distribution = "distribution";
-        languageTags = [ "py27" ];
+        languageTags = [
+          {
+            implementation = "python";
+            version = "27";
+          }
+        ];
         platformTags = [ "any" ];
         version = "1.0";
       };
@@ -19,10 +28,19 @@ in
     testComplex = {
       expr = parseFileName "cryptography-41.0.1-cp37-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl";
       expected = {
-        abiTag = "abi3";
+        abiTag = {
+          implementation = "abi";
+          version = "3";
+          flags = [ ];
+        };
         buildTag = null;
         distribution = "cryptography";
-        languageTags = [ "cp37" ];
+        languageTags = [
+          {
+            implementation = "cpython";
+            version = "37";
+          }
+        ];
         platformTags = [ "manylinux_2_17_aarch64" "manylinux2014_aarch64" ];
         version = "41.0.1";
       };
@@ -31,10 +49,23 @@ in
     testMultipleLanguageTags = {
       expr = parseFileName "Werkzeug-1.0.0-py2.py3-none-any.whl";
       expected = {
-        abiTag = "none";
+        abiTag = {
+          implementation = "none";
+          version = null;
+          flags = [ ];
+        };
         buildTag = null;
         distribution = "Werkzeug";
-        languageTags = [ "py2" "py3" ];
+        languageTags = [
+          {
+            implementation = "python";
+            version = "2";
+          }
+          {
+            implementation = "python";
+            version = "3";
+          }
+        ];
         platformTags = [ "any" ];
         version = "1.0.0";
       };

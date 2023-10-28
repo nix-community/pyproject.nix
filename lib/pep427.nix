@@ -1,4 +1,4 @@
-_:
+{ pypa, ... }:
 
 let
   inherit (builtins) match elemAt split filter isString;
@@ -26,7 +26,12 @@ in
       abiTag = "abi3";
       buildTag = null;
       distribution = "cryptography";
-      languageTag = "cp37";
+      languageTags = [  # Parsed by pypa.parsePythonTag
+        {
+          implementation = "cpython";
+          version = "37";
+        }
+      ];
       platformTags = [ "manylinux_2_17_aarch64" "manylinux2014_aarch64" ];
       version = "41.0.1";
     }
@@ -42,8 +47,8 @@ in
       distribution = mAt 0;
       version = mAt 1;
       buildTag = mAt 3;
-      languageTags = filter isString (split "\\." (mAt 4));
-      abiTag = mAt 5;
+      languageTags = map pypa.parsePythonTag (filter isString (split "\\." (mAt 4)));
+      abiTag = pypa.parseABITag (mAt 5);
       platformTags = filter isString (split "\\." (mAt 6));
     };
 }
