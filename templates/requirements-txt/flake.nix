@@ -5,7 +5,7 @@
   inputs.flake-utils.url = "github:numtide/flake-utils";
 
   inputs.pyproject-nix.url = "github:nix-community/pyproject.nix";
-  inputs.pyproject-nix.flake = false; # Don't use the pyproject.nix flake directly to avoid it's inputs in our closure
+  inputs.pyproject-nix.flake = false; # Don't use the pyproject.nix flake directly to avoid its inputs in our closure
 
   outputs =
     { nixpkgs
