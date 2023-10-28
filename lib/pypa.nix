@@ -102,7 +102,11 @@ lib.fix (self: {
      Example:
      # parseFileName "cryptography-41.0.1-cp37-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl"
      {
-      abiTag = "abi3";
+      abiTag = {
+        implementation = "abi";
+        version = "3";
+        flags = [ ];
+      };
       buildTag = null;
       distribution = "cryptography";
       languageTags = [  # Parsed by pypa.parsePythonTag
