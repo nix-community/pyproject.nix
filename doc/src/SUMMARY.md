@@ -4,6 +4,11 @@
 - [Hacking](./HACKING.md)
 - [FAQ](./FAQ.md)
 
+# Use cases
+
+- [requirements.txt](./use-cases/requirements.md)
+- [pyproject.toml](./use-cases/pyproject.md)
+
 # Reference
 
 - [User facing APIs](./reference.md)

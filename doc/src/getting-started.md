@@ -1,5 +1,10 @@
 # Getting started
 
+## Foreword
+
+This documentation only helps you to get started with `pyproject.nix`.
+As it's a toolkit with many use cases not every use case can be documented fully.
+
 ## Installation
 
 ### Flakes
