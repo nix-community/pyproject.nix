@@ -4,7 +4,7 @@
   inputs.pyproject.url = "github:nix-community/pyproject.nix";
   inputs.pyproject.inputs.nixpkgs.follows = "nixpkgs";
 
-  outputs = { nixpkgs, pyproject }:
+  outputs = { nixpkgs, pyproject, ... }:
     let
       inherit (nixpkgs) lib;
 
