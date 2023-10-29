@@ -18,4 +18,5 @@ fix (self: mapAttrs (_: path: import path ({ inherit lib; } // self)) {
   pep599 = ./pep599.nix;
   pep600 = ./pep600.nix;
   pep621 = ./pep621.nix;
+  pep656 = ./pep656.nix;
 })

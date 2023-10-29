@@ -23,6 +23,7 @@
   - [pep599](./lib/pep599.nix)
   - [pep600](./lib/pep600.nix)
   - [pep621](./lib/pep621.nix)
+  - [pep656](./lib/pep656.nix)
   - [poetry](./lib/poetry.nix)
   - [pypa](./lib/pypa.nix)
   - [pip](./lib/pip.nix)
