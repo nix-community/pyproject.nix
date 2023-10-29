@@ -1,6 +1,6 @@
-{ lib, pypa, ... }:
+{ lib, pypa, mocks, ... }:
 let
-  inherit (pypa) normalizePackageName parsePythonTag parseABITag parseWheelFileName isWheelFileName;
+  inherit (pypa) normalizePackageName parsePythonTag parseABITag parseWheelFileName isWheelFileName isPythonTagCompatible isABITagCompatible isPlatformTagCompatible isWheelFileCompatible;
   inherit (lib) mapAttrs';
 
 in
@@ -41,6 +41,7 @@ in
       };
     };
   };
+
   parseWheelFileName = {
     testSimple = {
       expr = parseWheelFileName "distribution-1.0-1-py27-none-any.whl";
@@ -129,6 +130,79 @@ in
     testComplexNoMatch = {
       expr = isWheelFileName "cryptography-41.0.1-cp37-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.zip";
       expected = false;
+    };
+  };
+
+  isPythonTagCompatible = {
+    testPython = {
+      expr = isPythonTagCompatible mocks.cpythonLinux38 (parsePythonTag "py3");
+      expected = true;
+    };
+
+    testCpython = {
+      expr = isPythonTagCompatible mocks.cpythonLinux38 (parsePythonTag "cp3");
+      expected = true;
+    };
+
+    testCpythonWithVersion = {
+      expr = isPythonTagCompatible mocks.cpythonLinux38 (parsePythonTag "cp38");
+      expected = true;
+    };
+
+    testCpythonWithVersionNoCompat = {
+      expr = isPythonTagCompatible mocks.cpythonLinux38 (parsePythonTag "cp39");
+      expected = false;
+    };
+
+    testPythonIncompatible = {
+      expr = isPythonTagCompatible mocks.cpythonLinux38 (parsePythonTag "py2");
+      expected = false;
+    };
+  };
+
+  isABITagCompatible = {
+    testCompatible = {
+      expr = isABITagCompatible mocks.cpythonLinux38 (parseABITag "cp38");
+      expected = true;
+    };
+
+    testIncompatible = {
+      expr = isABITagCompatible mocks.cpythonLinux38 (parseABITag "cp39");
+      expected = false;
+    };
+  };
+
+  isPlatformTagCompatible = {
+    testCompatible = {
+      expr = isPlatformTagCompatible mocks.cpythonLinux38 "manylinux_2_5_x86_64";
+      expected = true;
+    };
+
+    testCompatible2 = {
+      expr = isPlatformTagCompatible mocks.cpythonLinux38 "manylinux1_x86_64";
+      expected = true;
+    };
+
+    testIncompatibleArch = {
+      expr = isPlatformTagCompatible mocks.cpythonLinux38 "manylinux_2_5_armv7l";
+      expected = false;
+    };
+
+    testIncompatibleLibc = {
+      expr = isPlatformTagCompatible mocks.cpythonLinux38 "musllinux_1_1_x86_64";
+      expected = false;
+    };
+  };
+
+  isWheelFileCompatible = {
+    testIncompatible = {
+      expr = isWheelFileCompatible mocks.cpythonLinux38 (parseWheelFileName "cryptography-41.0.1-cp37-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl");
+      expected = false;
+    };
+
+    testCompatible = {
+      expr = isWheelFileCompatible mocks.cpythonLinux38 (parseWheelFileName "cryptography-41.0.1-cp38-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl");
+      expected = true;
     };
   };
 }

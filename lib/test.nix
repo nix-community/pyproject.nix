@@ -12,6 +12,7 @@ let
         { pname ? "python"
         , version
         , pythonVersion ? version
+        , sourceVersion ? { }
         , implementation ? "cpython"
         , isLinux ? false
         , isDarwin ? false
@@ -19,8 +20,9 @@ let
         }: {
           inherit pname version;
           passthru = {
-            inherit pythonVersion implementation;
+            inherit pythonVersion implementation sourceVersion;
           };
+
           # Generate a dummy package set based on the real python one
           # Note that inheriting from nixpkgs like this _will_ break tests
           # when updating nixpkgs.
@@ -70,6 +72,14 @@ let
           stdenv = {
             inherit isLinux isDarwin;
             targetPlatform.parsed.cpu.name = "x86_64";
+            cc =
+              if isLinux then {
+                libc.pname = "glibc";
+                libc.version = "2.37";
+              } else if isDarwin then {
+                libc.pname = "libSystem";
+                libc.version = "11.0.0";
+              } else throw "NO U";
           };
         };
     in
@@ -78,12 +88,16 @@ let
         version = "3.8.2";
         pythonVersion = "3.8";
         isLinux = true;
+        sourceVersion.major = "3";
+        sourceVersion.minor = "8";
       };
 
       cpythonDarwin311 = mkPython {
         version = "3.11.4";
         pythonVersion = "3.11";
         isDarwin = true;
+        sourceVersion.major = "3";
+        sourceVersion.minor = "11";
       };
 
       pypy39Linux = mkPython {
@@ -92,6 +106,8 @@ let
         pythonVersion = "3.9";
         isLinux = true;
         implementation = "pypy";
+        sourceVersion.major = "3";
+        sourceVersion.minor = "9";
       };
     };
 

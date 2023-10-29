@@ -1,7 +1,8 @@
-{ lib, ... }:
+{ lib, pep600, pep656, ... }:
 let
   inherit (builtins) concatStringsSep filter split match elemAt;
   inherit (lib) isString toLower;
+  inherit (lib.strings) hasPrefix;
 
   matchWheelFileName = match "([^-]+)-([^-]+)(-([[:digit:]][^-]*))?-([^-]+)-([^-]+)-(.+).whl";
 
@@ -42,9 +43,9 @@ lib.fix (self: {
      Type: parsePythonTag :: string -> AttrSet
 
      Example:
-     # parseABITag "cp37dmu"
+     # parsePythonTag "cp37"
      {
-       implementation = "cp";
+       implementation = "cpython";
        version = "37";
      }
      */
@@ -102,7 +103,7 @@ lib.fix (self: {
      Example:
      # parseFileName "cryptography-41.0.1-cp37-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl"
      {
-      abiTag = {
+      abiTag = {  # Parsed by pypa.parseABITag
         implementation = "abi";
         version = "3";
         flags = [ ];
@@ -134,4 +135,112 @@ lib.fix (self: {
       abiTag = self.parseABITag (mAt 5);
       platformTags = filter isString (split "\\." (mAt 6));
     };
+
+  /* Check whether an ABI tag is compatible with this python interpreter.
+
+     Type: isABITagCompatible :: derivation -> string -> bool
+
+     Example:
+     # isABITagCompatible pkgs.python3 "abiTag"
+     true
+  */
+  isABITagCompatible =
+    # Python interpreter derivation
+    python:
+    # ABI tag string
+    abiTag:
+    let
+      inherit (python.passthru.sourceVersion) major minor;
+      inherit (python.passthru) implementation;
+    in
+    (
+      # None is a wildcard compatible with any implementation
+      (abiTag.implementation == "none" || abiTag.implementation == "any")
+      ||
+      # implementation == sys.implementation.name
+      abiTag.implementation == implementation
+      ||
+      # The CPython stable ABI is abi3 as in the shared library suffix.
+      (abiTag.implementation == "abi" && implementation == "cpython")
+    )
+    &&
+    # Check version
+    (
+      abiTag.version == null || hasPrefix abiTag.version (major + minor)
+    );
+
+  /* Check whether a platform tag is compatible with this python interpreter.
+
+     Type: isPlatformTagCompatible :: derivation -> string -> bool
+
+     Example:
+     # isPlatformTagCompatible pkgs.python3 "platformTag"
+     true
+  */
+  isPlatformTagCompatible =
+    # Python interpreter derivation
+    python:
+    # Python tag
+    platformTag:
+    let
+      platform = python.stdenv.targetPlatfform;
+    in
+    if platformTag == "any" then true
+    else if hasPrefix "manylinux" platformTag then pep600.manyLinuxTagCompatible python.stdenv platformTag
+    else if hasPrefix "musllinux" platformTag then pep656.muslLinuxTagCompatible python.stdenv platformTag
+    else if hasPrefix "macosx" platformTag then (throw "Macosx tags not yet supported")
+    else if platformTag == "win32" then (platform.isWindows && platform.is32Bit && platform.isx86)
+    else if platformTag == "win_amd64" then (platform.isWindows && platform.is64Bit && platform.isx86_64)
+    else throw "Unknown platform tag: '${platformTag}'";
+
+  /* Check whether a Python language tag is compatible with this Python interpreter.
+
+     Type: isPythonTagCompatible :: derivation -> AttrSet -> bool
+
+     Example:
+     # isPlatformTagCompatible pkgs.python3 (pypa.parsePythonTag "pythonTag")
+     true
+  */
+  isPythonTagCompatible =
+    # Python interpreter derivation
+    python:
+    # Python tag
+    pythonTag:
+    let
+      inherit (python.passthru.sourceVersion) major minor;
+      inherit (python.passthru) implementation;
+    in
+    (
+      # Python is a wildcard compatible with any implementation
+      pythonTag.implementation == "python"
+      ||
+      # implementation == sys.implementation.name
+      pythonTag.implementation == implementation
+    )
+    &&
+    # Check version
+    (
+      pythonTag.version == null || hasPrefix pythonTag.version (major + minor)
+    );
+
+  /* Check whether wheel file name is compatible with this python interpreter.
+
+     Type: isWheelFileCompatible :: derivation -> AttrSet -> bool
+
+     Example:
+     # isWheelFileCompatible pkgs.python3 (pypa.parseWheelFileName "filename")
+     true
+  */
+  isWheelFileCompatible =
+    # Python interpreter derivation
+    python:
+    # The parsed wheel filename
+    file:
+    (
+      self.isABITagCompatible python file.abiTag
+      &&
+      lib.any (self.isPythonTagCompatible python) file.languageTags
+      &&
+      lib.any (self.isPlatformTagCompatible python) file.platformTags
+    );
 })
