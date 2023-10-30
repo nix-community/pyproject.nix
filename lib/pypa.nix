@@ -69,7 +69,7 @@ lib.fix (self: {
      Example:
      # parseABITag "cp37dmu"
      {
-       flags = [ "d" "m" "u" ];
+       rest = "dmu";
        implementation = "cp";
        version = "37";
      }
@@ -77,13 +77,13 @@ lib.fix (self: {
   parseABITag =
     tag:
     let
-      m = match "([a-z]+)([0-9]*)([a-z]*)" tag;
+      m = match "([a-z]+)([0-9]*)_?([a-z0-9]*)" tag;
       mAt = elemAt m;
     in
     assert m != null; {
       implementation = normalizeImpl (mAt 0);
       version = optionalString (mAt 1);
-      flags = lib.stringToCharacters (mAt 2);
+      rest = mAt 2;
     };
 
   /* Check whether string is a wheel file or not.

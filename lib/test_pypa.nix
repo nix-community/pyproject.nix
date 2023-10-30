@@ -35,9 +35,18 @@ in
     testWithFlags = {
       expr = parseABITag "cp37dmu";
       expected = {
-        flags = [ "d" "m" "u" ];
+        rest = "dmu";
         implementation = "cpython";
         version = "37";
+      };
+    };
+
+    testWithPypyFlags = {
+      expr = parseABITag "pypy38_pp73";
+      expected = {
+        rest = "pp73";
+        implementation = "pypy";
+        version = "38";
       };
     };
   };
@@ -49,7 +58,7 @@ in
         abiTag = {
           implementation = "none";
           version = null;
-          flags = [ ];
+          rest = "";
         };
         buildTag = "1";
         distribution = "distribution";
@@ -70,7 +79,7 @@ in
         abiTag = {
           implementation = "abi";
           version = "3";
-          flags = [ ];
+          rest = "";
         };
         buildTag = null;
         distribution = "cryptography";
@@ -91,7 +100,7 @@ in
         abiTag = {
           implementation = "none";
           version = null;
-          flags = [ ];
+          rest = "";
         };
         buildTag = null;
         distribution = "Werkzeug";
