@@ -141,7 +141,7 @@ lib.fix (self: {
      Type: isABITagCompatible :: derivation -> string -> bool
 
      Example:
-     # isABITagCompatible pkgs.python3 "abiTag"
+     # isABITagCompatible pkgs.python3 (pypa.parseABITag "cp37")
      true
   */
   isABITagCompatible =
@@ -174,7 +174,7 @@ lib.fix (self: {
      Type: isPlatformTagCompatible :: derivation -> string -> bool
 
      Example:
-     # isPlatformTagCompatible pkgs.python3 "platformTag"
+     # isPlatformTagCompatible pkgs.python3 "manylinux2014_x86_64"
      true
   */
   isPlatformTagCompatible =
@@ -198,7 +198,7 @@ lib.fix (self: {
      Type: isPythonTagCompatible :: derivation -> AttrSet -> bool
 
      Example:
-     # isPlatformTagCompatible pkgs.python3 (pypa.parsePythonTag "pythonTag")
+     # isPlatformTagCompatible pkgs.python3 (pypa.parsePythonTag "py3")
      true
   */
   isPythonTagCompatible =
@@ -228,7 +228,7 @@ lib.fix (self: {
      Type: isWheelFileCompatible :: derivation -> AttrSet -> bool
 
      Example:
-     # isWheelFileCompatible pkgs.python3 (pypa.parseWheelFileName "filename")
+     # isWheelFileCompatible pkgs.python3 (pypa.parseWheelFileName "Pillow-9.0.1-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl")
      true
   */
   isWheelFileCompatible =
