@@ -206,7 +206,30 @@ lib.fix (self: {
         )
       )
     else if platformTag == "win32" then (platform.isWindows && platform.is32Bit && platform.isx86)
-    else if platformTag == "win_amd64" then (platform.isWindows && platform.is64Bit && platform.isx86_64)
+    else if hasPrefix "win_" platformTag then
+      (
+        let
+          m = match "win_(.+)" platformTag;
+          arch = elemAt m 0;
+        in
+        assert m != null;
+        platform.isWindows && (
+          # Note that these platform mappings are incomplete.
+          # Nixpkgs should gain windows platform tags so we don't have to map them manually here.
+          if arch == "amd64" then platform.isx86_64
+          else if arch == "arm64" then platform.isAarch64
+          else false
+        )
+      )
+    else if hasPrefix "linux" platformTag then
+      (
+        let
+          m = match "linux_(.+)" platformTag;
+          arch = elemAt m 0;
+        in
+        assert m != null;
+        platform.isLinux && arch == platform.linuxArch
+      )
     else throw "Unknown platform tag: '${platformTag}'";
 
   /* Check whether a Python language tag is compatible with this Python interpreter.
