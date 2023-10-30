@@ -19,6 +19,25 @@ let
 
   optionalString = s: if s != "" then s else null;
 
+  parseTagVersion = v:
+    let
+      m = match "([0-9])([0-9]*)" v;
+      mAt = elemAt m;
+    in
+    if v == "" then null else assert m != null; {
+      major = mAt 0;
+      minor = optionalString (mAt 1);
+    };
+
+  checkTagVersion = sourceVersion: tagVersion: tagVersion == null || (
+    tagVersion.major == sourceVersion.major && (
+      tagVersion.minor == null || (
+        (compareVersions sourceVersion.minor tagVersion.minor) >= 0
+      )
+    )
+  );
+
+
 in
 lib.fix (self: {
   /* Normalize package name as documented in https://packaging.python.org/en/latest/specifications/name-normalization/#normalization
@@ -46,7 +65,10 @@ lib.fix (self: {
      # parsePythonTag "cp37"
      {
        implementation = "cpython";
-       version = "37";
+       version = {
+         major = "3";
+         minor = "7";
+       };
      }
      */
   parsePythonTag =
@@ -57,7 +79,7 @@ lib.fix (self: {
     in
     assert m != null; {
       implementation = normalizeImpl (mAt 0);
-      version = mAt 1;
+      version = parseTagVersion (mAt 1);
     };
 
   /* Parse ABI tags.
@@ -71,7 +93,10 @@ lib.fix (self: {
      {
        rest = "dmu";
        implementation = "cp";
-       version = "37";
+       version = {
+         major = "3";
+         minor = "7";
+       };
      }
   */
   parseABITag =
@@ -82,7 +107,7 @@ lib.fix (self: {
     in
     assert m != null; {
       implementation = normalizeImpl (mAt 0);
-      version = optionalString (mAt 1);
+      version = parseTagVersion (mAt 1);
       rest = mAt 2;
     };
 
@@ -105,7 +130,10 @@ lib.fix (self: {
      {
       abiTag = {  # Parsed by pypa.parseABITag
         implementation = "abi";
-        version = "3";
+        version = {
+          major = "3";
+          minor = null;
+        };
         flags = [ ];
       };
       buildTag = null;
@@ -113,7 +141,10 @@ lib.fix (self: {
       languageTags = [  # Parsed by pypa.parsePythonTag
         {
           implementation = "cpython";
-          version = "37";
+          version = {
+            major = "3";
+            minor = "7";
+          };
         }
       ];
       platformTags = [ "manylinux_2_17_aarch64" "manylinux2014_aarch64" ];
@@ -150,8 +181,7 @@ lib.fix (self: {
     # ABI tag string
     abiTag:
     let
-      inherit (python.passthru.sourceVersion) major minor;
-      inherit (python.passthru) implementation;
+      inherit (python.passthru) sourceVersion implementation;
     in
     (
       # None is a wildcard compatible with any implementation
@@ -166,7 +196,7 @@ lib.fix (self: {
     &&
     # Check version
     (
-      abiTag.version == null || hasPrefix abiTag.version (major + minor)
+      checkTagVersion sourceVersion abiTag.version
     );
 
   /* Check whether a platform tag is compatible with this python interpreter.
@@ -246,8 +276,7 @@ lib.fix (self: {
     # Python tag
     pythonTag:
     let
-      inherit (python.passthru.sourceVersion) major minor;
-      inherit (python.passthru) implementation;
+      inherit (python.passthru) sourceVersion implementation;
     in
     (
       # Python is a wildcard compatible with any implementation
@@ -258,9 +287,8 @@ lib.fix (self: {
     )
     &&
     # Check version
-    (
-      pythonTag.version == null || hasPrefix pythonTag.version (major + minor)
-    );
+    checkTagVersion sourceVersion pythonTag.version
+  ;
 
   /* Check whether wheel file name is compatible with this python interpreter.
 

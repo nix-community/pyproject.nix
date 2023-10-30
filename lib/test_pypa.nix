@@ -26,7 +26,10 @@ in
       expr = parsePythonTag "cp37";
       expected = {
         implementation = "cpython";
-        version = "37";
+        version = {
+          major = "3";
+          minor = "7";
+        };
       };
     };
   };
@@ -37,7 +40,10 @@ in
       expected = {
         rest = "dmu";
         implementation = "cpython";
-        version = "37";
+        version = {
+          major = "3";
+          minor = "7";
+        };
       };
     };
 
@@ -46,7 +52,10 @@ in
       expected = {
         rest = "pp73";
         implementation = "pypy";
-        version = "38";
+        version = {
+          major = "3";
+          minor = "8";
+        };
       };
     };
   };
@@ -65,7 +74,10 @@ in
         languageTags = [
           {
             implementation = "python";
-            version = "27";
+            version = {
+              major = "2";
+              minor = "7";
+            };
           }
         ];
         platformTags = [ "any" ];
@@ -78,7 +90,10 @@ in
       expected = {
         abiTag = {
           implementation = "abi";
-          version = "3";
+          version = {
+            major = "3";
+            minor = null;
+          };
           rest = "";
         };
         buildTag = null;
@@ -86,7 +101,10 @@ in
         languageTags = [
           {
             implementation = "cpython";
-            version = "37";
+            version = {
+              major = "3";
+              minor = "7";
+            };
           }
         ];
         platformTags = [ "manylinux_2_17_aarch64" "manylinux2014_aarch64" ];
@@ -107,11 +125,17 @@ in
         languageTags = [
           {
             implementation = "python";
-            version = "2";
+            version = {
+              major = "2";
+              minor = null;
+            };
           }
           {
             implementation = "python";
-            version = "3";
+            version = {
+              major = "3";
+              minor = null;
+            };
           }
         ];
         platformTags = [ "any" ];
