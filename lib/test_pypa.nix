@@ -192,6 +192,26 @@ in
       expr = isPlatformTagCompatible mocks.cpythonLinux38 "musllinux_1_1_x86_64";
       expected = false;
     };
+
+    testMacos = {
+      expr = isPlatformTagCompatible mocks.cpythonDarwin311 "macosx_11_0_x86_64";
+      expected = true;
+    };
+
+    testMacosIncomatibleArch = {
+      expr = isPlatformTagCompatible mocks.cpythonDarwin311 "macosx_11_0_arm64";
+      expected = false;
+    };
+
+    testMacosIncomatibleSdk = {
+      expr = isPlatformTagCompatible mocks.cpythonDarwin311 "macosx_12_0_x86_64";
+      expected = false;
+    };
+
+    testMacosUniversal2 = {
+      expr = isPlatformTagCompatible mocks.cpythonDarwin311 "macosx_11_0_universal2";
+      expected = true;
+    };
   };
 
   isWheelFileCompatible = {

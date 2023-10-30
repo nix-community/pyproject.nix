@@ -1,6 +1,6 @@
 { lib, pep600, pep656, ... }:
 let
-  inherit (builtins) concatStringsSep filter split match elemAt;
+  inherit (builtins) concatStringsSep filter split match elemAt compareVersions;
   inherit (lib) isString toLower;
   inherit (lib.strings) hasPrefix;
 
@@ -183,12 +183,24 @@ lib.fix (self: {
     # Python tag
     platformTag:
     let
-      platform = python.stdenv.targetPlatfform;
+      platform = python.stdenv.targetPlatform;
     in
     if platformTag == "any" then true
     else if hasPrefix "manylinux" platformTag then pep600.manyLinuxTagCompatible python.stdenv platformTag
     else if hasPrefix "musllinux" platformTag then pep656.muslLinuxTagCompatible python.stdenv platformTag
-    else if hasPrefix "macosx" platformTag then (throw "Macosx tags not yet supported")
+    else if hasPrefix "macosx" platformTag then
+      (
+        let
+          m = match "macosx_([0-9]+)_([0-9]+)_(.+)" platformTag;
+          mAt = elemAt m;
+          major = mAt 0;
+          minor = mAt 1;
+          arch = mAt 2;
+        in
+        assert m != null;
+        ((arch == "universal2" && (platform.darwinArch == "arm64" || platform.darwinArch == "x86_64")) || arch == platform.darwinArch)
+        && compareVersions platform.darwinSdkVersion "${major}.${minor}" >= 0
+      )
     else if platformTag == "win32" then (platform.isWindows && platform.is32Bit && platform.isx86)
     else if platformTag == "win_amd64" then (platform.isWindows && platform.is64Bit && platform.isx86_64)
     else throw "Unknown platform tag: '${platformTag}'";

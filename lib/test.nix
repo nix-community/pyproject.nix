@@ -71,7 +71,14 @@ let
           };
           stdenv = {
             inherit isLinux isDarwin;
-            targetPlatform.parsed.cpu.name = "x86_64";
+
+            targetPlatform = {
+              parsed.cpu.name = "x86_64";
+            } // lib.optionalAttrs isDarwin {
+              darwinArch = "x86_64";
+              darwinSdkVersion = "11.0";
+            };
+
             cc =
               if isLinux then {
                 libc.pname = "glibc";
