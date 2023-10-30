@@ -197,9 +197,13 @@ lib.fix (self: {
           minor = mAt 1;
           arch = mAt 2;
         in
-        assert m != null;
-        ((arch == "universal2" && (platform.darwinArch == "arm64" || platform.darwinArch == "x86_64")) || arch == platform.darwinArch)
-        && compareVersions platform.darwinSdkVersion "${major}.${minor}" >= 0
+        assert m != null; (
+          platform.isDarwin
+          &&
+          ((arch == "universal2" && (platform.darwinArch == "arm64" || platform.darwinArch == "x86_64")) || arch == platform.darwinArch)
+          &&
+          compareVersions platform.darwinSdkVersion "${major}.${minor}" >= 0
+        )
       )
     else if platformTag == "win32" then (platform.isWindows && platform.is32Bit && platform.isx86)
     else if platformTag == "win_amd64" then (platform.isWindows && platform.is64Bit && platform.isx86_64)
