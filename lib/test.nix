@@ -73,6 +73,8 @@ let
             inherit isLinux isDarwin;
 
             targetPlatform = {
+              inherit isLinux isDarwin;
+            } // {
               parsed.cpu.name = "x86_64";
             } // lib.optionalAttrs isDarwin {
               darwinArch = "x86_64";
