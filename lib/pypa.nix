@@ -2,7 +2,7 @@
 let
   inherit (builtins) concatStringsSep filter split match elemAt compareVersions;
   inherit (lib) isString toLower;
-  inherit (lib.strings) hasPrefix;
+  inherit (lib.strings) hasPrefix toInt;
 
   matchWheelFileName = match "([^-]+)-([^-]+)(-([[:digit:]][^-]*))?-([^-]+)-([^-]+)-(.+).whl";
 
@@ -19,24 +19,11 @@ let
 
   optionalString = s: if s != "" then s else null;
 
-  parseTagVersion = v:
-    let
-      m = match "([0-9])([0-9]*)" v;
-      mAt = elemAt m;
-    in
-    if v == "" then null else assert m != null; {
-      major = mAt 0;
-      minor = optionalString (mAt 1);
-    };
-
-  checkTagVersion = sourceVersion: tagVersion: tagVersion == null || (
-    tagVersion.major == sourceVersion.major && (
-      tagVersion.minor == null || (
-        (compareVersions sourceVersion.minor tagVersion.minor) >= 0
-      )
+  checkTagVersion = sourceVersion: tagVersion: tagVersion == null || tagVersion == sourceVersion.major || (
+    hasPrefix sourceVersion.major tagVersion && (
+      (toInt (sourceVersion.major + sourceVersion.minor)) >= toInt tagVersion
     )
   );
-
 
 in
 lib.fix (self: {
@@ -65,10 +52,7 @@ lib.fix (self: {
      # parsePythonTag "cp37"
      {
        implementation = "cpython";
-       version = {
-         major = "3";
-         minor = "7";
-       };
+       version = "37";
      }
      */
   parsePythonTag =
@@ -79,7 +63,7 @@ lib.fix (self: {
     in
     assert m != null; {
       implementation = normalizeImpl (mAt 0);
-      version = parseTagVersion (mAt 1);
+      version = optionalString (mAt 1);
     };
 
   /* Parse ABI tags.
@@ -93,10 +77,7 @@ lib.fix (self: {
      {
        rest = "dmu";
        implementation = "cp";
-       version = {
-         major = "3";
-         minor = "7";
-       };
+       version = "37";
      }
   */
   parseABITag =
@@ -107,7 +88,7 @@ lib.fix (self: {
     in
     assert m != null; {
       implementation = normalizeImpl (mAt 0);
-      version = parseTagVersion (mAt 1);
+      version = optionalString (mAt 1);
       rest = mAt 2;
     };
 
@@ -130,21 +111,15 @@ lib.fix (self: {
      {
       abiTag = {  # Parsed by pypa.parseABITag
         implementation = "abi";
-        version = {
-          major = "3";
-          minor = null;
-        };
-        flags = [ ];
+        version = "3";
+        rest = "";
       };
       buildTag = null;
       distribution = "cryptography";
       languageTags = [  # Parsed by pypa.parsePythonTag
         {
           implementation = "cpython";
-          version = {
-            major = "3";
-            minor = "7";
-          };
+          version = "37";
         }
       ];
       platformTags = [ "manylinux_2_17_aarch64" "manylinux2014_aarch64" ];
