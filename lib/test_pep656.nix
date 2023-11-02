@@ -11,7 +11,7 @@ let
           };
         };
         targetPlatform = lib.systems.elaborate "x86_64-linux" // {
-          libc = "musl";
+          libc = pname;
         };
       };
     in
