@@ -1,6 +1,6 @@
 { lib, pypa, mocks, ... }:
 let
-  inherit (pypa) normalizePackageName parsePythonTag parseABITag parseWheelFileName isWheelFileName isPythonTagCompatible isABITagCompatible isPlatformTagCompatible isWheelFileCompatible;
+  inherit (pypa) normalizePackageName parsePythonTag parseABITag parseWheelFileName isWheelFileName isPythonTagCompatible isABITagCompatible isPlatformTagCompatible isWheelFileCompatible selectWheels;
   inherit (lib) mapAttrs';
 
 in
@@ -234,4 +234,26 @@ in
       expected = true;
     };
   };
+
+  selectWheels =
+    let
+      mkTest = { input, output, python }: {
+        expr = selectWheels python (map parseWheelFileName input);
+        expected = map parseWheelFileName output;
+      };
+    in
+    {
+      testPyNoneAny = mkTest {
+        input = [ "distribution-1.0-1-py37-none-any.whl" "distribution-1.0-1-py38-none-any.whl" ];
+        output = [ "distribution-1.0-1-py38-none-any.whl" "distribution-1.0-1-py37-none-any.whl" ];
+        python = mocks.cpythonLinux38;
+      };
+
+      testPyNoneAnyReverseInput = mkTest {
+        input = [ "distribution-1.0-1-py38-none-any.whl" "distribution-1.0-1-py37-none-any.whl" ];
+        output = [ "distribution-1.0-1-py38-none-any.whl" "distribution-1.0-1-py37-none-any.whl" ];
+        python = mocks.cpythonLinux38;
+      };
+    };
+
 }

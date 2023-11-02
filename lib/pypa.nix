@@ -1,6 +1,6 @@
 { lib, pep600, pep656, ... }:
 let
-  inherit (builtins) concatStringsSep filter split match elemAt compareVersions;
+  inherit (builtins) concatStringsSep filter split match elemAt compareVersions length sort head;
   inherit (lib) isString toLower;
   inherit (lib.strings) hasPrefix toInt;
 
@@ -285,4 +285,59 @@ lib.fix (self: {
       &&
       lib.any (self.isPlatformTagCompatible python) file.platformTags
     );
+
+  /* Select compatible wheels from a list and return them in priority order.
+
+     Type: selectWheels :: derivation -> [ AttrSet ] -> [ AttrSet ]
+
+     Example:
+     # selectWheels pkgs.python3 [ (pypa.parseWheelFileName "Pillow-9.0.1-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl") ]
+     [ (pypa.parseWheelFileName "Pillow-9.0.1-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl") ]
+  */
+  selectWheels =
+    # Python interpreter derivation
+    python:
+    # List of files as parsed by parseWheelFileName
+    files:
+    let
+      # Get sorting/filter criteria fields
+      withSortedTags = map
+        (file:
+          let
+            abiCompatible = self.isABITagCompatible python file.abiTag;
+
+            # Filter only compatible tags
+            languageTags = filter (self.isPythonTagCompatible python) file.languageTags;
+            # Extract the tag as a number. E.g. "37" is `toInt "37"` and "none"/"any" is 0
+            languageTags' = map (tag: if tag == "none" then 0 else toInt tag.version) languageTags;
+
+          in
+          {
+            bestLanguageTag = head (sort (x: y: x > y) languageTags');
+            platformTagJoined = concatStringsSep "." file.platformTags;
+            compatible = abiCompatible && length languageTags > 0 && lib.any (self.isPlatformTagCompatible python) file.platformTags;
+            inherit file;
+          })
+        files;
+
+      # Only consider files compatible with this interpreter
+      compatibleFiles = filter (file: file.compatible) withSortedTags;
+
+      # Sort files based on their tags
+      sorted = sort
+        (
+          x: y:
+            x.file.distribution > y.file.distribution
+            || x.file.version > y.file.version
+            || (x.file.buildTag != null && (y.file.buildTag == null || x.file.buildTag > y.file.buildTag))
+            || x.bestLanguageTag > y.bestLanguageTag
+            || x.platformTagJoined > y.platformTagJoined
+        )
+        compatibleFiles;
+
+    in
+    # Strip away temporary sorting metadata
+    map (file': file'.file) sorted
+  ;
+
 })
