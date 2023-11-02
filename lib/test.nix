@@ -73,6 +73,7 @@ let
             inherit isLinux isDarwin;
 
             targetPlatform = {
+              isWindows = false;
               inherit isLinux isDarwin;
             } // {
               parsed.cpu.name = "x86_64";
