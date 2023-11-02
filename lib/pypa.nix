@@ -140,6 +140,9 @@ lib.fix (self: {
       languageTags = map self.parsePythonTag (filter isString (split "\\." (mAt 4)));
       abiTag = self.parseABITag (mAt 5);
       platformTags = filter isString (split "\\." (mAt 6));
+      # Keep filename around so selectWheel & such that returns structured filtered
+      # data becomes more ergonomic to use
+      filename = name;
     };
 
   /* Check whether an ABI tag is compatible with this python interpreter.

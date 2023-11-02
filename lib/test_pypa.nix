@@ -70,6 +70,7 @@ in
         ];
         platformTags = [ "any" ];
         version = "1.0";
+        filename = "distribution-1.0-1-py27-none-any.whl";
       };
     };
 
@@ -91,6 +92,7 @@ in
         ];
         platformTags = [ "manylinux_2_17_aarch64" "manylinux2014_aarch64" ];
         version = "41.0.1";
+        filename = "cryptography-41.0.1-cp37-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl";
       };
     };
 
@@ -116,6 +118,7 @@ in
         ];
         platformTags = [ "any" ];
         version = "1.0.0";
+        filename = "Werkzeug-1.0.0-py2.py3-none-any.whl";
       };
     };
   };
