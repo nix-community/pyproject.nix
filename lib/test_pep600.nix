@@ -10,7 +10,9 @@ let
             inherit pname version;
           };
         };
-        targetPlatform = lib.systems.elaborate "x86_64-linux";
+        targetPlatform = lib.systems.elaborate "x86_64-linux" // {
+          libc = pname;
+        };
       };
     in
     {

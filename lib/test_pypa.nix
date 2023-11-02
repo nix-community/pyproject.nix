@@ -186,54 +186,54 @@ in
 
   isPlatformTagCompatible = {
     testCompatible = {
-      expr = isPlatformTagCompatible mocks.cpythonLinux38 "manylinux_2_5_x86_64";
+      expr = isPlatformTagCompatible mocks.cpythonLinux38.stdenv.targetPlatform mocks.cpythonLinux38.stdenv.cc.libc "manylinux_2_5_x86_64";
       expected = true;
     };
 
     testCompatible2 = {
-      expr = isPlatformTagCompatible mocks.cpythonLinux38 "manylinux1_x86_64";
+      expr = isPlatformTagCompatible mocks.cpythonLinux38.stdenv.targetPlatform mocks.cpythonLinux38.stdenv.cc.libc "manylinux1_x86_64";
       expected = true;
     };
 
     testIncompatibleArch = {
-      expr = isPlatformTagCompatible mocks.cpythonLinux38 "manylinux_2_5_armv7l";
+      expr = isPlatformTagCompatible mocks.cpythonLinux38.stdenv.targetPlatform mocks.cpythonLinux38.stdenv.cc.libc "manylinux_2_5_armv7l";
       expected = false;
     };
 
     testIncompatibleLibc = {
-      expr = isPlatformTagCompatible mocks.cpythonLinux38 "musllinux_1_1_x86_64";
+      expr = isPlatformTagCompatible mocks.cpythonLinux38.stdenv.targetPlatform mocks.cpythonLinux38.stdenv.cc.libc "musllinux_1_1_x86_64";
       expected = false;
     };
 
     testMacos = {
-      expr = isPlatformTagCompatible mocks.cpythonDarwin311 "macosx_11_0_x86_64";
+      expr = isPlatformTagCompatible mocks.cpythonDarwin311.stdenv.targetPlatform mocks.cpythonDarwin311.stdenv.cc.libc "macosx_11_0_x86_64";
       expected = true;
     };
 
     testMacosIncomatibleArch = {
-      expr = isPlatformTagCompatible mocks.cpythonDarwin311 "macosx_11_0_arm64";
+      expr = isPlatformTagCompatible mocks.cpythonDarwin311.stdenv.targetPlatform mocks.cpythonDarwin311.stdenv.cc.libc "macosx_11_0_arm64";
       expected = false;
     };
 
     testMacosIncomatibleSdk = {
-      expr = isPlatformTagCompatible mocks.cpythonDarwin311 "macosx_12_0_x86_64";
+      expr = isPlatformTagCompatible mocks.cpythonDarwin311.stdenv.targetPlatform mocks.cpythonDarwin311.stdenv.cc.libc "macosx_12_0_x86_64";
       expected = false;
     };
 
     testMacosUniversal2 = {
-      expr = isPlatformTagCompatible mocks.cpythonDarwin311 "macosx_11_0_universal2";
+      expr = isPlatformTagCompatible mocks.cpythonDarwin311.stdenv.targetPlatform mocks.cpythonDarwin311.stdenv.cc.libc "macosx_11_0_universal2";
       expected = true;
     };
   };
 
   isWheelFileCompatible = {
     testIncompatible = {
-      expr = isWheelFileCompatible mocks.cpythonLinux38 (parseWheelFileName "cryptography-41.0.1-cp37-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl");
+      expr = isWheelFileCompatible mocks.cpythonLinux38.stdenv.targetPlatform mocks.cpythonLinux38.stdenv.cc.libc mocks.cpythonLinux38 (parseWheelFileName "cryptography-41.0.1-cp37-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl");
       expected = false;
     };
 
     testCompatible = {
-      expr = isWheelFileCompatible mocks.cpythonLinux38 (parseWheelFileName "cryptography-41.0.1-cp38-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl");
+      expr = isWheelFileCompatible mocks.cpythonLinux38.stdenv.targetPlatform mocks.cpythonLinux38.stdenv.cc.libc mocks.cpythonLinux38 (parseWheelFileName "cryptography-41.0.1-cp38-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl");
       expected = true;
     };
   };
@@ -241,7 +241,7 @@ in
   selectWheels =
     let
       mkTest = { input, output, python }: {
-        expr = map (wheel: wheel.filename) (selectWheels python (map parseWheelFileName input));
+        expr = map (wheel: wheel.filename) (selectWheels python.stdenv.targetPlatform python (map parseWheelFileName input));
         expected = output;
       };
 

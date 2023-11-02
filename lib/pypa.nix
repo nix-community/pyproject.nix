@@ -179,23 +179,22 @@ lib.fix (self: {
 
   /* Check whether a platform tag is compatible with this python interpreter.
 
-     Type: isPlatformTagCompatible :: derivation -> string -> bool
+     Type: isPlatformTagCompatible :: AttrSet -> derivation -> string -> bool
 
      Example:
      # isPlatformTagCompatible pkgs.python3 "manylinux2014_x86_64"
      true
   */
   isPlatformTagCompatible =
-    # Python interpreter derivation
-    python:
+    # Platform attrset (`lib.systems.elaborate "x86_64-linux"`)
+    platform:
+    # Libc derivation
+    libc:
     # Python tag
     platformTag:
-    let
-      platform = python.stdenv.targetPlatform;
-    in
     if platformTag == "any" then true
-    else if hasPrefix "manylinux" platformTag then pep600.manyLinuxTagCompatible platform python.stdenv.cc.libc platformTag
-    else if hasPrefix "musllinux" platformTag then pep656.muslLinuxTagCompatible platform python.stdenv.cc.libc platformTag
+    else if hasPrefix "manylinux" platformTag then pep600.manyLinuxTagCompatible platform libc platformTag
+    else if hasPrefix "musllinux" platformTag then pep656.muslLinuxTagCompatible platform libc platformTag
     else if hasPrefix "macosx" platformTag then
       (
         let
@@ -245,7 +244,7 @@ lib.fix (self: {
      Type: isPythonTagCompatible :: derivation -> AttrSet -> bool
 
      Example:
-     # isPlatformTagCompatible pkgs.python3 (pypa.parsePythonTag "py3")
+     # isPythonTagCompatible pkgs.python3 (pypa.parsePythonTag "py3")
      true
   */
   isPythonTagCompatible =
@@ -277,6 +276,10 @@ lib.fix (self: {
      true
   */
   isWheelFileCompatible =
+    # Platform attrset (`lib.systems.elaborate "x86_64-linux"`)
+    platform:
+    # Libc derivation
+    libc:
     # Python interpreter derivation
     python:
     # The parsed wheel filename
@@ -286,7 +289,7 @@ lib.fix (self: {
       &&
       lib.any (self.isPythonTagCompatible python) file.languageTags
       &&
-      lib.any (self.isPlatformTagCompatible python) file.platformTags
+      lib.any (self.isPlatformTagCompatible platform libc) file.platformTags
     );
 
   /* Select compatible wheels from a list and return them in priority order.
@@ -298,6 +301,8 @@ lib.fix (self: {
      [ (pypa.parseWheelFileName "Pillow-9.0.1-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl") ]
   */
   selectWheels =
+    # Platform attrset (`lib.systems.elaborate "x86_64-linux"`)
+    platform:
     # Python interpreter derivation
     python:
     # List of files as parsed by parseWheelFileName
@@ -317,7 +322,7 @@ lib.fix (self: {
           in
           {
             bestLanguageTag = head (sort (x: y: x > y) languageTags');
-            compatible = abiCompatible && length languageTags > 0 && lib.any (self.isPlatformTagCompatible python) file.platformTags;
+            compatible = abiCompatible && length languageTags > 0 && lib.any (self.isPlatformTagCompatible platform python.stdenv.cc.libc) file.platformTags;
             inherit file;
           })
         files;
