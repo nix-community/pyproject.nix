@@ -321,6 +321,37 @@ in
         "pyzmq-24.0.1-pp39-pypy39_pp73-win_amd64.whl"
       ];
 
+      pyarrowWheels = [
+        "pyarrow-13.0.0-cp310-cp310-macosx_10_14_x86_64.whl"
+        "pyarrow-13.0.0-cp310-cp310-macosx_11_0_arm64.whl"
+        "pyarrow-13.0.0-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl"
+        "pyarrow-13.0.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl"
+        "pyarrow-13.0.0-cp310-cp310-manylinux_2_28_aarch64.whl"
+        "pyarrow-13.0.0-cp310-cp310-manylinux_2_28_x86_64.whl"
+        "pyarrow-13.0.0-cp310-cp310-win_amd64.whl"
+        "pyarrow-13.0.0-cp311-cp311-macosx_10_14_x86_64.whl"
+        "pyarrow-13.0.0-cp311-cp311-macosx_11_0_arm64.whl"
+        "pyarrow-13.0.0-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl"
+        "pyarrow-13.0.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl"
+        "pyarrow-13.0.0-cp311-cp311-manylinux_2_28_aarch64.whl"
+        "pyarrow-13.0.0-cp311-cp311-manylinux_2_28_x86_64.whl"
+        "pyarrow-13.0.0-cp311-cp311-win_amd64.whl"
+        "pyarrow-13.0.0-cp38-cp38-macosx_10_14_x86_64.whl"
+        "pyarrow-13.0.0-cp38-cp38-macosx_11_0_arm64.whl"
+        "pyarrow-13.0.0-cp38-cp38-manylinux_2_17_aarch64.manylinux2014_aarch64.whl"
+        "pyarrow-13.0.0-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl"
+        "pyarrow-13.0.0-cp38-cp38-manylinux_2_28_aarch64.whl"
+        "pyarrow-13.0.0-cp38-cp38-manylinux_2_28_x86_64.whl"
+        "pyarrow-13.0.0-cp38-cp38-win_amd64.whl"
+        "pyarrow-13.0.0-cp39-cp39-macosx_10_14_x86_64.whl"
+        "pyarrow-13.0.0-cp39-cp39-macosx_11_0_arm64.whl"
+        "pyarrow-13.0.0-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl"
+        "pyarrow-13.0.0-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl"
+        "pyarrow-13.0.0-cp39-cp39-manylinux_2_28_aarch64.whl"
+        "pyarrow-13.0.0-cp39-cp39-manylinux_2_28_x86_64.whl"
+        "pyarrow-13.0.0-cp39-cp39-win_amd64.whl"
+      ];
+
     in
     {
       testPyNoneAny = mkTest {
@@ -345,7 +376,7 @@ in
         python = mocks.cpythonLinux38;
       };
 
-      testCPythonDarwin311 = mkTest {
+      testZmqCPythonDarwin311 = mkTest {
         input = zmqWheels;
         output = [
           "pyzmq-24.0.1-cp311-cp311-macosx_10_15_universal2.whl"
@@ -362,13 +393,40 @@ in
         python = mocks.cpythonDarwin311;
       };
 
-      testPypy39Linux = mkTest {
+      testZmqPypy39Linux = mkTest {
         input = zmqWheels;
         output = [
           "pyzmq-24.0.1-pp39-pypy39_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl"
           "pyzmq-24.0.1-pp38-pypy38_pp73-manylinux_2_12_x86_64.manylinux2010_x86_64.whl"
           "pyzmq-24.0.1-pp37-pypy37_pp73-manylinux_2_12_x86_64.manylinux2010_x86_64.whl"
         ];
+        python = mocks.pypy39Linux;
+      };
+
+      testArrowCpythonLinux38 = mkTest {
+        input = pyarrowWheels;
+        output = [
+          # TODO: Also sort by libc version, glibc 2.28 should come before 2.17
+          "pyarrow-13.0.0-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl"
+          "pyarrow-13.0.0-cp38-cp38-manylinux_2_28_x86_64.whl"
+        ];
+        python = mocks.cpythonLinux38;
+      };
+
+      testArrowCPythonDarwin311 = mkTest {
+        input = pyarrowWheels;
+        output = [
+          "pyarrow-13.0.0-cp311-cp311-macosx_10_14_x86_64.whl"
+          "pyarrow-13.0.0-cp310-cp310-macosx_10_14_x86_64.whl"
+          "pyarrow-13.0.0-cp39-cp39-macosx_10_14_x86_64.whl"
+          "pyarrow-13.0.0-cp38-cp38-macosx_10_14_x86_64.whl"
+        ];
+        python = mocks.cpythonDarwin311;
+      };
+
+      testArrowPypy39Linux = mkTest {
+        input = pyarrowWheels;
+        output = [ ];
         python = mocks.pypy39Linux;
       };
     };
