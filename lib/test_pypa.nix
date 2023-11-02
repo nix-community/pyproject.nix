@@ -348,16 +348,16 @@ in
       testCPythonDarwin311 = mkTest {
         input = zmqWheels;
         output = [
-          "pyzmq-24.0.1-cp311-cp311-macosx_10_9_x86_64.whl"
-          "pyzmq-24.0.1-cp39-cp39-macosx_10_9_x86_64.whl"
           "pyzmq-24.0.1-cp311-cp311-macosx_10_15_universal2.whl"
+          "pyzmq-24.0.1-cp311-cp311-macosx_10_9_x86_64.whl"
+          "pyzmq-24.0.1-cp310-cp310-macosx_10_15_universal2.whl"
           "pyzmq-24.0.1-cp310-cp310-macosx_10_9_x86_64.whl"
           "pyzmq-24.0.1-cp39-cp39-macosx_10_15_universal2.whl"
-          "pyzmq-24.0.1-cp38-cp38-macosx_10_9_x86_64.whl"
+          "pyzmq-24.0.1-cp39-cp39-macosx_10_9_x86_64.whl"
           "pyzmq-24.0.1-cp38-cp38-macosx_10_15_universal2.whl"
+          "pyzmq-24.0.1-cp38-cp38-macosx_10_9_x86_64.whl"
           "pyzmq-24.0.1-cp37-cp37m-macosx_10_9_x86_64.whl"
           "pyzmq-24.0.1-cp36-cp36m-macosx_10_9_x86_64.whl"
-          "pyzmq-24.0.1-cp310-cp310-macosx_10_15_universal2.whl"
         ];
         python = mocks.cpythonDarwin311;
       };

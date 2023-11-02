@@ -317,7 +317,6 @@ lib.fix (self: {
           in
           {
             bestLanguageTag = head (sort (x: y: x > y) languageTags');
-            platformTagJoined = concatStringsSep "." file.platformTags;
             compatible = abiCompatible && length languageTags > 0 && lib.any (self.isPlatformTagCompatible python) file.platformTags;
             inherit file;
           })
@@ -334,7 +333,6 @@ lib.fix (self: {
             || x.file.version > y.file.version
             || (x.file.buildTag != null && (y.file.buildTag == null || x.file.buildTag > y.file.buildTag))
             || x.bestLanguageTag > y.bestLanguageTag
-            || x.platformTagJoined > y.platformTagJoined
         )
         compatibleFiles;
 
