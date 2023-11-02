@@ -194,8 +194,8 @@ lib.fix (self: {
       platform = python.stdenv.targetPlatform;
     in
     if platformTag == "any" then true
-    else if hasPrefix "manylinux" platformTag then pep600.manyLinuxTagCompatible python.stdenv platformTag
-    else if hasPrefix "musllinux" platformTag then pep656.muslLinuxTagCompatible python.stdenv platformTag
+    else if hasPrefix "manylinux" platformTag then pep600.manyLinuxTagCompatible platform python.stdenv.cc.libc platformTag
+    else if hasPrefix "musllinux" platformTag then pep656.muslLinuxTagCompatible platform python.stdenv.cc.libc platformTag
     else if hasPrefix "macosx" platformTag then
       (
         let

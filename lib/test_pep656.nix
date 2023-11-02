@@ -1,16 +1,18 @@
-{ pep656, ... }:
+{ pep656, lib, ... }:
 let
   inherit (pep656) muslLinuxTagCompatible;
 
   mockStdenvs =
     let
-      mkMock = pname: version: cpuName: {
+      mkMock = pname: version: _cpuName: {
         cc = {
           libc = {
             inherit pname version;
           };
         };
-        targetPlatform.parsed.cpu.name = cpuName;
+        targetPlatform = lib.systems.elaborate "x86_64-linux" // {
+          libc = "musl";
+        };
       };
     in
     {
@@ -25,23 +27,23 @@ in
 {
   muslLinuxTagCompatible = {
     testSimpleIncompatible = {
-      expr = muslLinuxTagCompatible mockStdenvs.x86_64-linux.glibc_2_4 "musllinux_1_1_x86_64";
+      expr = muslLinuxTagCompatible mockStdenvs.x86_64-linux.glibc_2_4.targetPlatform mockStdenvs.x86_64-linux.glibc_2_4.cc.libc "musllinux_1_1_x86_64";
       expected = false;
     };
 
     testManyLinux = {
-      expr = muslLinuxTagCompatible mockStdenvs.x86_64-linux.musl_1_2_3 "manylinux1_x86_64";
+      expr = muslLinuxTagCompatible mockStdenvs.x86_64-linux.musl_1_2_3.targetPlatform mockStdenvs.x86_64-linux.musl_1_2_3.cc.libc "manylinux1_x86_64";
       expectedError.type = "ThrownError";
       expectedError.msg = ".* is not a valid musllinux tag";
     };
 
     testSimpleCompatible = {
-      expr = muslLinuxTagCompatible mockStdenvs.x86_64-linux.musl_1_2_3 "musllinux_1_1_x86_64";
+      expr = muslLinuxTagCompatible mockStdenvs.x86_64-linux.musl_1_2_3.targetPlatform mockStdenvs.x86_64-linux.musl_1_2_3.cc.libc "musllinux_1_1_x86_64";
       expected = true;
     };
 
     testSimpleArchIncompatible = {
-      expr = muslLinuxTagCompatible mockStdenvs.x86_64-linux.musl_1_2_3 "musllinux_1_1_armv7l";
+      expr = muslLinuxTagCompatible mockStdenvs.x86_64-linux.musl_1_2_3.targetPlatform mockStdenvs.x86_64-linux.musl_1_2_3.cc.libc "musllinux_1_1_armv7l";
       expected = false;
     };
   };
