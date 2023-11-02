@@ -16,6 +16,7 @@ let
         , implementation ? "cpython"
         , isLinux ? false
         , isDarwin ? false
+        , system
         ,
         }: {
           inherit pname version;
@@ -72,13 +73,7 @@ let
           stdenv = {
             inherit isLinux isDarwin;
 
-            targetPlatform = {
-              isWindows = false;
-              inherit isLinux isDarwin;
-            } // {
-              parsed.cpu.name = "x86_64";
-            } // lib.optionalAttrs isDarwin {
-              darwinArch = "x86_64";
+            targetPlatform = lib.systems.elaborate system // lib.optionalAttrs isDarwin {
               darwinSdkVersion = "11.0";
             };
 
@@ -100,6 +95,7 @@ let
         isLinux = true;
         sourceVersion.major = "3";
         sourceVersion.minor = "8";
+        system = "x86_64-linux";
       };
 
       cpythonDarwin311 = mkPython {
@@ -108,6 +104,7 @@ let
         isDarwin = true;
         sourceVersion.major = "3";
         sourceVersion.minor = "11";
+        system = "x86_64-darwin";
       };
 
       pypy39Linux = mkPython {
@@ -118,6 +115,7 @@ let
         implementation = "pypy";
         sourceVersion.major = "3";
         sourceVersion.minor = "9";
+        system = "x86_64-linux";
       };
     };
 

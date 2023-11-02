@@ -1,16 +1,16 @@
-{ pep600, ... }:
+{ pep600, lib, ... }:
 let
   inherit (pep600) legacyAliases manyLinuxTagCompatible;
 
   mockStdenvs =
     let
-      mkMock = pname: version: cpuName: {
+      mkMock = pname: version: _cpuName: {
         cc = {
           libc = {
             inherit pname version;
           };
         };
-        targetPlatform.parsed.cpu.name = cpuName;
+        targetPlatform = lib.systems.elaborate "x86_64-linux";
       };
     in
     {
@@ -37,22 +37,22 @@ in
 
   manyLinuxTagCompatible = {
     testSimpleIncompatible = {
-      expr = manyLinuxTagCompatible mockStdenvs.x86_64-linux.glibc_2_4 "manylinux1_x86_64";
+      expr = manyLinuxTagCompatible mockStdenvs.x86_64-linux.glibc_2_4.targetPlatform mockStdenvs.x86_64-linux.glibc_2_4.cc.libc "manylinux1_x86_64";
       expected = false;
     };
 
     testMusl = {
-      expr = manyLinuxTagCompatible mockStdenvs.x86_64-linux.musl_1_2_3 "manylinux1_x86_64";
+      expr = manyLinuxTagCompatible mockStdenvs.x86_64-linux.musl_1_2_3.targetPlatform mockStdenvs.x86_64-linux.musl_1_2_3.cc.libc "manylinux1_x86_64";
       expected = false;
     };
 
     testSimpleCompatible = {
-      expr = manyLinuxTagCompatible mockStdenvs.x86_64-linux.glibc_2_5 "manylinux1_x86_64";
+      expr = manyLinuxTagCompatible mockStdenvs.x86_64-linux.glibc_2_5.targetPlatform mockStdenvs.x86_64-linux.glibc_2_5.cc.libc "manylinux1_x86_64";
       expected = true;
     };
 
     testSimpleArchIncompatible = {
-      expr = manyLinuxTagCompatible mockStdenvs.x86_64-linux.glibc_2_5 "manylinux2014_armv7l";
+      expr = manyLinuxTagCompatible mockStdenvs.x86_64-linux.glibc_2_5.targetPlatform mockStdenvs.x86_64-linux.glibc_2_5.cc.libc "manylinux2014_armv7l";
       expected = false;
     };
   };
