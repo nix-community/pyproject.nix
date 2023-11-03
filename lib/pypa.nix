@@ -6,6 +6,9 @@ let
 
   matchWheelFileName = match "([^-]+)-([^-]+)(-([[:digit:]][^-]*))?-([^-]+)-([^-]+)-(.+).whl";
 
+  # PEP-625 only specifies .tar.gz as valid extension but .zip is also fairly widespread.
+  matchSdistFileName = match "([^-]+)-(.+)(\.tar\.gz|\.zip)";
+
   # Tag normalization documented in
   # https://packaging.python.org/en/latest/specifications/platform-compatibility-tags/#details
   normalizedImpls = {
@@ -92,6 +95,18 @@ lib.fix (self: {
       rest = mAt 2;
     };
 
+  /* Check whether string is a sdist file or not.
+
+     Type: isSdistFileName :: string -> bool
+
+     Example:
+     # isSdistFileName "cryptography-41.0.1.tar.gz"
+     true
+  */
+  isSdistFileName =
+    # The filename string
+    name: matchSdistFileName name != null;
+
   /* Check whether string is a wheel file or not.
 
      Type: isWheelFileName :: string -> bool
@@ -100,7 +115,9 @@ lib.fix (self: {
      # isWheelFileName "cryptography-41.0.1-cp37-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl"
      true
   */
-  isWheelFileName = name: matchWheelFileName name != null;
+  isWheelFileName =
+    # The filename string
+    name: matchWheelFileName name != null;
 
   /* Parse PEP-427 wheel file names.
 

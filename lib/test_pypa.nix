@@ -1,6 +1,6 @@
 { lib, pypa, mocks, ... }:
 let
-  inherit (pypa) normalizePackageName parsePythonTag parseABITag parseWheelFileName isWheelFileName isPythonTagCompatible isABITagCompatible isPlatformTagCompatible isWheelFileCompatible selectWheels;
+  inherit (pypa) normalizePackageName parsePythonTag parseABITag parseWheelFileName isWheelFileName isPythonTagCompatible isABITagCompatible isPlatformTagCompatible isWheelFileCompatible selectWheels isSdistFileName;
   inherit (lib) mapAttrs';
 
 in
@@ -141,6 +141,33 @@ in
 
     testComplexNoMatch = {
       expr = isWheelFileName "cryptography-41.0.1-cp37-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.zip";
+      expected = false;
+    };
+  };
+
+  isSdistFileName = {
+    testSimpleZip = {
+      expr = isSdistFileName "debugpy-1.6.7.zip";
+      expected = true;
+    };
+
+    testSimpleTarGz = {
+      expr = isSdistFileName "debugpy-1.6.7.tar.gz";
+      expected = true;
+    };
+
+    testSimpleTarBz2 = {
+      expr = isSdistFileName "debugpy-1.6.7.tar.bz2";
+      expected = false;
+    };
+
+    testUniversalWheel = {
+      expr = isSdistFileName "distribution-1.0-1-py27-none-any.whl";
+      expected = false;
+    };
+
+    testWheel = {
+      expr = isSdistFileName "cryptography-41.0.1-cp37-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl";
       expected = false;
     };
   };
