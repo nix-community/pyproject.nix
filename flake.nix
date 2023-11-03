@@ -94,7 +94,7 @@
               '';
             };
 
-            fetchers = import ./fetchers { inherit pkgs lib; };
+            fetchers = pkgs.callPackage ./fetchers { };
 
             proc.groups.run.processes = {
               nix-unittest.command = "${lib.getExe' pkgs.reflex "reflex"} -r '\.(nix)$' -- ${lib.getExe' nixUnit "nix-unit"} --quiet --flake '.#libTests'";

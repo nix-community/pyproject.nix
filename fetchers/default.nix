@@ -1,6 +1,9 @@
-{ pkgs
+{ curl
+, jq
 , lib
-,
+, python3
+, runCommand
+, stdenvNoCC
 }:
 let
   inherit (builtins) substring filter head nixPath;
@@ -51,11 +54,11 @@ lib.mapAttrs (_: func: lib.makeOverridable func) {
     let
       predictedURL = predictURLFromPypi { inherit pname file kind; };
     in
-    pkgs.stdenvNoCC.mkDerivation {
+    stdenvNoCC.mkDerivation {
       name = file;
       nativeBuildInputs = [
-        pkgs.buildPackages.curl
-        pkgs.buildPackages.jq
+        curl
+        jq
       ];
       isWheel = lib.strings.hasSuffix "whl" file;
       system = "builtin";
@@ -106,9 +109,9 @@ lib.mapAttrs (_: func: lib.makeOverridable func) {
         then (head pathParts).path
         else "";
     in
-    pkgs.runCommand file
+    runCommand file
       {
-        nativeBuildInputs = [ pkgs.buildPackages.python3 ];
+        nativeBuildInputs = [ python3 ];
         impureEnvVars = lib.fetchers.proxyImpureEnvVars;
         outputHashMode = "flat";
         outputHashAlgo = "sha256";
