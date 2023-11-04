@@ -1,6 +1,6 @@
 { lib, ... }:
 let
-  inherit (builtins) split filter match length elemAt head tail foldl' fromJSON typeOf;
+  inherit (builtins) split filter match length elemAt head foldl' fromJSON typeOf;
   inherit (lib) fix isString toInt toLower sublist;
 
   filterNull = filter (x: x != null);
@@ -54,19 +54,19 @@ let
   parseLocal = parseReleaseSuffix "\\+";
 
   # Compare the release fields from the parsed version
-  compareRelease = ra: rb:
+  compareRelease = offset: ra: rb:
     let
-      x = head ra;
-      y = head rb;
+      x = elemAt ra offset;
+      y = elemAt rb offset;
     in
-    if length ra == 0 || length rb == 0 then 0 else
+    if length ra == offset || length rb == offset then 0 else
     (
       if x == "*" || y == "*" then 0 # Wildcards are always considered equal
       else
         (
           if x > y then 1
           else if x < y then -1
-          else compareRelease (tail ra) (tail rb)
+          else compareRelease (offset + 1) ra rb
         )
     );
 
@@ -180,7 +180,7 @@ fix (self: {
     # is valid and we need to consider them all.
 
     # Compare release field
-    (compareRelease a.release b.release)
+    (compareRelease 0 a.release b.release)
 
     # Compare pre release
     (
