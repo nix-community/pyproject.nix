@@ -1,6 +1,6 @@
 { pep440, ... }:
 let
-  inherit (pep440) parseVersion parseVersionCond compareVersions comparators;
+  inherit (pep440) parseVersion parseVersionCond parseVersionConds compareVersions comparators;
 
 in
 
@@ -254,6 +254,39 @@ in
           release = [ "*" ];
         };
       };
+    };
+  };
+
+  parseVersionConds = {
+    testSimple = {
+      expr = parseVersionConds ">=3.0.0rc1,<=4.0";
+      expected = [
+        {
+          op = ">=";
+          version = {
+            dev = null;
+            epoch = 0;
+            local = null;
+            post = null;
+            pre = {
+              type = "rc";
+              value = 1;
+            };
+            release = [ 3 0 0 ];
+          };
+        }
+        {
+          op = "<=";
+          version = {
+            dev = null;
+            epoch = 0;
+            local = null;
+            post = null;
+            pre = null;
+            release = [ 4 0 ];
+          };
+        }
+      ];
     };
   };
 

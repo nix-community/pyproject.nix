@@ -2,6 +2,7 @@
 let
   inherit (builtins) split filter match length elemAt head foldl' fromJSON typeOf;
   inherit (lib) fix isString toInt toLower sublist;
+  inherit (import ./util.nix { inherit lib; }) splitComma;
 
   filterNull = filter (x: x != null);
   filterEmpty = filter (x: length x > 0);
@@ -159,6 +160,42 @@ fix (self: {
       version = self.parseVersion (mAt 1);
     }
   );
+
+  /* Parse a list of version conditionals separated by commas.
+
+     Type: parseVersionConds :: string -> [AttrSet]
+
+     Example:
+       # parseVersionConds ">=3.0.0rc1,<=4.0"
+       [
+         {
+           op = ">=";
+           version = {
+             dev = null;
+             epoch = 0;
+             local = null;
+             post = null;
+             pre = {
+               type = "rc";
+               value = 1;
+             };
+             release = [ 3 0 0 ];
+           };
+         }
+         {
+           op = "<=";
+           version = {
+             dev = null;
+             epoch = 0;
+             local = null;
+             post = null;
+             pre = null;
+             release = [ 4 0 ];
+           };
+         }
+       ]
+  */
+  parseVersionConds = conds: map self.parseVersionCond (splitComma conds);
 
   /* Compare two versions as parsed by `parseVersion` according to PEP-440.
 
