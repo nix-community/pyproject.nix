@@ -107,6 +107,27 @@ lib.fix (self: {
     # The filename string
     name: matchSdistFileName name != null;
 
+
+  /* Regex match a wheel file name, returning a list of match groups. Returns null if no match.
+
+     Type: matchWheelFileName :: string -> [ string ]
+  */
+  matchWheelFileName = name:
+    let
+      m = match "([^-]+)-([^-]+)(-([[:digit:]][^-]*))?-([^-]+)-([^-]+)-(.+).whl" name;
+    in
+    if m != null then filter isString m else null;
+
+  /* Regex match an egg file name, returning a list of match groups. Returns null if no match.
+
+     Type: matchEggFileName :: string -> [ string ]
+  */
+  matchEggFileName = name:
+    let
+      m = match "([^-]+)-([^-]+)-(.+)\\.egg" name;
+    in
+    if m != null then filter isString m else null;
+
   /* Check whether string is a wheel file or not.
 
      Type: isWheelFileName :: string -> bool

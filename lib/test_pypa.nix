@@ -1,6 +1,6 @@
 { lib, pypa, mocks, ... }:
 let
-  inherit (pypa) normalizePackageName parsePythonTag parseABITag parseWheelFileName isWheelFileName isPythonTagCompatible isABITagCompatible isPlatformTagCompatible isWheelFileCompatible selectWheels isSdistFileName;
+  inherit (pypa) normalizePackageName parsePythonTag parseABITag parseWheelFileName isWheelFileName isPythonTagCompatible isABITagCompatible isPlatformTagCompatible isWheelFileCompatible selectWheels isSdistFileName matchWheelFileName matchEggFileName;
   inherit (lib) mapAttrs';
 
 in
@@ -120,6 +120,40 @@ in
         version = "1.0.0";
         filename = "Werkzeug-1.0.0-py2.py3-none-any.whl";
       };
+    };
+  };
+
+  matchWheelFileName = {
+    testSimple = {
+      expr = matchWheelFileName "distribution-1.0-1-py27-none-any.whl";
+      expected = [ "distribution" "1.0" "-1" "1" "py27" "none" "any" ];
+    };
+
+    testSimpleNoMatch = {
+      expr = matchWheelFileName "distribution-1.0-1-py27-none-any.tar.gz";
+      expected = null;
+    };
+
+    testComplex = {
+      expr = matchWheelFileName "cryptography-41.0.1-cp37-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl";
+      expected = [ "cryptography" "41.0.1" "cp37" "abi3" "manylinux_2_17_aarch64.manylinux2014_aarch64" ];
+    };
+
+    testComplexNoMatch = {
+      expr = matchWheelFileName "cryptography-41.0.1-cp37-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.zip";
+      expected = null;
+    };
+  };
+
+  matchEggFileName = {
+    testSimple = {
+      expr = matchEggFileName "python_editor-1.0.4-py3.5.egg";
+      expected = [ "python_editor" "1.0.4" "py3.5" ];
+    };
+
+    testSimpleNoMatch = {
+      expr = matchEggFileName "distribution-1.0-1-py27-none-any.tar.gz";
+      expected = null;
     };
   };
 
