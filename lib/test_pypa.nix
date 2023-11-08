@@ -1,6 +1,6 @@
 { lib, pypa, mocks, ... }:
 let
-  inherit (pypa) normalizePackageName parsePythonTag parseABITag parseWheelFileName isWheelFileName isPythonTagCompatible isABITagCompatible isPlatformTagCompatible isWheelFileCompatible selectWheels isSdistFileName matchWheelFileName matchEggFileName;
+  inherit (pypa) normalizePackageName parsePythonTag parseABITag parseWheelFileName isWheelFileName isPythonTagCompatible isABITagCompatible isPlatformTagCompatible isWheelFileCompatible selectWheels isSdistFileName matchWheelFileName matchEggFileName isEggFileName;
   inherit (lib) mapAttrs';
 
 in
@@ -154,6 +154,18 @@ in
     testSimpleNoMatch = {
       expr = matchEggFileName "distribution-1.0-1-py27-none-any.tar.gz";
       expected = null;
+    };
+  };
+
+  isEggFileName = {
+    testSimple = {
+      expr = isEggFileName "python_editor-1.0.4-py3.5.egg";
+      expected = true;
+    };
+
+    testSimpleNoMatch = {
+      expr = isEggFileName "distribution-1.0-1-py27-none-any.tar.gz";
+      expected = false;
     };
   };
 

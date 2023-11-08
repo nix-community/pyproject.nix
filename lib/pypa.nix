@@ -128,6 +128,18 @@ lib.fix (self: {
     in
     if m != null then filter isString m else null;
 
+  /* Check whether string is an egg file or not.
+
+     Type: isEggFileName :: string -> bool
+
+     Example:
+     # isEggFileName "cryptography-41.0.1-cp37-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl"
+     false
+  */
+  isEggFileName =
+    # The filename string
+    name: self.matchEggFileName name != null;
+
   /* Check whether string is a wheel file or not.
 
      Type: isWheelFileName :: string -> bool
