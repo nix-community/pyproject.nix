@@ -30,7 +30,6 @@ in
       sysMajor = sysVersion' 0;
       sysMinor = sysVersion' 1;
     in
-    assert platform.libc == libc.pname;
     if m == null then throw "'${tag}' is not a valid musllinux tag."
     else if platform.libc != "musl" then false
     else if libc.pname != "musl" then false

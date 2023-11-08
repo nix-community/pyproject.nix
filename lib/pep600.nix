@@ -55,7 +55,6 @@ fix (self: {
       sysMajor = sysVersion' 0;
       sysMinor = sysVersion' 1;
     in
-    assert platform.libc == libc.pname;
     if m == null then throw "'${tag'}' is not a valid manylinux tag."
     else if platform.libc != "glibc" then false
     else if libc.pname != "glibc" then false
