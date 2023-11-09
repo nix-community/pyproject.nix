@@ -182,10 +182,19 @@ lib.fix (self: {
 
   loadRequirementsTxt = {
     testRecursive = {
-      expr = project.loadRequirementsTxt {
-        requirements = ./fixtures/requirements-recursive.txt;
-      };
+      expr =
+        let
+          self = project.loadRequirementsTxt {
+            requirements = ./fixtures/requirements-recursive.txt;
+          };
+        in
+        self // {
+          renderers = lib.attrNames self.renderers;
+          validators = lib.attrNames self.validators;
+        };
       expected = {
+        renderers = [ "buildPythonPackage" "withPackages" ];
+        validators = [ "validateVersionConstraints" ];
         dependencies = {
           build-systems = [ ];
           dependencies = [

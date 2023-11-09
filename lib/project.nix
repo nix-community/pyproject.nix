@@ -1,5 +1,14 @@
-{ pep621, poetry, pip, lib, ... }:
+{ pep621, poetry, pip, lib, renderers, validators, ... }:
 
+let
+  inherit (builtins) mapAttrs;
+
+  # Map over renderers and inject project argument.
+  # This allows for a user interface like:
+  # project.renderers.buildPythonPackage { } where project is already curried.
+  curryProject = attrs: project: lib.mapAttrs (_: func: args: func (args // { inherit project; })) attrs;
+
+in
 lib.fix (self: {
   /* Load dependencies from a PEP-621 pyproject.toml.
 
@@ -19,10 +28,12 @@ lib.fix (self: {
       pyproject
       # Example: extrasAttrPaths = [ "tool.pdm.dev-dependencies" ];
     , extrasAttrPaths ? [ ]
-    }: {
+    }: lib.fix (project: {
       dependencies = pep621.parseDependencies { inherit pyproject extrasAttrPaths; };
       inherit pyproject;
-    };
+      renderers = curryProject renderers project;
+      validators = curryProject validators project;
+    });
 
   /* Load dependencies from a PDM pyproject.toml.
 
@@ -65,11 +76,13 @@ lib.fix (self: {
     let
       pyproject-pep621 = poetry.translatePoetryProject pyproject;
     in
-    {
+    lib.fix (project: {
       dependencies = poetry.parseDependencies pyproject;
       pyproject = pyproject-pep621;
       pyproject-poetry = pyproject;
-    };
+      renderers = curryProject renderers project;
+      validators = curryProject validators project;
+    });
 
   /* Load dependencies from a requirements.txt.
 
@@ -89,12 +102,14 @@ lib.fix (self: {
     {
       # The contents of requirements.txt
       requirements
-    }: {
+    }: lib.fix (project: {
       dependencies = {
         dependencies = map (x: x.requirement) (pip.parseRequirementsTxt requirements);
         extras = { };
         build-systems = [ ];
       };
       pyproject = null;
-    };
+      renderers = curryProject renderers project;
+      validators = curryProject validators project;
+    });
 })
