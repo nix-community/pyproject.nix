@@ -101,7 +101,9 @@ lib.mapAttrs (_: func: lib.makeOverridable func) {
       # package name
       pname
     , # URL to package index
-      url
+      url ? null
+    , # URLs (multiple) to package index
+      urls ? [ ]
     , # filename including extension
       file
     , # SRI hash
@@ -109,13 +111,16 @@ lib.mapAttrs (_: func: lib.makeOverridable func) {
     ,
     }:
     let
+      urls' = urls ++ lib.optional (url != null) url;
+
       pathParts = filter ({ prefix, path }: "NETRC" == prefix) nixPath; # deadnix: skip
       netrc_file =
         if (pathParts != [ ])
         then (head pathParts).path
         else "";
     in
-    runCommand file
+    # Assert that we have at least one URL
+    assert urls' != [ ]; runCommand file
       {
         nativeBuildInputs = [ python3 ];
         impureEnvVars = lib.fetchers.proxyImpureEnvVars;
@@ -124,8 +129,9 @@ lib.mapAttrs (_: func: lib.makeOverridable func) {
         outputHash = hash;
         NETRC = netrc_file;
         passthru.isWheel = lib.strings.hasSuffix "whl" file;
-      } ''
-      python ${./fetch-from-legacy.py} ${url} ${pname} ${file}
-      mv ${file} $out
-    '';
+      }
+      ''
+        python ${./fetch-from-legacy.py} ${lib.concatStringsSep " " (map (url: "--url ${lib.escapeShellArg url}") urls)} --pname ${pname} --filename ${file}
+        mv ${file} $out
+      '';
 }
