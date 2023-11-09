@@ -140,6 +140,30 @@ lib.fix (self: {
     # The filename string
     name: self.matchEggFileName name != null;
 
+  /* Parse an egg file name.
+
+     Type: parsehEggFileName :: string -> AttrSet
+
+     Example:
+     # parseEggFileName
+  */
+  parseEggFileName = name:
+    let
+      m = self.matchEggFileName name;
+      mAt = elemAt m;
+      langM = match "([^0-9]*)(.+)" (mAt 2);
+      langAt = elemAt langM;
+    in
+    assert m != null; {
+      filename = name;
+      distribution = mAt 0;
+      version = mAt 1;
+      languageTag = {
+        implementation = normalizeImpl (langAt 0);
+        version = langAt 1;
+      };
+    };
+
   /* Check whether string is a wheel file or not.
 
      Type: isWheelFileName :: string -> bool
@@ -341,6 +365,29 @@ lib.fix (self: {
       &&
       lib.any (self.isPlatformTagCompatible platform libc) file.platformTags
     );
+
+  /* Select compatible eggs from a list and return them in priority order.
+
+     Type: selectEggs :: derivation -> [ AttrSet ] -> [ AttrSet ]
+  */
+  selectEggs =
+    # Python interpreter derivation
+    python:
+    # List of files parsed by parseEggFileName
+    files:
+    let
+      inherit (python.passthru) pythonVersion implementation;
+
+      langCompatible = filter
+        (file: file.languageTag.implementation == "python" || file.languageTag.implementation == implementation)
+        files;
+
+      versionCompatible = filter
+        (file: compareVersions pythonVersion file.languageTag.version >= 0)
+        langCompatible;
+
+    in
+    sort (a: b: compareVersions a.languageTag.version b.languageTag.version > 0) versionCompatible;
 
   /* Select compatible wheels from a list and return them in priority order.
 
