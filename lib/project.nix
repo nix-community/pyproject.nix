@@ -1,4 +1,4 @@
-{ pep518, pep621, poetry, pip, lib, ... }:
+{ pep621, poetry, pip, lib, ... }:
 
 lib.fix (self: {
   /* Load dependencies from a PEP-621 pyproject.toml.
@@ -21,7 +21,6 @@ lib.fix (self: {
     , extrasAttrPaths ? [ ]
     }: {
       dependencies = pep621.parseDependencies { inherit pyproject extrasAttrPaths; };
-      build-systems = pep518.parseBuildSystems pyproject;
       inherit pyproject;
     };
 
@@ -68,7 +67,6 @@ lib.fix (self: {
     in
     {
       dependencies = poetry.parseDependencies pyproject;
-      build-systems = pep518.parseBuildSystems pyproject;
       pyproject = pyproject-pep621;
       pyproject-poetry = pyproject;
     };
@@ -97,7 +95,6 @@ lib.fix (self: {
         extras = { };
         build-systems = [ ];
       };
-      build-systems = [ ];
       pyproject = null;
     };
 })

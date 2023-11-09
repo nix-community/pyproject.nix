@@ -186,7 +186,6 @@ lib.fix (self: {
         requirements = ./fixtures/requirements-recursive.txt;
       };
       expected = {
-        build-systems = [ ];
         dependencies = {
           build-systems = [ ];
           dependencies = [
