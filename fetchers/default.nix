@@ -128,7 +128,10 @@ lib.mapAttrs (_: func: lib.makeOverridable func) {
         outputHashAlgo = "sha256";
         outputHash = hash;
         NETRC = netrc_file;
-        passthru.isWheel = lib.strings.hasSuffix "whl" file;
+        passthru = {
+          isWheel = lib.strings.hasSuffix "whl" file; # Poetry2nix compat
+          urls = urls';
+        };
       }
       ''
         python ${./fetch-from-legacy.py} ${lib.concatStringsSep " " (map (url: "--url ${lib.escapeShellArg url}") urls')} --pname ${pname} --filename ${file}
