@@ -4,7 +4,7 @@ let
   inherit (lib) isString filterAttrs fix;
 
   splitAttrPath = path: filter isString (split "\\." path);
-  getAttrPath = path: lib.getAttrFromPath (splitAttrPath path);
+  getAttrPath = path: lib.attrByPath (splitAttrPath path) { };
 
 in
 fix (self: {

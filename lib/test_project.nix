@@ -2,6 +2,7 @@
 , fixtures
 , renderers
 , mocks
+, lib
 , ...
 }:
 let
@@ -11,8 +12,24 @@ let
   getPkgs = set: pnames: map (pname: set.pkgs.${pname}) pnames;
 
 in
-{
+lib.fix (self: {
+
   loadPyproject = {
+    testPandasMissingExtrasAttrPaths = {
+      expr =
+        let
+          project = loadPyproject {
+            pyproject = fixtures."pandas.toml";
+            extrasAttrPaths = [ "noway" ];
+          };
+        in
+        renderers.buildPythonPackage {
+          inherit project;
+          python = mocks.cpythonLinux38;
+        };
+      inherit (self.loadPyproject.testPandas) expected;
+    };
+
     testPandas = {
       expr =
         let
@@ -218,4 +235,4 @@ in
       };
     };
   };
-}
+})
