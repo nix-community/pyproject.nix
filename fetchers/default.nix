@@ -131,7 +131,7 @@ lib.mapAttrs (_: func: lib.makeOverridable func) {
         passthru.isWheel = lib.strings.hasSuffix "whl" file;
       }
       ''
-        python ${./fetch-from-legacy.py} ${lib.concatStringsSep " " (map (url: "--url ${lib.escapeShellArg url}") urls)} --pname ${pname} --filename ${file}
+        python ${./fetch-from-legacy.py} ${lib.concatStringsSep " " (map (url: "--url ${lib.escapeShellArg url}") urls')} --pname ${pname} --filename ${file}
         mv ${file} $out
       '';
 }
