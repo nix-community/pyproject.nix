@@ -5,7 +5,7 @@
 , ...
 }:
 let
-  inherit (project) loadPyproject loadPoetryPyproject;
+  inherit (project) loadPyproject loadPoetryPyproject loadPDMPyproject;
 
   # Get python packages from a set
   getPkgs = set: pnames: map (pname: set.pkgs.${pname}) pnames;
@@ -13,10 +13,42 @@ let
 in
 {
   loadPyproject = {
+    testPandas = {
+      expr =
+        let
+          project = loadPyproject { pyproject = fixtures."pandas.toml"; };
+        in
+        renderers.buildPythonPackage {
+          inherit project;
+          python = mocks.cpythonLinux38;
+        };
+      expected = {
+        format = "pyproject";
+        meta = { description = "Powerful data structures for data analysis, time series, and statistics"; };
+        nativeBuildInputs = getPkgs mocks.cpythonLinux38 [
+          "meson-python"
+          "meson"
+          "wheel"
+          "cython"
+          "oldest-supported-numpy"
+          "versioneer"
+        ];
+        pname = "pandas";
+        propagatedBuildInputs = getPkgs mocks.cpythonLinux38 [
+          "numpy"
+          "python-dateutil"
+          "pytz"
+          "tzdata"
+        ];
+      };
+    };
+  };
+
+  loadPDMPyproject = {
     testPdm = {
       expr =
         let
-          project = loadPyproject { pyproject = fixtures."pdm.toml"; };
+          project = loadPDMPyproject { pyproject = fixtures."pdm.toml"; };
         in
         renderers.buildPythonPackage {
           inherit project;
@@ -61,36 +93,6 @@ in
           "tomli"
           "importlib-resources"
           "importlib-metadata"
-        ];
-      };
-    };
-
-    testPandas = {
-      expr =
-        let
-          project = loadPyproject { pyproject = fixtures."pandas.toml"; };
-        in
-        renderers.buildPythonPackage {
-          inherit project;
-          python = mocks.cpythonLinux38;
-        };
-      expected = {
-        format = "pyproject";
-        meta = { description = "Powerful data structures for data analysis, time series, and statistics"; };
-        nativeBuildInputs = getPkgs mocks.cpythonLinux38 [
-          "meson-python"
-          "meson"
-          "wheel"
-          "cython"
-          "oldest-supported-numpy"
-          "versioneer"
-        ];
-        pname = "pandas";
-        propagatedBuildInputs = getPkgs mocks.cpythonLinux38 [
-          "numpy"
-          "python-dateutil"
-          "pytz"
-          "tzdata"
         ];
       };
     };

@@ -1,7 +1,7 @@
-{ pep518, pep621, poetry, pip, ... }:
+{ pep518, pep621, poetry, pip, lib, ... }:
 
-{
-  /* Load dependencies from a pyproject.toml.
+lib.fix (self: {
+  /* Load dependencies from a PEP-621 pyproject.toml.
 
      Type: loadPyproject :: AttrSet -> AttrSet
 
@@ -23,6 +23,27 @@
       dependencies = pep621.parseDependencies { inherit pyproject extrasAttrPaths; };
       build-systems = pep518.parseBuildSystems pyproject;
       inherit pyproject;
+    };
+
+  /* Load dependencies from a PDM pyproject.toml.
+
+     Type: loadPDMPyproject :: AttrSet -> AttrSet
+
+     Example:
+       # loadPyproject { pyproject = lib.importTOML }
+       {
+         dependencies = { }; # Parsed dependency structure in the schema of `lib.pep621.parseDependencies`
+         build-systems = [ ];  # Returned by `lib.pep518.parseBuildSystems`
+         pyproject = { }; # The unmarshaled contents of pyproject.toml
+       }
+  */
+  loadPDMPyproject =
+    {
+      # The unmarshaled contents of pyproject.toml
+      pyproject
+    }: self.loadPyproject {
+      inherit pyproject;
+      extrasAttrPaths = [ "tool.pdm.dev-dependencies" ];
     };
 
   /* Load dependencies from a Poetry pyproject.toml.
@@ -79,4 +100,4 @@
       build-systems = [ ];
       pyproject = null;
     };
-}
+})
