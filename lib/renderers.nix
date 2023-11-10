@@ -139,6 +139,8 @@ in
         nativeBuildInputs = map (dep: python.pkgs.${dep}) namedDeps.build-systems;
       } // optionalAttrs (pyproject.project ? name) {
         pname = pyproject.project.name;
+      } // optionalAttrs (project.projectRoot != null) {
+        src = project.projectRoot;
       }
       // optionalAttrs (pyproject.project ? version) {
         inherit (pyproject.project) version;

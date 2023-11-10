@@ -65,13 +65,24 @@ lib.fix (self: {
     testPdm = {
       expr =
         let
-          project = loadPDMPyproject { pyproject = fixtures."pdm.toml"; };
+          project = loadPDMPyproject {
+            pyproject = fixtures."pdm.toml";
+            projectRoot = ./fixtures;
+          };
+
+          attrs = renderers.buildPythonPackage {
+            inherit project;
+            python = mocks.cpythonLinux38;
+          };
+
         in
-        renderers.buildPythonPackage {
-          inherit project;
-          python = mocks.cpythonLinux38;
+        attrs // {
+          # Assert shape for src, not exact equality
+          src = lib.isStorePath "${attrs.src}";
         };
+
       expected = {
+        src = true;
         format = "pyproject";
         meta = {
           description = "A modern Python package and dependency manager supporting the latest PEP standards";
@@ -240,6 +251,7 @@ lib.fix (self: {
           extras = { };
         };
         pyproject = null;
+        projectRoot = null;
       };
     };
   };

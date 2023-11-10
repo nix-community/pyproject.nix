@@ -20,17 +20,21 @@ lib.fix (self: {
          dependencies = { }; # Parsed dependency structure in the schema of `lib.pep621.parseDependencies`
          build-systems = [ ];  # Returned by `lib.pep518.parseBuildSystems`
          pyproject = { }; # The unmarshaled contents of pyproject.toml
+         projectRoot = null; # Path to project root
        }
   */
   loadPyproject =
     {
       # The unmarshaled contents of pyproject.toml
-      pyproject
-      # Example: extrasAttrPaths = [ "tool.pdm.dev-dependencies" ];
-    , extrasAttrPaths ? [ ]
+      pyproject ? lib.importTOML (projectRoot + "/pyproject.toml")
+    , # Example: extrasAttrPaths = [ "tool.pdm.dev-dependencies" ];
+      extrasAttrPaths ? [ ]
+    , # Path to project root
+      projectRoot ? null
+    ,
     }: lib.fix (project: {
       dependencies = pep621.parseDependencies { inherit pyproject extrasAttrPaths; };
-      inherit pyproject;
+      inherit pyproject projectRoot;
       renderers = curryProject renderers project;
       validators = curryProject validators project;
     });
@@ -50,10 +54,18 @@ lib.fix (self: {
   loadPDMPyproject =
     {
       # The unmarshaled contents of pyproject.toml
-      pyproject
-    }: self.loadPyproject {
-      inherit pyproject;
-      extrasAttrPaths = [ "tool.pdm.dev-dependencies" ];
+      pyproject ? lib.importTOML (projectRoot + "/pyproject.toml")
+    , # Path to project root
+      projectRoot ? null
+    , # The unmarshaled contents of pdm.lock
+      pdmLock ? lib.importTOML (projectRoot + "/pdm.lock")
+    ,
+    }: self.loadPyproject
+      {
+        inherit pyproject projectRoot;
+        extrasAttrPaths = [ "tool.pdm.dev-dependencies" ];
+      } // {
+      inherit pdmLock;
     };
 
   /* Load dependencies from a Poetry pyproject.toml.
@@ -71,7 +83,12 @@ lib.fix (self: {
   loadPoetryPyproject =
     {
       # The unmarshaled contents of pyproject.toml
-      pyproject
+      pyproject ? lib.importTOML (projectRoot + "/pyproject.toml")
+    , # Path to project root
+      projectRoot ? null
+    , # The unmarshaled contents of pyproject.toml
+      poetryLock ? lib.importTOML (projectRoot + "/poetry.lock")
+    ,
     }:
     let
       pyproject-pep621 = poetry.translatePoetryProject pyproject;
@@ -82,6 +99,7 @@ lib.fix (self: {
       pyproject-poetry = pyproject;
       renderers = curryProject renderers project;
       validators = curryProject validators project;
+      inherit projectRoot poetryLock;
     });
 
   /* Load dependencies from a requirements.txt.
@@ -101,7 +119,10 @@ lib.fix (self: {
   loadRequirementsTxt =
     {
       # The contents of requirements.txt
-      requirements
+      requirements ? builtins.readFile (projectRoot + "/requirements.txt")
+    , # Path to project root
+      projectRoot ? null
+    ,
     }: lib.fix (project: {
       dependencies = {
         dependencies = map (x: x.requirement) (pip.parseRequirementsTxt requirements);
@@ -111,5 +132,6 @@ lib.fix (self: {
       pyproject = null;
       renderers = curryProject renderers project;
       validators = curryProject validators project;
+      inherit projectRoot;
     });
 })
