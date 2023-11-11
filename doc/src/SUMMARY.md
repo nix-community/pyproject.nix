@@ -6,8 +6,8 @@
 
 # Use cases
 
-- [requirements.txt](./use-cases/requirements.md)
 - [pyproject.toml](./use-cases/pyproject.md)
+- [requirements.txt](./use-cases/requirements.md)
 
 # Reference
 
