@@ -1,13 +1,12 @@
 # Contents
 
 - [Introduction](./introduction.md)
-- [Hacking](./HACKING.md)
-- [FAQ](./FAQ.md)
 
 # Use cases
 
 - [pyproject.toml](./use-cases/pyproject.md)
 - [requirements.txt](./use-cases/requirements.md)
+- [FAQ](./FAQ.md)
 
 # Reference
 
@@ -27,3 +26,7 @@
   - [poetry](./lib/poetry.nix)
   - [pypa](./lib/pypa.nix)
   - [pip](./lib/pip.nix)
+
+# Contributing
+
+- [Hacking](./HACKING.md)
