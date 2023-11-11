@@ -15,4 +15,7 @@ renderer = ["html"]
 [output.html]
 git-repository-url = "https://github.com/nix-community/pyproject.nix"
 git-branch = "master"
-open-on-text = "Found an issue? [Edit this page on GitHub.]"
+open-on-text = """
+<hr style="margin-top: 5em;" />
+Found an issue? [Edit this page on GitHub.]
+"""
