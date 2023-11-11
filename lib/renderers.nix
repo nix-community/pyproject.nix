@@ -70,7 +70,8 @@ in
       python
     , # Python extras (optionals) to enable
       extras ? [ ]
-    , # Map a Python extras group name to a Nix attribute set.
+    , # Map a Python extras group name to a Nix attribute set like:
+      # { dev = "checkInputs"; }
       # This is intended to be used with optionals such as test dependencies that you might
       # want to add to checkInputs instead of propagatedBuildInputs
       extrasAttrMappings ? { }
@@ -135,6 +136,9 @@ in
       ({
         propagatedBuildInputs = map (dep: python.pkgs.${dep}) namedDeps.dependencies;
         inherit format meta;
+        passthru = {
+          optional-dependencies = lib.mapAttrs (_group: deps: map (dep: python.pkgs.${dep.name}) deps) project.dependencies.extras;
+        };
       } // optionalAttrs (format != "wheel") {
         nativeBuildInputs = map (dep: python.pkgs.${dep}) namedDeps.build-systems;
       } // optionalAttrs (pyproject.project ? name) {

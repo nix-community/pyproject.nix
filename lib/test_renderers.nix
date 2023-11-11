@@ -22,6 +22,9 @@ let
   clearDrvInputs = attrs: attrs // {
     propagatedBuildInputs = map (drv: drv.pname) attrs.propagatedBuildInputs;
     nativeBuildInputs = map (drv: drv.pname) attrs.nativeBuildInputs;
+    passthru = attrs.passthru // {
+      optional-dependencies = lib.mapAttrs (_group: deps: map (drv: drv.pname) deps) attrs.passthru.optional-dependencies;
+    };
   } // optionalAttrs (attrs ? checkInputs) {
     checkInputs = map (drv: drv.pname) attrs.checkInputs;
   };
@@ -59,6 +62,7 @@ in
         };
         nativeBuildInputs = [ "pdm-backend" ];
         pname = "pdm";
+        passthru = { optional-dependencies = { all = [ "pdm" ]; cookiecutter = [ "cookiecutter" ]; copier = [ "copier" ]; doc = [ "mkdocs" "mkdocs-material" "mkdocstrings" "mike" "setuptools" "markdown-exec" "mkdocs-redirects" ]; keyring = [ "keyring" ]; pytest = [ "pytest" "pytest-mock" ]; template = [ "pdm" ]; test = [ "pdm" "pytest-cov" "pytest-xdist" "pytest-rerunfailures" "pytest-httpserver" ]; tox = [ "tox" "tox-pdm" ]; truststore = [ "truststore" ]; workflow = [ "pdm-pep517" "parver" "towncrier" "pycomplete" ]; }; };
         propagatedBuildInputs = [ "blinker" "certifi" "packaging" "platformdirs" "rich" "virtualenv" "pyproject-hooks" "requests-toolbelt" "unearth" "findpython" "tomlkit" "shellingham" "python-dotenv" "resolvelib" "installer" "cachecontrol" "tomli" "importlib-resources" "importlib-metadata" ];
       };
     };
@@ -82,6 +86,7 @@ in
         };
         nativeBuildInputs = [ "pdm-backend" ];
         pname = "pdm";
+        passthru = { optional-dependencies = { all = [ "pdm" ]; cookiecutter = [ "cookiecutter" ]; copier = [ "copier" ]; doc = [ "mkdocs" "mkdocs-material" "mkdocstrings" "mike" "setuptools" "markdown-exec" "mkdocs-redirects" ]; keyring = [ "keyring" ]; pytest = [ "pytest" "pytest-mock" ]; template = [ "pdm" ]; test = [ "pdm" "pytest-cov" "pytest-xdist" "pytest-rerunfailures" "pytest-httpserver" ]; tox = [ "tox" "tox-pdm" ]; truststore = [ "truststore" ]; workflow = [ "pdm-pep517" "parver" "towncrier" "pycomplete" ]; }; };
         propagatedBuildInputs = [ "blinker" "certifi" "packaging" "platformdirs" "rich" "virtualenv" "pyproject-hooks" "requests-toolbelt" "unearth" "findpython" "tomlkit" "shellingham" "python-dotenv" "resolvelib" "installer" "cachecontrol" "tomli" "importlib-resources" "importlib-metadata" ];
       };
     };

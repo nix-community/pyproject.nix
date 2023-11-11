@@ -40,6 +40,11 @@ let
               version = "0.1.0";
             };
 
+            pdm = {
+              pname = "pdm";
+              version = "2.10.0";
+            };
+
             resolvelib = {
               pname = "resolvelib";
               version = "0.5.5";
@@ -48,6 +53,36 @@ let
             oldest-supported-numpy = {
               pname = "oldest-supported-numpy";
               version = "1.0.0";
+            };
+
+            markdown-exec = {
+              pname = "markdown-exec";
+              version = "0.7.0";
+            };
+
+            copier = {
+              pname = "copier";
+              version = "0.7.0";
+            };
+
+            pycomplete = {
+              pname = "pycomplete";
+              version = "0.7.0";
+            };
+
+            pandas-gbq = {
+              pname = "pandas-gbq";
+              version = "0.7.0";
+            };
+
+            pytest-github-actions-annotate-failures = {
+              pname = "pytest-github-actions-annotate-failures";
+              version = "0.1.0";
+            };
+
+            types-jsonschema = {
+              pname = "types-jsonschema";
+              version = "0.1.0";
             };
 
             unearth = {

@@ -72,6 +72,7 @@ fix (self: {
       extras = mapAttrs (_: getNames) dependencies.extras;
       build-systems = getNames dependencies.build-systems;
     };
+
   /* Filter dependencies not relevant for this environment.
 
      Type: filterDependenciesByEnviron :: AttrSet -> AttrSet -> AttrSet

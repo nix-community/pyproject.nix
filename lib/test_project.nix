@@ -3,13 +3,14 @@
 , renderers
 , mocks
 , lib
+, pypa
 , ...
 }:
 let
   inherit (project) loadPyproject loadPoetryPyproject loadPDMPyproject;
 
   # Get python packages from a set
-  getPkgs = set: pnames: map (pname: set.pkgs.${pname}) pnames;
+  getPkgs = set: pnames: map (pname: set.pkgs.${pypa.normalizePackageName pname}) pnames;
 
 in
 lib.fix (self: {
@@ -39,25 +40,52 @@ lib.fix (self: {
           inherit project;
           python = mocks.cpythonLinux38;
         };
-      expected = {
-        format = "pyproject";
-        meta = { description = "Powerful data structures for data analysis, time series, and statistics"; };
-        nativeBuildInputs = getPkgs mocks.cpythonLinux38 [
-          "meson-python"
-          "meson"
-          "wheel"
-          "cython"
-          "oldest-supported-numpy"
-          "versioneer"
-        ];
-        pname = "pandas";
-        propagatedBuildInputs = getPkgs mocks.cpythonLinux38 [
-          "numpy"
-          "python-dateutil"
-          "pytz"
-          "tzdata"
-        ];
-      };
+      expected =
+        let
+          getPkgs' = getPkgs mocks.cpythonLinux38;
+        in
+        {
+          format = "pyproject";
+          meta = { description = "Powerful data structures for data analysis, time series, and statistics"; };
+          passthru.optional-dependencies = lib.mapAttrs (_: getPkgs') {
+            all = [ "beautifulsoup4" "bottleneck" "brotlipy" "fastparquet" "fsspec" "gcsfs" "html5lib" "hypothesis" "Jinja2" "lxml" "matplotlib" "numba" "numexpr" "odfpy" "openpyxl" "pandas-gbq" "psycopg2" "pyarrow" "PyMySQL" "PyQt5" "pyreadstat" "pytest" "pytest-xdist" "pytest-asyncio" "python-snappy" "pyxlsb" "QtPy" "scipy" "s3fs" "SQLAlchemy" "tables" "tabulate" "xarray" "xlrd" "xlsxwriter" "zstandard" ];
+            aws = [ "s3fs" ];
+            clipboard = [ "PyQt5" "QtPy" ];
+            compression = [ "brotlipy" "python-snappy" "zstandard" ];
+            computation = [ "scipy" "xarray" ];
+            excel = [ "odfpy" "openpyxl" "pyxlsb" "xlrd" "xlsxwriter" ];
+            feather = [ "pyarrow" ];
+            fss = [ "fsspec" ];
+            gcp = [ "gcsfs" "pandas-gbq" ];
+            hdf5 = [ "tables" ];
+            html = [ "beautifulsoup4" "html5lib" "lxml" ];
+            mysql = [ "SQLAlchemy" "PyMySQL" ];
+            output_formatting = [ "Jinja2" "tabulate" ];
+            parquet = [ "pyarrow" ];
+            performance = [ "bottleneck" "numba" "numexpr" ];
+            plot = [ "matplotlib" ];
+            postgresql = [ "SQLAlchemy" "psycopg2" ];
+            spss = [ "pyreadstat" ];
+            sql-other = [ "SQLAlchemy" ];
+            test = [ "hypothesis" "pytest" "pytest-xdist" "pytest-asyncio" ];
+            xml = [ "lxml" ];
+          };
+          nativeBuildInputs = getPkgs' [
+            "meson-python"
+            "meson"
+            "wheel"
+            "cython"
+            "oldest-supported-numpy"
+            "versioneer"
+          ];
+          pname = "pandas";
+          propagatedBuildInputs = getPkgs' [
+            "numpy"
+            "python-dateutil"
+            "pytz"
+            "tzdata"
+          ];
+        };
     };
   };
 
@@ -81,48 +109,65 @@ lib.fix (self: {
           src = lib.isStorePath "${attrs.src}";
         };
 
-      expected = {
-        src = true;
-        format = "pyproject";
-        meta = {
-          description = "A modern Python package and dependency manager supporting the latest PEP standards";
-          license = {
-            deprecated = false;
-            free = true;
-            fullName = "MIT License";
-            redistributable = true;
-            shortName = "mit";
-            spdxId = "MIT";
-            url = "https://spdx.org/licenses/MIT.html";
+      expected =
+        let
+          getPkgs' = getPkgs mocks.cpythonLinux38;
+        in
+        {
+          src = true;
+          format = "pyproject";
+          passthru.optional-dependencies = lib.mapAttrs (_: getPkgs') {
+            all = [ "pdm" ];
+            cookiecutter = [ "cookiecutter" ];
+            copier = [ "copier" ];
+            doc = [ "mkdocs" "mkdocs-material" "mkdocstrings" "mike" "setuptools" "markdown-exec" "mkdocs-redirects" ];
+            keyring = [ "keyring" ];
+            pytest = [ "pytest" "pytest-mock" ];
+            template = [ "pdm" ];
+            test = [ "pdm" "pytest-cov" "pytest-xdist" "pytest-rerunfailures" "pytest-httpserver" ];
+            tox = [ "tox" "tox-pdm" ];
+            truststore = [ "truststore" ];
+            workflow = [ "pdm-pep517" "parver" "towncrier" "pycomplete" ];
           };
-          mainProgram = "pdm";
+          meta = {
+            description = "A modern Python package and dependency manager supporting the latest PEP standards";
+            license = {
+              deprecated = false;
+              free = true;
+              fullName = "MIT License";
+              redistributable = true;
+              shortName = "mit";
+              spdxId = "MIT";
+              url = "https://spdx.org/licenses/MIT.html";
+            };
+            mainProgram = "pdm";
+          };
+          nativeBuildInputs = getPkgs mocks.cpythonLinux38 [
+            "pdm-backend"
+          ];
+          pname = "pdm";
+          propagatedBuildInputs = getPkgs mocks.cpythonLinux38 [
+            "blinker"
+            "certifi"
+            "packaging"
+            "platformdirs"
+            "rich"
+            "virtualenv"
+            "pyproject-hooks"
+            "requests-toolbelt"
+            "unearth"
+            "findpython"
+            "tomlkit"
+            "shellingham"
+            "python-dotenv"
+            "resolvelib"
+            "installer"
+            "cachecontrol"
+            "tomli"
+            "importlib-resources"
+            "importlib-metadata"
+          ];
         };
-        nativeBuildInputs = getPkgs mocks.cpythonLinux38 [
-          "pdm-backend"
-        ];
-        pname = "pdm";
-        propagatedBuildInputs = getPkgs mocks.cpythonLinux38 [
-          "blinker"
-          "certifi"
-          "packaging"
-          "platformdirs"
-          "rich"
-          "virtualenv"
-          "pyproject-hooks"
-          "requests-toolbelt"
-          "unearth"
-          "findpython"
-          "tomlkit"
-          "shellingham"
-          "python-dotenv"
-          "resolvelib"
-          "installer"
-          "cachecontrol"
-          "tomli"
-          "importlib-resources"
-          "importlib-metadata"
-        ];
-      };
     };
   };
 
@@ -137,57 +182,67 @@ lib.fix (self: {
           extras = [ "dev" ];
           python = mocks.cpythonLinux38;
         };
-      expected = {
-        format = "pyproject";
-        meta = {
-          description = "Python dependency management and packaging made easy.";
-          license = {
-            deprecated = false;
-            free = true;
-            fullName = "MIT License";
-            redistributable = true;
-            shortName = "mit";
-            spdxId = "MIT";
-            url = "https://spdx.org/licenses/MIT.html";
+      expected =
+        let
+          getPkgs' = getPkgs mocks.cpythonLinux38;
+        in
+        {
+          format = "pyproject";
+          passthru.optional-dependencies = lib.mapAttrs (_: getPkgs') {
+            dev = [ "pre-commit" ];
+            github-actions = [ "pytest-github-actions-annotate-failures" ];
+            test = [ "cachy" "deepdiff" "deepdiff" "httpretty" "pytest" "pytest-cov" "pytest-mock" "pytest-randomly" "pytest-xdist" "zipp" ];
+            typing = [ "mypy" "types-html5lib" "types-jsonschema" "types-requests" "typing-extensions" ];
           };
+          meta = {
+            description = "Python dependency management and packaging made easy.";
+            license = {
+              deprecated = false;
+              free = true;
+              fullName = "MIT License";
+              redistributable = true;
+              shortName = "mit";
+              spdxId = "MIT";
+              url = "https://spdx.org/licenses/MIT.html";
+            };
+          };
+          nativeBuildInputs = getPkgs mocks.cpythonLinux38 [
+            "poetry-core"
+          ];
+          pname = "poetry";
+          propagatedBuildInputs = getPkgs mocks.cpythonLinux38 [
+            "build"
+            "cachecontrol"
+            "cleo"
+            "crashtest"
+            "dulwich"
+            "filelock"
+            "html5lib"
+            "importlib-metadata"
+            "installer"
+            "jsonschema"
+            "keyring"
+            "lockfile"
+            "packaging"
+            "pexpect"
+            "pkginfo"
+            "platformdirs"
+            "poetry-core"
+            "poetry-plugin-export"
+            "pyproject-hooks"
+            "python3"
+            "requests"
+            "requests-toolbelt"
+            "shellingham"
+            "tomli"
+            "tomlkit"
+            "trove-classifiers"
+            "urllib3"
+            "virtualenv"
+            "pre-commit"
+          ];
+          version = "1.4.2";
         };
-        nativeBuildInputs = getPkgs mocks.cpythonLinux38 [
-          "poetry-core"
-        ];
-        pname = "poetry";
-        propagatedBuildInputs = getPkgs mocks.cpythonLinux38 [
-          "build"
-          "cachecontrol"
-          "cleo"
-          "crashtest"
-          "dulwich"
-          "filelock"
-          "html5lib"
-          "importlib-metadata"
-          "installer"
-          "jsonschema"
-          "keyring"
-          "lockfile"
-          "packaging"
-          "pexpect"
-          "pkginfo"
-          "platformdirs"
-          "poetry-core"
-          "poetry-plugin-export"
-          "pyproject-hooks"
-          "python3"
-          "requests"
-          "requests-toolbelt"
-          "shellingham"
-          "tomli"
-          "tomlkit"
-          "trove-classifiers"
-          "urllib3"
-          "virtualenv"
-          "pre-commit"
-        ];
-        version = "1.4.2";
-      };
     };
   };
 
