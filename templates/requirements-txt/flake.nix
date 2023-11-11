@@ -7,7 +7,6 @@
 
   outputs =
     { nixpkgs
-    , flake-utils
     , pyproject-nix
     , ...
     }:
