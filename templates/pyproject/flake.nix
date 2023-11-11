@@ -56,7 +56,9 @@
           attrs = project.renderers.buildPythonPackage { inherit python; };
         in
         # Pass attributes to buildPythonPackage.
-        # Here is a good spot to add on any missing attributes such as `src`.
-        python.pkgs.buildPythonPackage attrs;
+          # Here is a good spot to add on any missing or custom attributes.
+        python.pkgs.buildPythonPackage (attrs // {
+          env.CUSTOM_ENVVAR = "hello";
+        });
     };
 }

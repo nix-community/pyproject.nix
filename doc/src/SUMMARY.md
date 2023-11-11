@@ -1,6 +1,6 @@
 # Contents
 
-- [Getting started](./getting-started.md)
+- [Introduction](./introduction.md)
 - [Hacking](./HACKING.md)
 - [FAQ](./FAQ.md)
 
