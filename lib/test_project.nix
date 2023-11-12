@@ -7,7 +7,7 @@
 , ...
 }:
 let
-  inherit (project) loadPyproject loadPoetryPyproject loadPDMPyproject;
+  inherit (project) loadPyproject loadPoetryPyproject loadPDMPyproject loadPyprojectDynamic;
 
   # Get python packages from a set
   getPkgs = set: pnames: map (pname: set.pkgs.${pypa.normalizePackageName pname}) pnames;
@@ -243,6 +243,38 @@ lib.fix (self: {
           ];
           version = "1.4.2";
         };
+    };
+  };
+
+  loadPyprojectDynamic = {
+    testPoetry = {
+      expr =
+        let
+          project = loadPyprojectDynamic { pyproject = fixtures."poetry.toml"; };
+        in
+        renderers.buildPythonPackage {
+          inherit project;
+          extras = [ "dev" ];
+          python = mocks.cpythonLinux38;
+        };
+      inherit (self.loadPoetryPyproject.testProjectRenderBuildPythonPackage) expected;
+    };
+
+    testPep621 = {
+      expr =
+        (loadPyprojectDynamic { pyproject = fixtures."pandas.toml"; }).renderers.buildPythonPackage {
+          inherit project;
+          python = mocks.cpythonLinux38;
+        };
+      inherit (self.loadPyproject.testPandas) expected;
+    };
+
+    testError = {
+      expr = loadPyprojectDynamic {
+        pyproject = { };
+      };
+      expectedError.type = "ThrownError";
+      expectedError.msg = "Project is neither Poetry nor PEP-621";
     };
   };
 

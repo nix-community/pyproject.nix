@@ -134,4 +134,34 @@ lib.fix (self: {
       validators = curryProject validators project;
       inherit projectRoot;
     });
+
+  /* Load dependencies from a either a PEP-621 or Poetry pyproject.toml file.
+     This function is intended for 2nix authors that wants to include local pyproject.toml files
+     but don't know up front whether they're from Poetry or PEP-621.
+
+     Type: loadPyprojectDynamic :: AttrSet -> AttrSet
+
+     Example:
+       # loadPyprojectDynamic { pyproject = lib.importTOML }
+       {
+         dependencies = { }; # Parsed dependency structure in the schema of `lib.pep621.parseDependencies`
+         build-systems = [ ];  # Returned by `lib.pep518.parseBuildSystems`
+         pyproject = { }; # The unmarshaled contents of pyproject.toml
+         projectRoot = null; # Path to project root
+       }
+  */
+  loadPyprojectDynamic =
+    {
+      # The unmarshaled contents of pyproject.toml
+      pyproject ? lib.importTOML (projectRoot + "/pyproject.toml")
+    , # Path to project root
+      projectRoot ? null
+    }:
+    let
+      isPoetry = lib.hasAttrByPath [ "tool" "poetry" ] pyproject;
+      isPep621 = lib.hasAttrByPath [ "project" ] pyproject;
+    in
+    (if isPoetry then self.loadPoetryPyproject else if isPep621 then self.loadPyproject else throw "Project is neither Poetry nor PEP-621") {
+      inherit pyproject projectRoot;
+    };
 })
