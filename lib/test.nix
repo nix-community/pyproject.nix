@@ -169,6 +169,7 @@ fix (self: {
   renderers = importTests ./test_renderers.nix;
   validators = importTests ./test_validators.nix;
   poetry = importTests ./test_poetry.nix;
+  eggs = importTests ./test_eggs.nix;
 
   pep440 = importTests ./test_pep440.nix;
   pep508 = importTests ./test_pep508.nix;

@@ -26,7 +26,7 @@ let
     }:
     let
       matchedWheel = pyproject.pypa.matchWheelFileName file;
-      matchedEgg = pyproject.pypa.matchEggFileName file;
+      matchedEgg = pyproject.eggs.matchEggFileName file;
       kind =
         if matchedWheel != null then "wheel"
         else if matchedEgg != null then elemAt matchedEgg 2
@@ -81,7 +81,7 @@ lib.mapAttrs (_: func: lib.makeOverridable func) {
       builder = ./fetch-from-pypi.sh;
 
       outputHashMode = "flat";
-      outputHashAlgo = "sha256";
+      outputHashAlgo = null;
       outputHash = hash;
 
       passthru = {

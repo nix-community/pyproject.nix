@@ -25,6 +25,7 @@
   - [pep656](./lib/pep656.nix)
   - [poetry](./lib/poetry.nix)
   - [pypa](./lib/pypa.nix)
+  - [eggs](./lib/eggs.nix)
   - [pip](./lib/pip.nix)
 
 # Contributing
