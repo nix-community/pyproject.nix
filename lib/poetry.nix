@@ -174,6 +174,10 @@ in
       inherit (poetry) keywords;
     } // optionalAttrs (poetry ? classifiers) {
       inherit (poetry) classifiers;
+    } // optionalAttrs (poetry ? scripts) {
+      inherit (poetry) scripts;
+    } // optionalAttrs (poetry ? plugins) {
+      entry-points = poetry.plugins;
     };
   };
 

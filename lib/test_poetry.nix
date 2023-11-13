@@ -20,6 +20,7 @@ in
         description = "Python dependency management and packaging made easy.";
         keywords = [ "packaging" "dependency" "poetry" ];
         license = { text = "MIT"; };
+        scripts = { poetry = "poetry.console.application:main"; };
         maintainers = [
           {
             email = "arun.neelicattu@gmail.com";

@@ -205,6 +205,7 @@ lib.fix (self: {
               spdxId = "MIT";
               url = "https://spdx.org/licenses/MIT.html";
             };
+            mainProgram = "poetry";
           };
           nativeBuildInputs = getPkgs mocks.cpythonLinux38 [
             "poetry-core"
