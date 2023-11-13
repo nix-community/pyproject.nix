@@ -376,7 +376,20 @@ fix (self:
 
     in
     {
-      inherit (package) name conditions extras;
+      name =
+        if package.name != null then package.name
+        # Infer name from URL if no name was specified explicitly
+        else if tokens.url != null then
+          (
+            let
+              inherit (tokens) url;
+              mEggFragment = match ".+#egg=(.+)" url;
+            in
+            if mEggFragment != null then elemAt mEggFragment 0
+            else null
+          )
+        else null;
+      inherit (package) conditions extras;
       inherit (tokens) url;
       markers = if tokens.markerSegment == null then null else self.parseMarkers tokens.markerSegment;
     };
