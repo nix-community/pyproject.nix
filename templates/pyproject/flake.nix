@@ -20,7 +20,8 @@
       # This example is only using x86_64-linux
       pkgs = nixpkgs.legacyPackages.x86_64-linux;
 
-      # We are using the default Python3 interpreter & package set.
+      # We are using the default nixpkgs Python3 interpreter & package set.
+      #
       # This means that you are purposefully ignoring:
       # - Version bounds
       # - Dependency sources (meaning local path dependencies won't resolve to the local path)
