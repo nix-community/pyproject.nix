@@ -46,6 +46,7 @@ lib.fix (self: {
         in
         {
           format = "pyproject";
+          disabled = true;
           meta = { description = "Powerful data structures for data analysis, time series, and statistics"; };
           passthru.optional-dependencies = lib.mapAttrs (_: getPkgs') {
             all = [ "beautifulsoup4" "bottleneck" "brotlipy" "fastparquet" "fsspec" "gcsfs" "html5lib" "hypothesis" "Jinja2" "lxml" "matplotlib" "numba" "numexpr" "odfpy" "openpyxl" "pandas-gbq" "psycopg2" "pyarrow" "PyMySQL" "PyQt5" "pyreadstat" "pytest" "pytest-xdist" "pytest-asyncio" "python-snappy" "pyxlsb" "QtPy" "scipy" "s3fs" "SQLAlchemy" "tables" "tabulate" "xarray" "xlrd" "xlsxwriter" "zstandard" ];
@@ -114,6 +115,7 @@ lib.fix (self: {
           getPkgs' = getPkgs mocks.cpythonLinux38;
         in
         {
+          disabled = false;
           src = true;
           format = "pyproject";
           passthru.optional-dependencies = lib.mapAttrs (_: getPkgs') {
@@ -293,6 +295,7 @@ lib.fix (self: {
         };
       expected = {
         renderers = [ "buildPythonPackage" "withPackages" ];
+        requires-python = null;
         validators = [ "validateVersionConstraints" ];
         dependencies = {
           build-systems = [ ];

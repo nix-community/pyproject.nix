@@ -54,6 +54,7 @@ in
         python = mocks.cpythonLinux38;
       });
       expected = {
+        disabled = false;
         format = "pyproject";
         meta = {
           description = "A modern Python package and dependency manager supporting the latest PEP standards";
@@ -77,6 +78,7 @@ in
         };
       });
       expected = {
+        disabled = false;
         checkInputs = [ "tox" "tox-pdm" ];
         format = "pyproject";
         meta = {

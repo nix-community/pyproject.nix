@@ -1,5 +1,6 @@
 { lib
 , pep508
+, pep440
 , pep621
 , ...
 }:
@@ -86,6 +87,8 @@ in
         inherit extras;
       };
 
+      pythonVersion = pep440.parseVersion python.version;
+
       namedDeps = pep621.getDependenciesNames filteredDeps;
 
       inherit (project) pyproject;
@@ -148,6 +151,9 @@ in
       }
       // optionalAttrs (pyproject.project ? version) {
         inherit (pyproject.project) version;
+      }
+      // optionalAttrs (project.requires-python != null) {
+        disabled = ! lib.all (spec: pep440.comparators.${spec.op} pythonVersion spec.version) project.requires-python;
       })
       (attrNames namedDeps.extras);
 }

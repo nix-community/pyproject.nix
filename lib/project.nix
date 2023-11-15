@@ -21,6 +21,7 @@ lib.fix (self: {
          build-systems = [ ];  # Returned by `lib.pep518.parseBuildSystems`
          pyproject = { }; # The unmarshaled contents of pyproject.toml
          projectRoot = null; # Path to project root
+         requires-python = null; # requires-python as parsed by pep621.parseRequiresPython
        }
   */
   loadPyproject =
@@ -37,6 +38,7 @@ lib.fix (self: {
       inherit pyproject projectRoot;
       renderers = curryProject renderers project;
       validators = curryProject validators project;
+      requires-python = pep621.parseRequiresPython pyproject;
     });
 
   /* Load dependencies from a PDM pyproject.toml.
@@ -49,6 +51,8 @@ lib.fix (self: {
          dependencies = { }; # Parsed dependency structure in the schema of `lib.pep621.parseDependencies`
          build-systems = [ ];  # Returned by `lib.pep518.parseBuildSystems`
          pyproject = { }; # The unmarshaled contents of pyproject.toml
+         projectRoot = null; # Path to project root
+         requires-python = null; # requires-python as parsed by pep621.parseRequiresPython
        }
   */
   loadPDMPyproject =
@@ -78,6 +82,8 @@ lib.fix (self: {
          dependencies = { }; # Parsed dependency structure in the schema of `lib.pep621.parseDependencies`
          build-systems = [ ];  # Returned by `lib.pep518.parseBuildSystems`
          pyproject = { }; # The unmarshaled contents of pyproject.toml
+         projectRoot = null; # Path to project root
+         requires-python = null; # requires-python as parsed by pep621.parseRequiresPython
        }
   */
   loadPoetryPyproject =
@@ -100,6 +106,7 @@ lib.fix (self: {
       renderers = curryProject renderers project;
       validators = curryProject validators project;
       inherit projectRoot poetryLock;
+      requires-python = null;
     });
 
   /* Load dependencies from a requirements.txt.
@@ -114,6 +121,8 @@ lib.fix (self: {
          dependencies = { }; # Parsed dependency structure in the schema of `lib.pep621.parseDependencies`
          build-systems = [ ];  # Returned by `lib.pep518.parseBuildSystems`
          pyproject = null; # The unmarshaled contents of pyproject.toml
+         projectRoot = null; # Path to project root
+         requires-python = null; # requires-python as parsed by pep621.parseRequiresPython
        }
   */
   loadRequirementsTxt =
@@ -133,6 +142,7 @@ lib.fix (self: {
       renderers = curryProject renderers project;
       validators = curryProject validators project;
       inherit projectRoot;
+      requires-python = null;
     });
 
   /* Load dependencies from a either a PEP-621 or Poetry pyproject.toml file.
@@ -148,6 +158,7 @@ lib.fix (self: {
          build-systems = [ ];  # Returned by `lib.pep518.parseBuildSystems`
          pyproject = { }; # The unmarshaled contents of pyproject.toml
          projectRoot = null; # Path to project root
+         requires-python = null; # requires-python as parsed by pep621.parseRequiresPython
        }
   */
   loadPyprojectDynamic =
