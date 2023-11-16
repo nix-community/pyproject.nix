@@ -229,6 +229,13 @@ fix (self: {
     # 1.0b2.post345
     # is valid and we need to consider them all.
 
+    # Compare epoch
+    (
+      if a.epoch == b.epoch then 0
+      else if a.epoch > b.epoch then 1
+      else -1
+    )
+
     # Compare release field
     (compareRelease 0 a.release b.release)
 
@@ -254,13 +261,6 @@ fix (self: {
       else if a.post != null then 1
       else if b.post != null then -1
       else 0
-    )
-
-    # Compare epoch
-    (
-      if a.epoch == b.epoch then 0
-      else if a.epoch > b.epoch then 1
-      else -1
     )
 
     # Compare local
