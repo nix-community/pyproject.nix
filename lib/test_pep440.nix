@@ -94,18 +94,45 @@ in
       };
     };
 
+    testDevDot = {
+      expr = parseVersion "1.2.0.dev21";
+      expected = {
+        dev = {
+          type = "dev";
+          value = 21;
+        };
+        epoch = 0;
+        local = null;
+        post = null;
+        pre = null;
+        release = [ 1 2 0 ];
+      };
+    };
+
+    testDevDash = {
+      expr = parseVersion "1.2.0-dev21";
+      expected = {
+        dev = {
+          type = "dev";
+          value = 21;
+        };
+        epoch = 0;
+        local = null;
+        post = null;
+        pre = null;
+        release = [ 1 2 0 ];
+      };
+    };
+
     testLocal = {
       expr = parseVersion "1.2+4.3";
       expected = {
         dev = null;
         epoch = 0;
-        local = {
-          type = "+";
-          value = 4;
-        };
+        local = "4.3";
         post = null;
         pre = null;
-        release = [ 1 2 3 ];
+        release = [ 1 2 ];
       };
     };
 
@@ -142,15 +169,15 @@ in
       };
     };
 
-    testepoch = {
+    testEpoch = {
       expr = parseVersion "1!2.0";
       expected = {
         dev = null;
-        epoch = 2;
+        epoch = 1;
         local = null;
         post = null;
         pre = null;
-        release = [ 1 0 ];
+        release = [ 2 0 ];
       };
     };
   };

@@ -1,22 +1,17 @@
 { lib, ... }:
 let
-  inherit (builtins) split filter match length elemAt head foldl' fromJSON typeOf;
-  inherit (lib) fix isString toInt toLower sublist;
+  inherit (builtins) split filter match length elemAt head foldl' fromJSON typeOf compareVersions;
+  inherit (lib) fix isString toInt sublist;
   inherit (import ./util.nix { inherit lib; }) splitComma;
-
-  filterNull = filter (x: x != null);
-  filterEmpty = filter (x: length x > 0);
-  filterEmptyStr = filter (s: s != "");
 
   # A version of lib.toInt that supports leading zeroes
   toIntRelease = s:
     let
       n = fromJSON (head (match "0?([[:digit:]]+)" s));
     in
-    assert typeOf n == "int"; n;
+    if s == "*" then s else (assert typeOf n == "int"; n);
 
-  # Return a list elem at index with a default value if it doesn't exist
-  optionalElem = list: idx: default: if length list >= idx + 1 then elemAt list idx else default;
+  emptyVersion = { dev = null; epoch = 0; local = null; post = null; pre = null; release = [ ]; };
 
   # We consider some words to be alternate spellings of other words and
   # in those cases we want to normalize the spellings to our preferred
@@ -31,28 +26,7 @@ let
     r = "post";
     "-" = "post";
   };
-
-  # Parse a release (pre/post/whatever) attrset from split tokens
-  parseReleaseSuffix = patterns: tokens:
-    let
-      matches = map
-        (x:
-          let
-            type = toLower (elemAt x 0);
-            value = elemAt x 1;
-          in
-          {
-            type = normalizedReleaseTypes.${type} or type;
-            value = if value != "" then toInt value else 0;
-          })
-        (filterNull (map (match "[0-9]*(${patterns})([0-9]*)") tokens));
-    in
-    assert length matches <= 1; optionalElem matches 0 null;
-
-  parsePre = parseReleaseSuffix "a|b|c|rc|alpha|beta|pre|preview";
-  parsePost = parseReleaseSuffix "post|rev|r|\-";
-  parseDev = parseReleaseSuffix "dev";
-  parseLocal = parseReleaseSuffix "\\+";
+  normalizedReleaseType = type: normalizedReleaseTypes.${type} or type;
 
   # Compare the release fields from the parsed version
   compareRelease = offset: ra: rb:
@@ -79,6 +53,13 @@ let
     rc = 2;
     post = 3;
   };
+
+  # Strip leading dash from a string
+  stripDash = s:
+    let
+      m = match "(-)(.+)" s;
+    in
+    if m != null then (elemAt m 1) else s;
 
   # Compare dev/pre/post/local release modifiers
   compareVersionModifier = x: y: assert x != null && y != null; let
@@ -117,16 +98,48 @@ fix (self: {
   */
   parseVersion = version:
     let
-      tokens = filter isString (split "\\." version);
+      # Split input into (_, epoch, release, modifiers)
+      tokens = match "(([0-9]+)!)?([^-\+a-zA-Z]+)(.*)" version;
+      tAt = elemAt tokens;
+
+      epoch = tAt 1;
+      release = filter (s: isString s && s != "") (split "\\." (tAt 2));
+
+      # Modifiers including local segment
+      modifiers' = tAt 3;
+      modPrimeAt = elemAt (match "([^\\+]*)\\+?(.*)" modifiers');
+      modifiersSegment = modPrimeAt 0;
+      local = modPrimeAt 1;
+
+      modifiers =
+        map
+          (mod:
+            let
+              m = match "([^0-9]+)([0-9]+)" mod;
+              mAt = elemAt m;
+              type = stripDash (mAt 0);
+              value = mAt 1;
+            in
+            {
+              type = normalizedReleaseType type;
+              value = toIntRelease value;
+            })
+          (filter (s: isString s && s != "") (split "\\." modifiersSegment));
+
     in
-    {
+    if version == "" then emptyVersion
+    else {
       # Return epoch defaulting to 0
-      epoch = toInt (optionalElem (map head (filterNull (map (match "[0-9]+!([0-9]+)") tokens))) 0 "0");
-      release = map (t: (x: if x == "*" then x else toIntRelease x) (head t)) (filterEmpty (map (t: filterEmptyStr (match "([\\*0-9]*).*" t)) tokens));
-      pre = parsePre tokens;
-      post = parsePost tokens;
-      dev = parseDev tokens;
-      local = parseLocal tokens;
+      epoch =
+        if epoch != null then toInt epoch
+        else 0;
+      release = map toIntRelease release;
+      pre = lib.findFirst (mod: mod.type == "rc" || mod.type == "b" || mod.type == "a") null modifiers;
+      post = lib.findFirst (mod: mod.type == "post") null modifiers;
+      dev = lib.findFirst (mod: mod.type == "dev") null modifiers;
+      # Local releases needs to be treated specially.
+      # The value isn't just a straight up number, but an arbitrary string.
+      local = if local != "" then local else null;
     };
 
   /* Parse a version conditional.
@@ -252,7 +265,10 @@ fix (self: {
 
     # Compare local
     (
-      if a.local != null && b.local != null then compareVersionModifier a.local b.local
+      # HACK: Local are arbitrary strings.
+      # We do a best estimate by comparing local as versions using builtins.compareVersions.
+      # This is strictly not correct but it's better than no handling..
+      if a.local != null && b.local != null then compareVersions a.local b.local
       else if b.local != null then -1
       else 0
     )
