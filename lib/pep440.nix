@@ -100,29 +100,30 @@ fix (self: {
     let
       # Split input into (_, epoch, release, modifiers)
       tokens = match "(([0-9]+)!)?([^-\+a-zA-Z]+)(.*)" version;
-      tAt = elemAt tokens;
+      tokenAt = elemAt tokens;
 
-      epoch = tAt 1;
-      release = filter (s: isString s && s != "") (split "\\." (tAt 2));
+      # Segments
+      epochSegment = tokenAt 1;
+      releaseSegment = tokenAt 2;
+      modifierLocalSegment = tokenAt 3;
 
-      # Modifiers including local segment
-      modifiers' = tAt 3;
-      modPrimeAt = elemAt (match "([^\\+]*)\\+?(.*)" modifiers');
-      modifiersSegment = modPrimeAt 0;
-      local = modPrimeAt 1;
+      # Split modifier/local segment
+      mLocalAt = elemAt (match "([^\\+]*)\\+?(.*)" modifierLocalSegment);
+      modifiersSegment = mLocalAt 0;
+      local = mLocalAt 1;
 
+      # Parse each post345/dev1 string into attrset
       modifiers =
         map
           (mod:
             let
+              # Split post345 into ["post" "345"]
               m = match "([^0-9]+)([0-9]+)" mod;
               mAt = elemAt m;
-              type = stripDash (mAt 0);
-              value = mAt 1;
             in
-            {
-              type = normalizedReleaseType type;
-              value = toIntRelease value;
+            assert m != null; {
+              type = normalizedReleaseType (stripDash (mAt 0));
+              value = toIntRelease (mAt 1);
             })
           (filter (s: isString s && s != "") (split "\\." modifiersSegment));
 
@@ -131,12 +132,17 @@ fix (self: {
     else {
       # Return epoch defaulting to 0
       epoch =
-        if epoch != null then toInt epoch
+        if epochSegment != null then toInt epochSegment
         else 0;
-      release = map toIntRelease release;
+
+      # Parse release segments delimited by dots into list of ints
+      release = map toIntRelease (filter (s: isString s && s != "") (split "\\." releaseSegment));
+
+      # Find modifiers in modifiers list
       pre = lib.findFirst (mod: mod.type == "rc" || mod.type == "b" || mod.type == "a") null modifiers;
       post = lib.findFirst (mod: mod.type == "post") null modifiers;
       dev = lib.findFirst (mod: mod.type == "dev") null modifiers;
+
       # Local releases needs to be treated specially.
       # The value isn't just a straight up number, but an arbitrary string.
       local = if local != "" then local else null;
