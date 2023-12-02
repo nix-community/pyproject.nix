@@ -14,16 +14,11 @@
     nix-github-actions.url = "github:nix-community/nix-github-actions";
     nix-github-actions.inputs.nixpkgs.follows = "nixpkgs";
 
-    nix-unit.url = "github:adisbladis/nix-unit";
-    nix-unit.inputs.nixpkgs.follows = "nixpkgs";
-
-    nixdoc.url = "github:nix-community/nixdoc";
-    nixdoc.inputs.nixpkgs.follows = "nixpkgs";
     mdbook-nixdoc.url = "github:adisbladis/mdbook-nixdoc";
     mdbook-nixdoc.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { self, nixpkgs, nix-github-actions, flake-parts, treefmt-nix, nix-unit, nixdoc, ... }@inputs:
+  outputs = { self, nixpkgs, nix-github-actions, flake-parts, treefmt-nix, ... }@inputs:
     let
       inherit (nixpkgs) lib;
 
@@ -78,9 +73,6 @@
         };
 
         perSystem = { pkgs, config, system, ... }:
-          let
-            nixUnit = nix-unit.packages.${system}.nix-unit;
-          in
           {
             treefmt.imports = [ ./dev/treefmt.nix ];
 
@@ -97,7 +89,7 @@
             fetchers = pkgs.callPackage ./fetchers { };
 
             proc.groups.run.processes = {
-              nix-unittest.command = "${lib.getExe' pkgs.reflex "reflex"} -r '\.(nix)$' -- ${lib.getExe' nixUnit "nix-unit"} --quiet --flake '.#libTests'";
+              nix-unittest.command = "${lib.getExe' pkgs.reflex "reflex"} -r '\.(nix)$' -- ${lib.getExe' pkgs.nix-unit "nix-unit"} --quiet --flake '.#libTests'";
               mdbook.command = "(cd doc && mdbook serve)";
             };
 
@@ -105,14 +97,13 @@
               inputsFrom = [ config.flake-root.devShell ]; # Provides $FLAKE_ROOT in dev shell
               packages = [
                 config.proc.groups.run.package
-                nixUnit
+                pkgs.nix-unit
                 inputs.mdbook-nixdoc.packages.${system}.default
               ] ++ self.packages.${system}.doc.nativeBuildInputs;
             };
 
             packages.doc = pkgs.callPackage ./doc {
               inherit self;
-              nixdoc = nixdoc.packages.${system}.default;
               mdbook-nixdoc = inputs.mdbook-nixdoc.packages.${system}.default;
             };
           };
