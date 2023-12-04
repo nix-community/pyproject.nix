@@ -403,6 +403,11 @@ in
 
     in
     {
+      test_selectWheel_platform_type_error = {
+        expr = selectWheels "x86_64-linux" null null;
+        expectedError.type = "ThrownError";
+        expectedError.msg = "SelectWheel was called with wrong type for its first argument 'platform'";
+      };
       testPyNoneAny = mkTest {
         input = [ "distribution-1.0-1-py37-none-any.whl" "distribution-1.0-1-py38-none-any.whl" ];
         output = [ "distribution-1.0-1-py38-none-any.whl" "distribution-1.0-1-py37-none-any.whl" ];
