@@ -38,7 +38,8 @@ in
       python
     , # Python extras (optionals) to enable
       extras ? [ ]
-    ,
+    , # Extra withPackages function
+      extraPackages ? _ps: [ ]
     }:
     let
       filteredDeps = pep621.filterDependencies {
@@ -49,7 +50,7 @@ in
       namedDeps = pep621.getDependenciesNames filteredDeps;
       flatDeps = namedDeps.dependencies ++ flatten (attrValues namedDeps.extras) ++ namedDeps.build-systems;
     in
-    ps: map (dep: ps.${dep}) flatDeps;
+    ps: map (dep: ps.${dep}) flatDeps ++ extraPackages ps;
 
   /*
     Renders a project as an argument that can be passed to buildPythonPackage/buildPythonApplication.
