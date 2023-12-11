@@ -123,11 +123,24 @@ lib.mapAttrs'
     }
   )
   {
-    requests = {
+    requests-sdist = {
       file = "requests-2.25.1.tar.gz";
       hash = "sha256:27973dd4a904a4f13b263a19c866c13b92a39ed1c964655f025f3f8d3d75b804";
       pname = "requests";
       version = "2.25.1";
+    };
+    requests-wheel = {
+      file = "requests-2.31.0-py3-none-any.whl";
+      hash = "sha256-WM0hh8AecObiZQW8p1F3eqny7gt/QwCYi3CfROATAD8=";
+      pname = "requests";
+      version = "2.31.0";
+    };
+    # Special case where filename contains non-normalized version
+    unidecode = {
+      file = "Unidecode-0.04.21-py2.py3-none-any.whl";
+      hash = "sha256-YfgHIg7aAgOndKCfhLQwSj+TtZRBEMwTKvKd24E2aIM=";
+      pname = "Unidecode";
+      version = "0.4.21";
     };
   }
   //
