@@ -50,7 +50,13 @@ in
       namedDeps = pep621.getDependenciesNames filteredDeps;
       flatDeps = namedDeps.dependencies ++ flatten (attrValues namedDeps.extras) ++ namedDeps.build-systems;
     in
-    ps: map (dep: ps.${dep}) flatDeps ++ extraPackages ps;
+    ps:
+    let
+      buildSystems' =
+        if namedDeps.build-systems != [ ] then [ ]
+        else [ ps.setuptools ps.wheel ];
+    in
+    map (dep: ps.${dep}) flatDeps ++ extraPackages ps ++ buildSystems';
 
   /*
     Renders a project as an argument that can be passed to buildPythonPackage/buildPythonApplication.
@@ -89,6 +95,8 @@ in
       };
 
       pythonVersion = pep440.parseVersion python.version;
+
+      pythonPackages = python.pkgs;
 
       namedDeps = pep621.getDependenciesNames filteredDeps;
 
@@ -144,7 +152,9 @@ in
           optional-dependencies = lib.mapAttrs (_group: deps: map (dep: python.pkgs.${dep.name}) deps) project.dependencies.extras;
         };
       } // optionalAttrs (format != "wheel") {
-        nativeBuildInputs = map (dep: python.pkgs.${dep}) namedDeps.build-systems;
+        nativeBuildInputs =
+          if namedDeps.build-systems != [ ] then map (dep: pythonPackages.${dep}) namedDeps.build-systems
+          else [ pythonPackages.setuptools pythonPackages.wheel ];
       } // optionalAttrs (pyproject.project ? name) {
         pname = pyproject.project.name;
       } // optionalAttrs (project.projectRoot != null) {
