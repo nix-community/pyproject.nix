@@ -5,6 +5,21 @@
 Package names are normalized according to the [PyPA normalization specification](https://packaging.python.org/en/latest/specifications/name-normalization/#normalization).
 Nixpkgs also uses the same normalization [but has some legacy package names](https://github.com/NixOS/nixpkgs/issues/245383) that do not follow normalization guidelines.
 
+The other case where the automatic mapping goes wrong is when the Nixpkgs `python.pkgs` set does not contain a dependency.
+One such example is `ruff`, a Python linter written in Rust.
+
+Nixpkgs has `ruff` on the top-level (`pkgs`), but not in `python3.pkgs`.
+In such cases you can use an overlay to add the package to the Python set:
+``` nix
+let
+  python = pkgs.python3.override {
+    packageOverrides = self: super: {
+      ruff = pkgs.ruff;
+    };
+  };
+in ...
+```
+
 ## How do you treat `dynamic` attributes?
 
 Pyproject.nix makes no attempt at parsing dynamic fields as it does not have the required knowledge to infer these.
