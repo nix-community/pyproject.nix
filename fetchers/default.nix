@@ -26,9 +26,10 @@ let
     }:
     let
       matchedWheel = pyproject.pypa.matchWheelFileName file;
+      wheelPythonVersion = builtins.elemAt matchedWheel 2;
       matchedEgg = pyproject.eggs.matchEggFileName file;
       kind =
-        if matchedWheel != null then "wheel"
+        if matchedWheel != null then wheelPythonVersion
         else if matchedEgg != null then elemAt matchedEgg 2
         else "source";
     in
@@ -59,6 +60,7 @@ lib.mapAttrs (_: func: lib.makeOverridable func) {
     }:
     let
       predictedURL = predictURLFromPypi { inherit pname file; };
+      wheelMatch = pyproject.pypa.matchWheelFileName file;
     in
     stdenvNoCC.mkDerivation {
       name = file;
@@ -76,7 +78,14 @@ lib.mapAttrs (_: func: lib.makeOverridable func) {
           "NIX_CURL_FLAGS"
         ];
 
-      inherit pname file version curlOpts predictedURL;
+      inherit pname file curlOpts predictedURL;
+
+      # In case of a wheel, the non-normalized version from the filename is
+      #   required in order to do a successful lookup via the pypi api.
+      version =
+        if wheelMatch != null
+        then builtins.elemAt wheelMatch 1
+        else version;
 
       builder = ./fetch-from-pypi.sh;
 
