@@ -10,7 +10,8 @@ One such example is `ruff`, a Python linter written in Rust.
 
 Nixpkgs has `ruff` on the top-level (`pkgs`), but not in `python3.pkgs`.
 In such cases you can use an overlay to add the package to the Python set:
-``` nix
+
+```nix
 let
   python = pkgs.python3.override {
     packageOverrides = self: super: {
