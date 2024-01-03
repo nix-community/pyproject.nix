@@ -50,7 +50,7 @@ def try_fetch(url: str, package_name: str, package_filename: str) -> None:
     # Parse username and password for this host from the netrc file if given.
     username: Optional[str] = None
     password: Optional[str] = None
-    if "NETRC" in os.environ:
+    if os.environ["NETRC"]:
         netrc_obj = netrc.netrc(os.environ["NETRC"])
         host = urlparse(index_url).netloc
         # Strip port number if present
