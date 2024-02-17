@@ -80,7 +80,7 @@ lib.mapAttrs'
     }
   )
   projects
-// (
+  // (
   lib.mapAttrs'
     (
       n: project: {
@@ -113,20 +113,3 @@ lib.mapAttrs'
     )
     projects
 )
-  //
-  # Test fetchFromLegacy
-lib.mapAttrs'
-  (
-    n: args: {
-      name = "fetchers_fetchFromLegacy-${n}";
-      value = pyproject.fetchers.fetchFromLegacy args;
-    }
-  )
-  {
-    urllib3 = {
-      file = "urllib3-1.26.2.tar.gz";
-      hash = "sha256:19188f96923873c92ccb987120ec4acaa12f0461fa9ce5d3d0772bc965a39e08";
-      pname = "urllib3";
-      url = "https://pypi.org/simple";
-    };
-  }
