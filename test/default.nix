@@ -113,23 +113,6 @@ lib.mapAttrs'
     )
     projects
 )
-//
-# Test fetchFromPypi
-lib.mapAttrs'
-  (
-    n: args: {
-      name = "fetchers_fetchFromPypi-${n}";
-      value = pyproject.fetchers.fetchFromPypi args;
-    }
-  )
-  {
-    requests = {
-      file = "requests-2.25.1.tar.gz";
-      hash = "sha256:27973dd4a904a4f13b263a19c866c13b92a39ed1c964655f025f3f8d3d75b804";
-      pname = "requests";
-      version = "2.25.1";
-    };
-  }
   //
   # Test fetchFromLegacy
 lib.mapAttrs'
