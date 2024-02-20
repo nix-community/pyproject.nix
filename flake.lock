@@ -37,25 +37,19 @@
     },
     "mdbook-nixdoc": {
       "inputs": {
-        "flake-parts": [
-          "flake-parts"
-        ],
         "nix-github-actions": [
           "nix-github-actions"
         ],
         "nixpkgs": [
           "nixpkgs"
-        ],
-        "treefmt-nix": [
-          "treefmt-nix"
         ]
       },
       "locked": {
-        "lastModified": 1708342507,
-        "narHash": "sha256-KoaAog/peCdkrtapUPq7F9aneJLXZMwo6CCcQ3+OtOA=",
+        "lastModified": 1708395692,
+        "narHash": "sha256-smf0VmxGbjJDZqKvxxG3ZVqubgbVwAWG26wPo+BT/A0=",
         "owner": "adisbladis",
         "repo": "mdbook-nixdoc",
-        "rev": "ce2d327032fb3d6f20144a54e7dc1195c108a1b1",
+        "rev": "d6a71b114b9221c0b4f20d31b81766d072cc26be",
         "type": "github"
       },
       "original": {

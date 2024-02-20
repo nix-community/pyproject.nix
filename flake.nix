@@ -17,8 +17,6 @@
     mdbook-nixdoc.url = "github:adisbladis/mdbook-nixdoc";
     mdbook-nixdoc.inputs.nixpkgs.follows = "nixpkgs";
     mdbook-nixdoc.inputs.nix-github-actions.follows = "nix-github-actions";
-    mdbook-nixdoc.inputs.flake-parts.follows = "flake-parts";
-    mdbook-nixdoc.inputs.treefmt-nix.follows = "treefmt-nix";
   };
 
   outputs = { self, nixpkgs, nix-github-actions, flake-parts, treefmt-nix, ... }@inputs:
