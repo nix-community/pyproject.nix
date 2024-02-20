@@ -4,7 +4,7 @@ This document outlines hacking on `pyproject.nix` itself, and lays out it's proj
 
 ## Getting started
 
-To start hacking run `nix develop -c run` to run the project in watch mode.
+To start hacking run `nix develop -c hivemind` to run the project in watch mode.
 
 This will start up two processes:
 

@@ -20,21 +20,6 @@
         "type": "github"
       }
     },
-    "flake-root": {
-      "locked": {
-        "lastModified": 1692742795,
-        "narHash": "sha256-f+Y0YhVCIJ06LemO+3Xx00lIcqQxSKJHXT/yk1RTKxw=",
-        "owner": "srid",
-        "repo": "flake-root",
-        "rev": "d9a70d9c7a5fd7f3258ccf48da9335e9b47c3937",
-        "type": "github"
-      },
-      "original": {
-        "owner": "srid",
-        "repo": "flake-root",
-        "type": "github"
-      }
-    },
     "mdbook-nixdoc": {
       "inputs": {
         "nix-github-actions": [
@@ -94,29 +79,12 @@
         "type": "github"
       }
     },
-    "proc-flake": {
-      "locked": {
-        "lastModified": 1692742849,
-        "narHash": "sha256-Nv8SOX+O6twFfPnA9BfubbPLZpqc+UeK6JvIWnWkdb0=",
-        "owner": "srid",
-        "repo": "proc-flake",
-        "rev": "25291b6e3074ad5dd573c1cb7d96110a9591e10f",
-        "type": "github"
-      },
-      "original": {
-        "owner": "srid",
-        "repo": "proc-flake",
-        "type": "github"
-      }
-    },
     "root": {
       "inputs": {
         "flake-parts": "flake-parts",
-        "flake-root": "flake-root",
         "mdbook-nixdoc": "mdbook-nixdoc",
         "nix-github-actions": "nix-github-actions",
         "nixpkgs": "nixpkgs",
-        "proc-flake": "proc-flake",
         "treefmt-nix": "treefmt-nix"
       }
     },
