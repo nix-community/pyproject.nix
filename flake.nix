@@ -67,7 +67,7 @@
           pkgs = nixpkgs.legacyPackages.x86_64-linux;
         };
 
-        perSystem = { pkgs, config, system, ... }:
+        perSystem = { pkgs, system, ... }:
           {
             treefmt.imports = [ ./dev/treefmt.nix ];
 
