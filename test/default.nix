@@ -3,7 +3,7 @@
 { pyproject
 , pkgs
 , lib
-,
+, src
 }:
 let
   fixtures = import ./fixtures { inherit lib; };
