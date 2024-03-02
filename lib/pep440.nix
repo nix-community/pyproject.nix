@@ -1,7 +1,7 @@
 { lib, ... }:
 let
   inherit (builtins) split filter match length elemAt head fromJSON typeOf compareVersions;
-  inherit (lib) fix isString toInt sublist;
+  inherit (lib) fix isString toInt sublist findFirst;
   inherit (import ./util.nix { inherit lib; }) splitComma;
 
   # A version of lib.toInt that supports leading zeroes
@@ -145,9 +145,9 @@ fix (self: {
       release = map toIntRelease (filter (s: isString s && s != "") (split "\\." releaseSegment));
 
       # Find modifiers in modifiers list
-      pre = lib.findFirst (mod: mod.type == "rc" || mod.type == "b" || mod.type == "a") null modifiers;
-      post = lib.findFirst (mod: mod.type == "post") null modifiers;
-      dev = lib.findFirst (mod: mod.type == "dev") null modifiers;
+      pre = findFirst (mod: mod.type == "rc" || mod.type == "b" || mod.type == "a") null modifiers;
+      post = findFirst (mod: mod.type == "post") null modifiers;
+      dev = findFirst (mod: mod.type == "dev") null modifiers;
 
       # Local releases needs to be treated specially.
       # The value isn't just a straight up number, but an arbitrary string.
