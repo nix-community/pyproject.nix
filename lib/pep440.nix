@@ -288,17 +288,22 @@ fix (self: {
        true
   */
   comparators = {
-    "~=" = a: b: (
-      # Local version identifiers are NOT permitted in this version specifier.
-      assert a.local == null && b.local == null;
-      self.comparators.">=" a b && self.comparators."==" a (b // {
-        release = sublist 0 ((length b.release) - 1) b.release;
-        # If a pre-release, post-release or developmental release is named in a compatible release clause as V.N.suffix, then the suffix is ignored when determining the required prefix match.
-        pre = null;
-        post = null;
-        dev = null;
-      })
-    );
+    "~=" =
+      let
+        gte = self.comparators.">=";
+        eq = self.comparators."==";
+      in
+      a: b: (
+        # Local version identifiers are NOT permitted in this version specifier.
+        assert a.local == null && b.local == null;
+        gte a b && eq a (b // {
+          release = sublist 0 ((length b.release) - 1) b.release;
+          # If a pre-release, post-release or developmental release is named in a compatible release clause as V.N.suffix, then the suffix is ignored when determining the required prefix match.
+          pre = null;
+          post = null;
+          dev = null;
+        })
+      );
     "==" = a: b: self.compareVersions a b == 0;
     "!=" = a: b: self.compareVersions a b != 0;
     "<=" = a: b: self.compareVersions a b <= 0;
