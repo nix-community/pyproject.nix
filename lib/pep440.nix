@@ -60,13 +60,6 @@ let
     post = 3;
   };
 
-  # Strip leading dash from a string
-  stripDash = s:
-    let
-      m = match "(-)(.+)" s;
-    in
-    if m != null then (elemAt m 1) else s;
-
   # Compare dev/pre/post/local release modifiers
   compareVersionModifier = x: y: assert x != null && y != null; let
     prioX = modifierPriority.${x.type};
@@ -124,11 +117,11 @@ fix (self: {
           (mod:
             let
               # Split post345 into ["post" "345"]
-              m = match "([^0-9]+)([0-9]+)" mod;
+              m = match "-?([^0-9]+)([0-9]+)" mod;
               mAt = elemAt m;
             in
             assert m != null; {
-              type = normalizedReleaseType (stripDash (mAt 0));
+              type = normalizedReleaseType (mAt 0);
               value = toIntRelease (mAt 1);
             })
           (filter (s: isString s && s != "") (split "\\." modifiersSegment));
