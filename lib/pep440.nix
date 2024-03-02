@@ -1,6 +1,6 @@
 { lib, ... }:
 let
-  inherit (builtins) split filter match length elemAt head foldl' fromJSON typeOf compareVersions;
+  inherit (builtins) split filter match length elemAt head fromJSON typeOf compareVersions;
   inherit (lib) fix isString toInt sublist;
   inherit (import ./util.nix { inherit lib; }) splitComma;
 
@@ -229,56 +229,47 @@ fix (self: {
        # compareVersions (parseVersion "3.0.0") (parseVersion "3.0.0")
        0
   */
-  compareVersions = a: b: foldl' (acc: comp: if acc != 0 then acc else comp) 0 [
-    # mixing dev/pre/post like:
-    # 1.0b2.post345.dev456
-    # 1.0b2.post345
-    # is valid and we need to consider them all.
-
-    # Compare epoch
-    (
-      if a.epoch == b.epoch then 0
-      else if a.epoch > b.epoch then 1
-      else -1
-    )
+  compareVersions =
+    a:
+    b:
+    let
+      releaseComp = compareRelease 0 a.release b.release;
+      preComp = compareVersionModifier a.pre b.pre;
+      devComp = compareVersionModifier a.dev b.dev;
+      postComp = compareVersionModifier a.post b.post;
+      localComp = compareVersions a.local b.local;
+    in
+    if a.epoch > b.epoch then 1
+    else if a.epoch < b.epoch then -1
 
     # Compare release field
-    (compareRelease 0 a.release b.release)
+    else if releaseComp != 0 then releaseComp
 
     # Compare pre release
-    (
-      if a.pre != null && b.pre != null then compareVersionModifier a.pre b.pre
-      else if a.pre != null then -1
-      else if b.pre != null then 1
-      else 0
-    )
+    else if a.pre != null && b.pre != null && preComp != 0 then preComp
+    else if a.pre != null && b.pre == null then -1
+    else if b.pre != null && a.pre == null then 1
 
     # Compare dev release
-    (
-      if a.dev != null && b.dev != null then compareVersionModifier a.dev b.dev
-      else if a.dev != null then -1
-      else if b.dev != null then 1
-      else 0
-    )
+    else if a.dev != null && b.dev != null && devComp != 0 then devComp
+    else if a.dev != null && b.dev == null then -1
+    else if b.dev != null && a.dev == null then 1
 
     # Compare post release
-    (
-      if a.post != null && b.post != null then compareVersionModifier a.post b.post
-      else if a.post != null then 1
-      else if b.post != null then -1
-      else 0
-    )
+    else if a.post != null && b.post != null && postComp != 0 then postComp
+    else if a.post != null && b.post == null then 1
+    else if b.post != null && a.post == null then -1
 
     # Compare local
-    (
-      # HACK: Local are arbitrary strings.
-      # We do a best estimate by comparing local as versions using builtins.compareVersions.
-      # This is strictly not correct but it's better than no handling..
-      if a.local != null && b.local != null then compareVersions a.local b.local
-      else if b.local != null then -1
-      else 0
-    )
-  ];
+    # HACK: Local are arbitrary strings.
+    # We do a best estimate by comparing local as versions using builtins.compareVersions.
+    # This is strictly not correct but it's better than no handling..
+    else if a.local != null && b.local != null && localComp != 0 then localComp
+    else if a.local != null && b.local == null then 1
+    else if b.local != null && a.local == null then -1
+
+    # Equal
+    else 0;
 
   /* Map comparison operators as strings to a comparator function.
 
