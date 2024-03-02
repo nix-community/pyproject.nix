@@ -65,13 +65,16 @@ let
     s: elem s markerFields;
 
   unpackValue = value:
-    let
-      # If the value is a single ticked string we can't pass it plainly to toJSON.
-      # Normalise to a double quoted.
-      singleTicked = match "^'(.+)'$" value; # TODO: Account for escaped ' in input (unescape)
-    in
     if isMarkerVariable value then value
-    else fromJSON (if singleTicked != null then "\"" + head singleTicked + "\"" else value);
+    else
+      (
+        let
+          # If the value is a single ticked string we can't pass it plainly to toJSON.
+          # Normalise to a double quoted.
+          singleTicked = match "^'(.+)'$" value; # TODO: Account for escaped ' in input (unescape)
+        in
+        fromJSON (if singleTicked != null then "\"" + head singleTicked + "\"" else value)
+      );
 
   # Comparators for simple equality
   # For versions see pep440.comparators
