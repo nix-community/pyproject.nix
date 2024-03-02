@@ -36,12 +36,12 @@ let
 
   # Compare the release fields from the parsed version
   compareRelease = offset: ra: rb:
-    let
-      x = elemAt ra offset;
-      y = elemAt rb offset;
-    in
     if length ra == offset || length rb == offset then 0 else
     (
+      let
+        x = elemAt ra offset;
+        y = elemAt rb offset;
+      in
       if x == "*" || y == "*" then 0 # Wildcards are always considered equal
       else
         (
