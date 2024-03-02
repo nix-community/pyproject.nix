@@ -35,12 +35,15 @@ let
   );
 
   # Remove groupings ( ) from expression
-  unparen = expr':
+  unparen =
     let
-      expr = stripStr expr';
-      m = match "\\((.+)\\)" expr;
+      matchParen = match "[\t ]*\\((.+)\\)[\t ]*";
     in
-    if m != null then elemAt m 0 else expr;
+    expr:
+    let
+      m = matchParen expr;
+    in
+    if m != null then head m else expr;
 
   isMarkerVariable =
     let
