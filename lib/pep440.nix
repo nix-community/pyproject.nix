@@ -5,11 +5,17 @@ let
   inherit (import ./util.nix { inherit lib; }) splitComma;
 
   # A version of lib.toInt that supports leading zeroes
-  toIntRelease = s:
+  toIntRelease =
     let
-      n = fromJSON (head (match "0?([[:digit:]]+)" s));
+      matchDigit = match "0?([[:digit:]]+)";
     in
-    if s == "*" then s else (assert typeOf n == "int"; n);
+    s:
+    if s == "*" then s
+    else
+      let
+        n = fromJSON (head (matchDigit s));
+      in
+      assert typeOf n == "int"; n;
 
   emptyVersion = { dev = null; epoch = 0; local = null; post = null; pre = null; release = [ ]; };
 
