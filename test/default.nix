@@ -55,7 +55,13 @@ let
   python = pkgs.python3.override {
     self = python;
     # Poetry plugins aren't exposed in the Python set
-    packageOverrides = _self: _super: (pkgs.poetry.override { python3 = python; }).plugins;
+    packageOverrides = _self: _super:
+      let
+        poetry' = pkgs.poetry.override { python3 = python; };
+      in
+      {
+        inherit (poetry'.plugins) poetry-plugin-export;
+      };
   };
 in
 # Construct withPackages environments and assert modules can be imported
@@ -97,6 +103,8 @@ lib.mapAttrs'
             inherit (project) src;
             # Add relax deps since we don't assert versions
             nativeBuildInputs = attrs.nativeBuildInputs or [ ] ++ [ python.pkgs.pythonRelaxDepsHook ];
+
+            dontCheckRuntimeDeps = true;
 
             # HACK: Relax deps hook is not sufficient
             postPatch = ''
