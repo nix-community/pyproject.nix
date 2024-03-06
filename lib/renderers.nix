@@ -123,7 +123,7 @@ in
             # "The text key has a string value which is the license of the project whose meaning is that of the License field from the core metadata.
             # These keys are mutually exclusive, so a tool MUST raise an error if the metadata specifies both keys."
             # Hence the assert above.
-            license = licensesBySpdxId.${project'.license.text};
+            license = licensesBySpdxId.${project'.license.text} or project'.license.text;
           }
         ) //
         # Only set mainProgram if we only have one script, otherwise it's ambigious which one is main
