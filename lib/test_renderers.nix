@@ -68,6 +68,20 @@ in
       };
     };
 
+    # Test that a license not in the spdix table is properly passed through verbatim
+    testNonSpdxLicense =
+      let
+        fixture = lib.recursiveUpdate fixtures."pdm.toml" { project.license.text = "Proprietary"; };
+        attrs = renderers.buildPythonPackage {
+          project = loadPyproject { pyproject = fixture; };
+          python = mocks.cpythonLinux38;
+        };
+      in
+      {
+        expr = attrs.meta.license;
+        expected = "Proprietary";
+      };
+
     testPdmWithMaps = {
       expr = clearDrvInputs (renderers.buildPythonPackage {
         project = projects.pdm;
