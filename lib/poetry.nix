@@ -214,7 +214,7 @@ in
   */
   parseVersionCond = cond: (
     let
-      m = match "^([~[:digit:]^])(.+)$" cond;
+      m = match "^([~^])?([a-zA-Z0-9].+)$" cond;
       mAt = elemAt m;
       c = mAt 0;
       rest = mAt 1;

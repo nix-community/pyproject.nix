@@ -96,6 +96,24 @@ in
       ];
     };
 
+    # Regression test: Check that ~= isn't parsed as ~
+    testTildeEquals = {
+      expr = parseVersionCond "~=3.2.1";
+      expected = [
+        {
+          op = "~=";
+          version = {
+            dev = null;
+            epoch = 0;
+            local = null;
+            post = null;
+            pre = null;
+            release = [ 3 2 1 ];
+          };
+        }
+      ];
+    };
+
     testCaret = {
       expr = parseVersionCond "^3.2.1";
       expected = [
@@ -701,7 +719,7 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 5 2 0 ];
+                  release = [ 1 5 2 ];
                 };
               }
             ];
@@ -1270,7 +1288,7 @@ in
                     local = null;
                     post = null;
                     pre = null;
-                    release = [ 3 0 0 ];
+                    release = [ 0 3 0 ];
                   };
                 }
               ];
