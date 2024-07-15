@@ -506,7 +506,7 @@ fix (self:
           else throw "Unsupported platform";
         platform_machine =
           if targetPlatform.isDarwin then targetPlatform.darwinArch
-          else pep599.manyLinuxTargetMachines.${targetPlatform.parsed.cpu.name};
+          else pep599.manyLinuxTargetMachines.${targetPlatform.parsed.cpu.name} or targetPlatform.parsed.cpu.name;
         platform_python_implementation =
           if impl == "cpython" then "CPython"
           else if impl == "pypy" then "PyPy"
