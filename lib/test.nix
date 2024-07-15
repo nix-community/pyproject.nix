@@ -142,6 +142,15 @@ let
         system = "x86_64-darwin";
       };
 
+      cpythonDarwin311Aarch64 = mkPython {
+        version = "3.11.4";
+        pythonVersion = "3.11";
+        isDarwin = true;
+        sourceVersion.major = "3";
+        sourceVersion.minor = "11";
+        system = "aarch64-darwin";
+      };
+
       pypy39Linux = mkPython {
         pname = "pypy";
         version = "7.3.11";

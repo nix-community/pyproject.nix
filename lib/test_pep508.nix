@@ -742,6 +742,16 @@ fix (self: {
       };
     };
 
+    testPython311DarwinAarch64 = {
+      input = mocks.cpythonDarwin311Aarch64;
+      expected = self.mkEnviron.testPython311Darwin.expected // {
+        platform_machine = {
+          type = "string";
+          value = "arm64";
+        };
+      };
+    };
+
     testPypy3Linux = {
       input = mocks.pypy39Linux;
       expected = {
