@@ -46,7 +46,7 @@ lib.fix (self: {
      Type: loadPDMPyproject :: AttrSet -> AttrSet
 
      Example:
-       # loadPyproject { pyproject = lib.importTOML }
+       # loadPyproject { projectRoot = ./.; }
        {
          dependencies = { }; # Parsed dependency structure in the schema of `lib.pep621.parseDependencies`
          build-systems = [ ];  # Returned by `lib.pep518.parseBuildSystems`
@@ -77,7 +77,7 @@ lib.fix (self: {
      Type: loadPoetryPyproject :: AttrSet -> AttrSet
 
      Example:
-       # loadPoetryPyproject { pyproject = lib.importTOML }
+       # loadPoetryPyproject { projectRoot = ./.; }
        {
          dependencies = { }; # Parsed dependency structure in the schema of `lib.pep621.parseDependencies`
          build-systems = [ ];  # Returned by `lib.pep518.parseBuildSystems`
@@ -92,7 +92,7 @@ lib.fix (self: {
       pyproject ? lib.importTOML (projectRoot + "/pyproject.toml")
     , # Path to project root
       projectRoot ? null
-    , # The unmarshaled contents of pyproject.toml
+    , # The unmarshaled contents of poetry.lock
       poetryLock ? lib.importTOML (projectRoot + "/poetry.lock")
     ,
     }:
@@ -116,7 +116,7 @@ lib.fix (self: {
      Type: loadRequirementsTxt :: AttrSet -> AttrSet
 
      Example:
-       # loadRequirementstxt { requirements = builtins.readFile ./requirements.txt; root = ./.; }
+       # loadRequirementstxt { requirements = builtins.readFile ./requirements.txt; projectRoot = ./.; }
        {
          dependencies = { }; # Parsed dependency structure in the schema of `lib.pep621.parseDependencies`
          build-systems = [ ];  # Returned by `lib.pep518.parseBuildSystems`
@@ -152,7 +152,7 @@ lib.fix (self: {
      Type: loadPyprojectDynamic :: AttrSet -> AttrSet
 
      Example:
-       # loadPyprojectDynamic { pyproject = lib.importTOML }
+       # loadPyprojectDynamic { projectRoot = ./.; }
        {
          dependencies = { }; # Parsed dependency structure in the schema of `lib.pep621.parseDependencies`
          build-systems = [ ];  # Returned by `lib.pep518.parseBuildSystems`
