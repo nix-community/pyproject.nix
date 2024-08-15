@@ -86,9 +86,6 @@ let
     )) [ ]
     (attrNames deps);
 
-  # Normalized version of parseVersionCond'
-  parseVersionConds = s: flatten (map self.parseVersionCond (splitComma s));
-
   dummyMarker = {
     type = "bool";
     value = true;
@@ -123,12 +120,12 @@ let
           # Encode no markers as a marker that always evaluates to true to simplify fold logi above.
           if dep ? markers then pep508.parseMarkers dep.markers else dummyMarker
         )
-        (if dep ? python then parseVersionConds dep.python else [ ]);
+        (if dep ? python then self.parseVersionConds dep.python else [ ]);
 
     in
     {
       inherit (dep) name;
-      conditions = parseVersionConds dep.version;
+      conditions = self.parseVersionConds dep.version;
       extras = dep.extras or [ ];
       url = dep.url or null;
       markers = if markers == dummyMarker then null else markers;
@@ -259,4 +256,10 @@ in
     }]
   );
 
+  /* Parse a comma separated list version conditionals.
+     Supports additional non-standard operators `^` and `~` used by Poetry.
+
+     Type: parseVersionConds :: string -> [ AttrSet ]
+  */
+  parseVersionConds = s: flatten (map self.parseVersionCond (splitComma s));
 })

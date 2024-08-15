@@ -3,7 +3,7 @@
 , ...
 }:
 let
-  inherit (poetry) translatePoetryProject parseDependencies parseVersionCond;
+  inherit (poetry) translatePoetryProject parseDependencies parseVersionCond parseVersionConds;
 in
 {
   translatePoetryProject = {
@@ -140,6 +140,13 @@ in
           };
         }
       ];
+    };
+  };
+
+  parseVersionConds = {
+    testAll = {
+      expr = parseVersionConds "^3.2.1,~3.2.1";
+      expected = [{ op = ">="; version = { dev = null; epoch = 0; local = null; post = null; pre = null; release = [ 3 2 1 ]; }; } { op = "<"; version = { dev = null; epoch = 0; local = null; post = null; pre = null; release = [ 4 0 0 ]; }; } { op = ">="; version = { dev = null; epoch = 0; local = null; post = null; pre = null; release = [ 3 2 1 ]; }; } { op = "<"; version = { dev = null; epoch = 0; local = null; post = null; pre = null; release = [ 3 3 0 ]; }; }];
     };
   };
 
