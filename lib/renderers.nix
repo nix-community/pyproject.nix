@@ -69,7 +69,7 @@ in
 
     Example:
       # buildPythonPackage { project = lib.project.loadPyproject ...; python = pkgs.python3;  }
-        { pname = "blinker"; version = "1.3.3.7"; propagatedBuildInputs = [ ]; }
+        { pname = "blinker"; version = "1.3.3.7"; dependencies = [ ]; }
     */
   buildPythonPackage =
     {
@@ -82,7 +82,7 @@ in
     , # Map a Python extras group name to a Nix attribute set like:
       # { dev = "checkInputs"; }
       # This is intended to be used with optionals such as test dependencies that you might
-      # want to add to checkInputs instead of propagatedBuildInputs
+      # want to add to checkInputs instead of dependencies
       extrasAttrMappings ? { }
     , # Which package format to pass to buildPythonPackage
       # If the format is "wheel" PEP-518 build-systems are excluded from the build.
@@ -142,19 +142,20 @@ in
     foldl'
       (attrs: group:
       let
-        attr = extrasAttrMappings.${group} or "propagatedBuildInputs";
+        attr = extrasAttrMappings.${group} or "dependencies";
       in
       attrs // {
         ${attr} = attrs.${attr} or [ ] ++ map (dep: python.pkgs.${dep}) namedDeps.extras.${group};
       })
       ({
-        propagatedBuildInputs = map (dep: python.pkgs.${dep}) namedDeps.dependencies;
-        inherit format meta;
-        passthru = {
-          optional-dependencies = lib.mapAttrs (_group: deps: map (dep: python.pkgs.${dep.name}) deps) project.dependencies.extras;
-        };
+        pyproject = format == "pyproject";
+        dependencies = map (dep: python.pkgs.${dep}) namedDeps.dependencies;
+        optional-dependencies = lib.mapAttrs (_group: deps: map (dep: python.pkgs.${dep.name}) deps) project.dependencies.extras;
+        inherit meta;
+      } // optionalAttrs (format != "pyproject") {
+        inherit format;
       } // optionalAttrs (format != "wheel") {
-        nativeBuildInputs =
+        build-system =
           if namedDeps.build-systems != [ ] then map (dep: pythonPackages.${dep}) namedDeps.build-systems
           else [ pythonPackages.setuptools pythonPackages.wheel ];
       } // optionalAttrs (pyproject.project ? name) {

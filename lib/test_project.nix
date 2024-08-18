@@ -45,10 +45,10 @@ lib.fix (self: {
           getPkgs' = getPkgs mocks.cpythonLinux38;
         in
         {
-          format = "pyproject";
+          pyproject = true;
           disabled = true;
           meta = { description = "Powerful data structures for data analysis, time series, and statistics"; };
-          passthru.optional-dependencies = lib.mapAttrs (_: getPkgs') {
+          optional-dependencies = lib.mapAttrs (_: getPkgs') {
             all = [ "beautifulsoup4" "bottleneck" "brotlipy" "fastparquet" "fsspec" "gcsfs" "html5lib" "hypothesis" "Jinja2" "lxml" "matplotlib" "numba" "numexpr" "odfpy" "openpyxl" "pandas-gbq" "psycopg2" "pyarrow" "PyMySQL" "PyQt5" "pyreadstat" "pytest" "pytest-xdist" "pytest-asyncio" "python-snappy" "pyxlsb" "QtPy" "scipy" "s3fs" "SQLAlchemy" "tables" "tabulate" "xarray" "xlrd" "xlsxwriter" "zstandard" ];
             aws = [ "s3fs" ];
             clipboard = [ "PyQt5" "QtPy" ];
@@ -71,7 +71,7 @@ lib.fix (self: {
             test = [ "hypothesis" "pytest" "pytest-xdist" "pytest-asyncio" ];
             xml = [ "lxml" ];
           };
-          nativeBuildInputs = getPkgs' [
+          build-system = getPkgs' [
             "meson-python"
             "meson"
             "wheel"
@@ -80,7 +80,7 @@ lib.fix (self: {
             "versioneer"
           ];
           pname = "pandas";
-          propagatedBuildInputs = getPkgs' [
+          dependencies = getPkgs' [
             "numpy"
             "python-dateutil"
             "pytz"
@@ -117,8 +117,8 @@ lib.fix (self: {
         {
           disabled = false;
           src = true;
-          format = "pyproject";
-          passthru.optional-dependencies = lib.mapAttrs (_: getPkgs') {
+          pyproject = true;
+          optional-dependencies = lib.mapAttrs (_: getPkgs') {
             all = [ "pdm" ];
             cookiecutter = [ "cookiecutter" ];
             copier = [ "copier" ];
@@ -144,11 +144,11 @@ lib.fix (self: {
             };
             mainProgram = "pdm";
           };
-          nativeBuildInputs = getPkgs mocks.cpythonLinux38 [
+          build-system = getPkgs mocks.cpythonLinux38 [
             "pdm-backend"
           ];
           pname = "pdm";
-          propagatedBuildInputs = getPkgs mocks.cpythonLinux38 [
+          dependencies = getPkgs mocks.cpythonLinux38 [
             "blinker"
             "certifi"
             "packaging"
@@ -189,8 +189,8 @@ lib.fix (self: {
           getPkgs' = getPkgs mocks.cpythonLinux38;
         in
         {
-          format = "pyproject";
-          passthru.optional-dependencies = lib.mapAttrs (_: getPkgs') {
+          pyproject = true;
+          optional-dependencies = lib.mapAttrs (_: getPkgs') {
             dev = [ "pre-commit" ];
             github-actions = [ "pytest-github-actions-annotate-failures" ];
             test = [ "cachy" "deepdiff" "deepdiff" "httpretty" "pytest" "pytest-cov" "pytest-mock" "pytest-randomly" "pytest-xdist" "zipp" ];
@@ -209,11 +209,11 @@ lib.fix (self: {
             };
             mainProgram = "poetry";
           };
-          nativeBuildInputs = getPkgs mocks.cpythonLinux38 [
+          build-system = getPkgs mocks.cpythonLinux38 [
             "poetry-core"
           ];
           pname = "poetry";
-          propagatedBuildInputs = getPkgs mocks.cpythonLinux38 [
+          dependencies = getPkgs mocks.cpythonLinux38 [
             "build"
             "cachecontrol"
             "cleo"

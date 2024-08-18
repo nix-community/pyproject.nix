@@ -20,11 +20,9 @@ let
   # Clear drv inputs from stuff like version and just return the name string
   # so our tests don't start failing randomly just because we upgrade and nixpkgs moved
   clearDrvInputs = attrs: attrs // {
-    propagatedBuildInputs = map (drv: drv.pname) attrs.propagatedBuildInputs;
-    nativeBuildInputs = map (drv: drv.pname) attrs.nativeBuildInputs;
-    passthru = attrs.passthru // {
-      optional-dependencies = lib.mapAttrs (_group: deps: map (drv: drv.pname) deps) attrs.passthru.optional-dependencies;
-    };
+    dependencies = map (drv: drv.pname) attrs.dependencies;
+    build-system = map (drv: drv.pname) attrs.build-system;
+    optional-dependencies = lib.mapAttrs (_group: deps: map (drv: drv.pname) deps) attrs.optional-dependencies;
   } // optionalAttrs (attrs ? checkInputs) {
     checkInputs = map (drv: drv.pname) attrs.checkInputs;
   };
@@ -55,16 +53,16 @@ in
       });
       expected = {
         disabled = false;
-        format = "pyproject";
+        pyproject = true;
         meta = {
           description = "A modern Python package and dependency manager supporting the latest PEP standards";
           license = lib.licenses.mit;
           mainProgram = "pdm";
         };
-        nativeBuildInputs = [ "pdm-backend" ];
+        build-system = [ "pdm-backend" ];
         pname = "pdm";
-        passthru = { optional-dependencies = { all = [ "pdm" ]; cookiecutter = [ "cookiecutter" ]; copier = [ "copier" ]; doc = [ "mkdocs" "mkdocs-material" "mkdocstrings" "mike" "setuptools" "markdown-exec" "mkdocs-redirects" ]; keyring = [ "keyring" ]; pytest = [ "pytest" "pytest-mock" ]; template = [ "pdm" ]; test = [ "pdm" "pytest-cov" "pytest-xdist" "pytest-rerunfailures" "pytest-httpserver" ]; tox = [ "tox" "tox-pdm" ]; truststore = [ "truststore" ]; workflow = [ "pdm-pep517" "parver" "towncrier" "pycomplete" ]; }; };
-        propagatedBuildInputs = [ "blinker" "certifi" "packaging" "platformdirs" "rich" "virtualenv" "pyproject-hooks" "requests-toolbelt" "unearth" "findpython" "tomlkit" "shellingham" "python-dotenv" "resolvelib" "installer" "cachecontrol" "tomli" "importlib-resources" "importlib-metadata" ];
+        optional-dependencies = { all = [ "pdm" ]; cookiecutter = [ "cookiecutter" ]; copier = [ "copier" ]; doc = [ "mkdocs" "mkdocs-material" "mkdocstrings" "mike" "setuptools" "markdown-exec" "mkdocs-redirects" ]; keyring = [ "keyring" ]; pytest = [ "pytest" "pytest-mock" ]; template = [ "pdm" ]; test = [ "pdm" "pytest-cov" "pytest-xdist" "pytest-rerunfailures" "pytest-httpserver" ]; tox = [ "tox" "tox-pdm" ]; truststore = [ "truststore" ]; workflow = [ "pdm-pep517" "parver" "towncrier" "pycomplete" ]; };
+        dependencies = [ "blinker" "certifi" "packaging" "platformdirs" "rich" "virtualenv" "pyproject-hooks" "requests-toolbelt" "unearth" "findpython" "tomlkit" "shellingham" "python-dotenv" "resolvelib" "installer" "cachecontrol" "tomli" "importlib-resources" "importlib-metadata" ];
       };
     };
 
@@ -94,16 +92,16 @@ in
       expected = {
         disabled = false;
         checkInputs = [ "tox" "tox-pdm" ];
-        format = "pyproject";
+        pyproject = true;
         meta = {
           description = "A modern Python package and dependency manager supporting the latest PEP standards";
           license = lib.licenses.mit;
           mainProgram = "pdm";
         };
-        nativeBuildInputs = [ "pdm-backend" ];
+        build-system = [ "pdm-backend" ];
         pname = "pdm";
-        passthru = { optional-dependencies = { all = [ "pdm" ]; cookiecutter = [ "cookiecutter" ]; copier = [ "copier" ]; doc = [ "mkdocs" "mkdocs-material" "mkdocstrings" "mike" "setuptools" "markdown-exec" "mkdocs-redirects" ]; keyring = [ "keyring" ]; pytest = [ "pytest" "pytest-mock" ]; template = [ "pdm" ]; test = [ "pdm" "pytest-cov" "pytest-xdist" "pytest-rerunfailures" "pytest-httpserver" ]; tox = [ "tox" "tox-pdm" ]; truststore = [ "truststore" ]; workflow = [ "pdm-pep517" "parver" "towncrier" "pycomplete" ]; }; };
-        propagatedBuildInputs = [ "blinker" "certifi" "packaging" "platformdirs" "rich" "virtualenv" "pyproject-hooks" "requests-toolbelt" "unearth" "findpython" "tomlkit" "shellingham" "python-dotenv" "resolvelib" "installer" "cachecontrol" "tomli" "importlib-resources" "importlib-metadata" ];
+        optional-dependencies = { all = [ "pdm" ]; cookiecutter = [ "cookiecutter" ]; copier = [ "copier" ]; doc = [ "mkdocs" "mkdocs-material" "mkdocstrings" "mike" "setuptools" "markdown-exec" "mkdocs-redirects" ]; keyring = [ "keyring" ]; pytest = [ "pytest" "pytest-mock" ]; template = [ "pdm" ]; test = [ "pdm" "pytest-cov" "pytest-xdist" "pytest-rerunfailures" "pytest-httpserver" ]; tox = [ "tox" "tox-pdm" ]; truststore = [ "truststore" ]; workflow = [ "pdm-pep517" "parver" "towncrier" "pycomplete" ]; };
+        dependencies = [ "blinker" "certifi" "packaging" "platformdirs" "rich" "virtualenv" "pyproject-hooks" "requests-toolbelt" "unearth" "findpython" "tomlkit" "shellingham" "python-dotenv" "resolvelib" "installer" "cachecontrol" "tomli" "importlib-resources" "importlib-metadata" ];
       };
     };
   };
