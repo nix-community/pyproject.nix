@@ -119,7 +119,7 @@ in
           inherit (project') description;
         } //
         # Optional license
-        optionalAttrs (lib.hasAttrByPath [ "license" "text" ] project') (
+        optionalAttrs (project' ? license.text) (
           assert !(project'.license ? file); {
             # From PEP-621:
             # "The text key has a string value which is the license of the project whose meaning is that of the License field from the core metadata.

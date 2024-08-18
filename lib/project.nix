@@ -169,8 +169,8 @@ lib.fix (self: {
       projectRoot ? null
     }:
     let
-      isPoetry = lib.hasAttrByPath [ "tool" "poetry" ] pyproject;
-      isPep621 = lib.hasAttrByPath [ "project" ] pyproject;
+      isPoetry = pyproject ? tool.poetry;
+      isPep621 = pyproject ? project;
     in
     (if isPoetry then self.loadPoetryPyproject else if isPep621 then self.loadPyproject else throw "Project is neither Poetry nor PEP-621") {
       inherit pyproject projectRoot;
