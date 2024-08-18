@@ -6,7 +6,7 @@
 }:
 let
   inherit (builtins) attrValues length attrNames head foldl';
-  inherit (lib) optionalAttrs flatten mapAttrs' filterAttrs;
+  inherit (lib) optionalAttrs concatLists mapAttrs' filterAttrs;
 
   # Group licenses by their SPDX IDs for easy lookup
   licensesBySpdxId = mapAttrs'
@@ -49,7 +49,7 @@ in
         inherit environ extras;
       };
       namedDeps = pep621.getDependenciesNames filteredDeps;
-      flatDeps = namedDeps.dependencies ++ flatten (attrValues namedDeps.extras) ++ namedDeps.build-systems;
+      flatDeps = namedDeps.dependencies ++ concatLists (attrValues namedDeps.extras) ++ namedDeps.build-systems;
     in
     ps:
     let

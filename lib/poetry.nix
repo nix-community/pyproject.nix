@@ -8,7 +8,7 @@
 lib.fix (self:
 let
   inherit (builtins) match elemAt foldl' typeOf attrNames head tail mapAttrs length filter split;
-  inherit (lib) optionalAttrs flatten;
+  inherit (lib) optionalAttrs concatLists;
   inherit (import ./util.nix { inherit lib; }) splitComma;
 
   # Translate author from a string like "Name <email>" to a structured set as defined by PEP-621.
@@ -261,5 +261,5 @@ in
 
      Type: parseVersionConds :: string -> [ AttrSet ]
   */
-  parseVersionConds = s: flatten (map self.parseVersionCond (splitComma s));
+  parseVersionConds = s: concatLists (map self.parseVersionCond (splitComma s));
 })

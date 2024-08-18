@@ -7,7 +7,7 @@
 }:
 let
   inherit (builtins) attrValues foldl' filter;
-  inherit (lib) flatten;
+  inherit (lib) concatLists;
 
 in
 {
@@ -49,7 +49,7 @@ in
         environ = pep508.mkEnviron python;
         inherit extras;
       };
-      flatDeps = filteredDeps.dependencies ++ flatten (attrValues filteredDeps.extras) ++ filteredDeps.build-systems;
+      flatDeps = filteredDeps.dependencies ++ concatLists (attrValues filteredDeps.extras) ++ filteredDeps.build-systems;
 
     in
     foldl'
