@@ -96,7 +96,7 @@ in
         inherit environ extras;
       };
 
-      pythonVersion = pep440.parseVersion python.version;
+      pythonVersion = environ.python_full_version.value;
 
       pythonPackages = python.pkgs;
 
