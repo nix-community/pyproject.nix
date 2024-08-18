@@ -40,12 +40,13 @@ in
       extras ? [ ]
     , # Extra withPackages function
       extraPackages ? _ps: [ ]
+    , # PEP-508 environment
+      environ ? pep508.mkEnviron python
     }:
     let
       filteredDeps = pep621.filterDependencies {
         inherit (project) dependencies;
-        environ = pep508.mkEnviron python;
-        inherit extras;
+        inherit environ extras;
       };
       namedDeps = pep621.getDependenciesNames filteredDeps;
       flatDeps = namedDeps.dependencies ++ flatten (attrValues namedDeps.extras) ++ namedDeps.build-systems;
@@ -86,12 +87,13 @@ in
     , # Which package format to pass to buildPythonPackage
       # If the format is "wheel" PEP-518 build-systems are excluded from the build.
       format ? "pyproject"
+    , # PEP-508 environment
+      environ ? pep508.mkEnviron python
     }:
     let
       filteredDeps = pep621.filterDependencies {
         inherit (project) dependencies;
-        environ = pep508.mkEnviron python;
-        inherit extras;
+        inherit environ extras;
       };
 
       pythonVersion = pep440.parseVersion python.version;
