@@ -78,7 +78,7 @@ jobs:
           set -Eeu
           for template in templates/*; do
             echo "Evaluating $template"
-            nix flake show --all-systems --override-input pyproject-nix . --override-input pyproject "./$template"
+            nix flake show --all-systems --override-input pyproject-nix . "./$template"
           done
 
   collect:
