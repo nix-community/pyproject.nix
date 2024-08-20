@@ -125,7 +125,7 @@ let
     in
     {
       inherit (dep) name;
-      conditions = self.parseVersionConds dep.version;
+      conditions = if dep ? version then self.parseVersionConds dep.version else [ ];
       extras = dep.extras or [ ];
       url = dep.url or null;
       markers = if markers == dummyMarker then null else markers;
