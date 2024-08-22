@@ -23,7 +23,7 @@ let
     ;
 
   splitAttrPath = path: filter isString (split "\\." path);
-  getAttrPath = path: lib.attrByPath (splitAttrPath path) { };
+  getAttrPath = path: lib.attrByPath (splitAttrPath path);
 
 in
 fix (self: {
@@ -56,10 +56,10 @@ fix (self: {
     let
       # Fold extras from all considered attributes into one set
       extras' =
-        foldl' (acc: attr: acc // getAttrPath attr pyproject) (pyproject.project.optional-dependencies
+        foldl' (acc: attr: acc // getAttrPath attr { } pyproject) (pyproject.project.optional-dependencies
           or { }
         ) extrasAttrPaths
-        // mapAttrs' (path: attr: nameValuePair attr (getAttrPath path pyproject)) extrasListPaths;
+        // mapAttrs' (path: attr: nameValuePair attr (getAttrPath path [ ] pyproject)) extrasListPaths;
     in
     {
       dependencies = map pep508.parseString (pyproject.project.dependencies or [ ]);
