@@ -44,16 +44,47 @@ lib.fix (self: {
       pyproject ? lib.importTOML (projectRoot + "/pyproject.toml"),
       # Example: extrasAttrPaths = [ "tool.pdm.dev-dependencies" ];
       extrasAttrPaths ? [ ],
+      # Example: extrasListPaths = { "tool.uv.dependencies.dev-dependencies" = "dev-dependencies"; }
+      extrasListPaths ? { },
       # Path to project root
       projectRoot ? null,
     }:
     lib.fix (project: {
-      dependencies = pep621.parseDependencies { inherit pyproject extrasAttrPaths; };
+      dependencies = pep621.parseDependencies { inherit pyproject extrasAttrPaths extrasListPaths; };
       inherit pyproject projectRoot;
       renderers = curryProject renderers project;
       validators = curryProject validators project;
       requires-python = pep621.parseRequiresPython pyproject;
     });
+
+  /*
+    Load dependencies from a uv pyproject.toml.
+
+    Type: loadUVPyproject :: AttrSet -> AttrSet
+
+    Example:
+      # loadUVPyproject { projectRoot = ./.; }
+      {
+        dependencies = { }; # Parsed dependency structure in the schema of `lib.pep621.parseDependencies`
+        build-systems = [ ];  # Returned by `lib.pep518.parseBuildSystems`
+        pyproject = { }; # The unmarshaled contents of pyproject.toml
+        projectRoot = null; # Path to project root
+        requires-python = null; # requires-python as parsed by pep621.parseRequiresPython
+      }
+  */
+  loadUVPyproject =
+    let
+      extrasListPaths = {
+        "tool.uv.dev-dependencies" = "dev-dependencies";
+      };
+    in
+    {
+      # The unmarshaled contents of pyproject.toml
+      pyproject ? lib.importTOML (projectRoot + "/pyproject.toml"),
+      # Path to project root
+      projectRoot ? null,
+    }:
+    self.loadPyproject { inherit pyproject projectRoot extrasListPaths; };
 
   /*
     Load dependencies from a PDM pyproject.toml.

@@ -14,7 +14,13 @@ let
     filter
     elem
     ;
-  inherit (lib) isString filterAttrs fix;
+  inherit (lib)
+    isString
+    filterAttrs
+    fix
+    nameValuePair
+    mapAttrs'
+    ;
 
   splitAttrPath = path: filter isString (split "\\." path);
   getAttrPath = path: lib.attrByPath (splitAttrPath path) { };
@@ -45,12 +51,15 @@ fix (self: {
     {
       pyproject,
       extrasAttrPaths ? [ ],
+      extrasListPaths ? { },
     }:
     let
       # Fold extras from all considered attributes into one set
-      extras' = foldl' (
-        acc: attr: acc // getAttrPath attr pyproject
-      ) (pyproject.project.optional-dependencies or { }) extrasAttrPaths;
+      extras' =
+        foldl' (acc: attr: acc // getAttrPath attr pyproject) (pyproject.project.optional-dependencies
+          or { }
+        ) extrasAttrPaths
+        // mapAttrs' (path: attr: nameValuePair attr (getAttrPath path pyproject)) extrasListPaths;
     in
     {
       dependencies = map pep508.parseString (pyproject.project.dependencies or [ ]);
@@ -114,26 +123,19 @@ fix (self: {
     dependencies:
     (
       let
-        filterList =
-          environ:
-          filter (
-            dep:
-            dep.markers == null
-            || pep508.evalMarkers (
-              environ
-              // {
-                extra = {
-                  type = "extra";
-                  value = extras;
-                };
-              }
-            ) dep.markers
-          );
+        environ' = environ // {
+          extra = {
+            type = "extra";
+            value = extras;
+          };
+        };
+
+        filterList = filter (dep: dep.markers == null || pep508.evalMarkers environ' dep.markers);
       in
       {
-        dependencies = filterList environ dependencies.dependencies;
-        extras = mapAttrs (_: filterList environ) dependencies.extras;
-        build-systems = filterList environ dependencies.build-systems;
+        dependencies = filterList dependencies.dependencies;
+        extras = mapAttrs (_: filterList) dependencies.extras;
+        build-systems = filterList dependencies.build-systems;
       }
     );
 

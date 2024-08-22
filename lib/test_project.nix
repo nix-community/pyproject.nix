@@ -11,6 +11,7 @@ let
   inherit (project)
     loadPyproject
     loadPoetryPyproject
+    loadUVPyproject
     loadPDMPyproject
     loadPyprojectDynamic
     ;
@@ -173,6 +174,55 @@ lib.fix (self: {
             "tzdata"
           ];
         };
+    };
+  };
+
+  loadUVPyproject = {
+    testUvExtras = {
+      expr =
+        let
+          project = loadUVPyproject {
+            pyproject = fixtures."uv.toml";
+            projectRoot = ./fixtures;
+          };
+
+          attrs = renderers.buildPythonPackage {
+            inherit project;
+            python = mocks.cpythonLinux38;
+          };
+
+        in
+        attrs
+        // {
+          # Assert shape for src, not exact equality
+          src = lib.isStorePath "${attrs.src}";
+        };
+
+      expected = {
+        build-system = [
+          {
+            pname = "hatchling";
+            version = "1.25.0";
+          }
+        ];
+        dependencies = [ ];
+        disabled = true;
+        meta = {
+          description = "Add your description here";
+        };
+        optional-dependencies = {
+          dev-dependencies = [
+            {
+              pname = "coverage";
+              version = "7.5.3";
+            }
+          ];
+        };
+        pname = "uv-fixture";
+        pyproject = true;
+        src = true;
+        version = "0.1.0";
+      };
     };
   };
 
