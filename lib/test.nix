@@ -1,6 +1,16 @@
-{ lib, pyproject, pkgs }:
+{
+  lib,
+  pyproject,
+  pkgs,
+}:
 let
-  inherit (builtins) mapAttrs attrNames length substring stringLength;
+  inherit (builtins)
+    mapAttrs
+    attrNames
+    length
+    substring
+    stringLength
+    ;
   inherit (lib) mapAttrs' toUpper fix;
 
   capitalise = s: toUpper (substring 0 1 s) + (substring 1 (stringLength s) s);
@@ -9,16 +19,17 @@ let
     let
       # Mock python derivations so we don't have to keep a pkgs reference
       mkPython =
-        { pname ? "python"
-        , version
-        , pythonVersion ? version
-        , sourceVersion ? { }
-        , implementation ? "cpython"
-        , isLinux ? false
-        , isDarwin ? false
-        , system
-        ,
-        }: {
+        {
+          pname ? "python",
+          version,
+          pythonVersion ? version,
+          sourceVersion ? { },
+          implementation ? "cpython",
+          isLinux ? false,
+          isDarwin ? false,
+          system,
+        }:
+        {
           inherit pname version;
           passthru = {
             inherit pythonVersion implementation sourceVersion;
@@ -29,11 +40,7 @@ let
           # when updating nixpkgs.
           #
           # When that happens add another override to the attrset below.
-          pkgs = mapAttrs
-            (_n: drv: {
-              inherit (drv) pname version;
-            })
-            pkgs.python3.pkgs // {
+          pkgs = mapAttrs (_n: drv: { inherit (drv) pname version; }) pkgs.python3.pkgs // {
 
             tox-pdm = {
               pname = "tox-pdm";
@@ -108,18 +115,23 @@ let
           stdenv = {
             inherit isLinux isDarwin;
 
-            targetPlatform = lib.systems.elaborate system // lib.optionalAttrs isDarwin {
-              darwinSdkVersion = "11.0";
-            };
+            targetPlatform =
+              lib.systems.elaborate system
+              // lib.optionalAttrs isDarwin { darwinSdkVersion = "11.0"; };
 
             cc =
-              if isLinux then {
-                libc.pname = "glibc";
-                libc.version = "2.37";
-              } else if isDarwin then {
-                libc.pname = "libSystem";
-                libc.version = "11.0.0";
-              } else throw "NO U";
+              if isLinux then
+                {
+                  libc.pname = "glibc";
+                  libc.version = "2.37";
+                }
+              else if isDarwin then
+                {
+                  libc.pname = "libSystem";
+                  libc.version = "11.0.0";
+                }
+              else
+                throw "NO U";
           };
         };
     in
@@ -163,14 +175,19 @@ let
       };
     };
 
-  importTests = path: import path (pyproject // {
-    inherit lib mocks;
-    fixtures = import ./fixtures;
-  });
+  importTests =
+    path:
+    import path (
+      pyproject
+      // {
+        inherit lib mocks;
+        fixtures = import ./fixtures;
+      }
+    );
 
 in
 # Work with the tests as a tree
-  # The attrpath is: module(file) -> symbol(function) -> test
+# The attrpath is: module(file) -> symbol(function) -> test
 fix (self: {
   pip = importTests ./test_pip.nix;
   pypa = importTests ./test_pypa.nix;
@@ -191,13 +208,16 @@ fix (self: {
   # Yo dawg, I heard you like tests...
   #
   # Check that all exported modules are covered by a test suite with at least one test.
-  coverage = mapAttrs
-    (moduleName: mapAttrs' (sym: _: {
-      name = "test" + capitalise sym;
-      value = {
-        expected = true;
-        expr = self ? ${moduleName}.${sym} && length (attrNames self.${moduleName}.${sym}) >= 1;
-      };
-    }))
-    pyproject;
+  coverage = mapAttrs (
+    moduleName:
+    mapAttrs' (
+      sym: _: {
+        name = "test" + capitalise sym;
+        value = {
+          expected = true;
+          expr = self ? ${moduleName}.${sym} && length (attrNames self.${moduleName}.${sym}) >= 1;
+        };
+      }
+    )
+  ) pyproject;
 })

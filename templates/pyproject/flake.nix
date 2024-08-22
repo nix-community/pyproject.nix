@@ -4,7 +4,8 @@
   inputs.pyproject-nix.url = "github:nix-community/pyproject.nix";
   inputs.pyproject-nix.inputs.nixpkgs.follows = "nixpkgs";
 
-  outputs = { nixpkgs, pyproject-nix, ... }:
+  outputs =
+    { nixpkgs, pyproject-nix, ... }:
     let
       inherit (nixpkgs) lib;
 
@@ -46,9 +47,7 @@
 
         in
         # Create a devShell like normal.
-        pkgs.mkShell {
-          packages = [ pythonEnv ];
-        };
+        pkgs.mkShell { packages = [ pythonEnv ]; };
 
       # Build our package using `buildPythonPackage
       packages.x86_64-linux.default =
@@ -57,9 +56,7 @@
           attrs = project.renderers.buildPythonPackage { inherit python; };
         in
         # Pass attributes to buildPythonPackage.
-          # Here is a good spot to add on any missing or custom attributes.
-        python.pkgs.buildPythonPackage (attrs // {
-          env.CUSTOM_ENVVAR = "hello";
-        });
+        # Here is a good spot to add on any missing or custom attributes.
+        python.pkgs.buildPythonPackage (attrs // { env.CUSTOM_ENVVAR = "hello"; });
     };
 }

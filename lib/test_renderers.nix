@@ -1,9 +1,10 @@
-{ lib
-, project
-, fixtures
-, renderers
-, mocks
-, ...
+{
+  lib,
+  project,
+  fixtures,
+  renderers,
+  mocks,
+  ...
 }:
 let
   inherit (project) loadPyproject;
@@ -19,38 +20,64 @@ let
 
   # Clear drv inputs from stuff like version and just return the name string
   # so our tests don't start failing randomly just because we upgrade and nixpkgs moved
-  clearDrvInputs = attrs: attrs // {
-    dependencies = map (drv: drv.pname) attrs.dependencies;
-    build-system = map (drv: drv.pname) attrs.build-system;
-    optional-dependencies = lib.mapAttrs (_group: deps: map (drv: drv.pname) deps) attrs.optional-dependencies;
-  } // optionalAttrs (attrs ? checkInputs) {
-    checkInputs = map (drv: drv.pname) attrs.checkInputs;
-  };
+  clearDrvInputs =
+    attrs:
+    attrs
+    // {
+      dependencies = map (drv: drv.pname) attrs.dependencies;
+      build-system = map (drv: drv.pname) attrs.build-system;
+      optional-dependencies = lib.mapAttrs (
+        _group: deps: map (drv: drv.pname) deps
+      ) attrs.optional-dependencies;
+    }
+    // optionalAttrs (attrs ? checkInputs) { checkInputs = map (drv: drv.pname) attrs.checkInputs; };
 
 in
 {
   withPackages = {
     testPdm = {
-      expr =
-        map (drv: drv.pname) (
-          let
-            rendered = renderers.withPackages {
-              project = projects.pdm;
-              python = mocks.cpythonLinux38;
-            };
-          in
-          rendered mocks.cpythonLinux38.pkgs
-        );
-      expected = [ "blinker" "certifi" "packaging" "platformdirs" "rich" "virtualenv" "pyproject-hooks" "requests-toolbelt" "unearth" "findpython" "tomlkit" "shellingham" "python-dotenv" "resolvelib" "installer" "cachecontrol" "tomli" "importlib-resources" "importlib-metadata" "pdm-backend" ];
+      expr = map (drv: drv.pname) (
+        let
+          rendered = renderers.withPackages {
+            project = projects.pdm;
+            python = mocks.cpythonLinux38;
+          };
+        in
+        rendered mocks.cpythonLinux38.pkgs
+      );
+      expected = [
+        "blinker"
+        "certifi"
+        "packaging"
+        "platformdirs"
+        "rich"
+        "virtualenv"
+        "pyproject-hooks"
+        "requests-toolbelt"
+        "unearth"
+        "findpython"
+        "tomlkit"
+        "shellingham"
+        "python-dotenv"
+        "resolvelib"
+        "installer"
+        "cachecontrol"
+        "tomli"
+        "importlib-resources"
+        "importlib-metadata"
+        "pdm-backend"
+      ];
     };
   };
 
   buildPythonPackage = {
     testPdm = {
-      expr = clearDrvInputs (renderers.buildPythonPackage {
-        project = projects.pdm;
-        python = mocks.cpythonLinux38;
-      });
+      expr = clearDrvInputs (
+        renderers.buildPythonPackage {
+          project = projects.pdm;
+          python = mocks.cpythonLinux38;
+        }
+      );
       expected = {
         disabled = false;
         pyproject = true;
@@ -61,8 +88,65 @@ in
         };
         build-system = [ "pdm-backend" ];
         pname = "pdm";
-        optional-dependencies = { all = [ "pdm" ]; cookiecutter = [ "cookiecutter" ]; copier = [ "copier" ]; doc = [ "mkdocs" "mkdocs-material" "mkdocstrings" "mike" "setuptools" "markdown-exec" "mkdocs-redirects" ]; keyring = [ "keyring" ]; pytest = [ "pytest" "pytest-mock" ]; template = [ "pdm" ]; test = [ "pdm" "pytest-cov" "pytest-xdist" "pytest-rerunfailures" "pytest-httpserver" ]; tox = [ "tox" "tox-pdm" ]; truststore = [ "truststore" ]; workflow = [ "pdm-pep517" "parver" "towncrier" "pycomplete" ]; };
-        dependencies = [ "blinker" "certifi" "packaging" "platformdirs" "rich" "virtualenv" "pyproject-hooks" "requests-toolbelt" "unearth" "findpython" "tomlkit" "shellingham" "python-dotenv" "resolvelib" "installer" "cachecontrol" "tomli" "importlib-resources" "importlib-metadata" ];
+        optional-dependencies = {
+          all = [ "pdm" ];
+          cookiecutter = [ "cookiecutter" ];
+          copier = [ "copier" ];
+          doc = [
+            "mkdocs"
+            "mkdocs-material"
+            "mkdocstrings"
+            "mike"
+            "setuptools"
+            "markdown-exec"
+            "mkdocs-redirects"
+          ];
+          keyring = [ "keyring" ];
+          pytest = [
+            "pytest"
+            "pytest-mock"
+          ];
+          template = [ "pdm" ];
+          test = [
+            "pdm"
+            "pytest-cov"
+            "pytest-xdist"
+            "pytest-rerunfailures"
+            "pytest-httpserver"
+          ];
+          tox = [
+            "tox"
+            "tox-pdm"
+          ];
+          truststore = [ "truststore" ];
+          workflow = [
+            "pdm-pep517"
+            "parver"
+            "towncrier"
+            "pycomplete"
+          ];
+        };
+        dependencies = [
+          "blinker"
+          "certifi"
+          "packaging"
+          "platformdirs"
+          "rich"
+          "virtualenv"
+          "pyproject-hooks"
+          "requests-toolbelt"
+          "unearth"
+          "findpython"
+          "tomlkit"
+          "shellingham"
+          "python-dotenv"
+          "resolvelib"
+          "installer"
+          "cachecontrol"
+          "tomli"
+          "importlib-resources"
+          "importlib-metadata"
+        ];
       };
     };
 
@@ -81,17 +165,22 @@ in
       };
 
     testPdmWithMaps = {
-      expr = clearDrvInputs (renderers.buildPythonPackage {
-        project = projects.pdm;
-        python = mocks.cpythonLinux38;
-        extras = [ "tox" ];
-        extrasAttrMappings = {
-          tox = "checkInputs";
-        };
-      });
+      expr = clearDrvInputs (
+        renderers.buildPythonPackage {
+          project = projects.pdm;
+          python = mocks.cpythonLinux38;
+          extras = [ "tox" ];
+          extrasAttrMappings = {
+            tox = "checkInputs";
+          };
+        }
+      );
       expected = {
         disabled = false;
-        checkInputs = [ "tox" "tox-pdm" ];
+        checkInputs = [
+          "tox"
+          "tox-pdm"
+        ];
         pyproject = true;
         meta = {
           description = "A modern Python package and dependency manager supporting the latest PEP standards";
@@ -100,8 +189,65 @@ in
         };
         build-system = [ "pdm-backend" ];
         pname = "pdm";
-        optional-dependencies = { all = [ "pdm" ]; cookiecutter = [ "cookiecutter" ]; copier = [ "copier" ]; doc = [ "mkdocs" "mkdocs-material" "mkdocstrings" "mike" "setuptools" "markdown-exec" "mkdocs-redirects" ]; keyring = [ "keyring" ]; pytest = [ "pytest" "pytest-mock" ]; template = [ "pdm" ]; test = [ "pdm" "pytest-cov" "pytest-xdist" "pytest-rerunfailures" "pytest-httpserver" ]; tox = [ "tox" "tox-pdm" ]; truststore = [ "truststore" ]; workflow = [ "pdm-pep517" "parver" "towncrier" "pycomplete" ]; };
-        dependencies = [ "blinker" "certifi" "packaging" "platformdirs" "rich" "virtualenv" "pyproject-hooks" "requests-toolbelt" "unearth" "findpython" "tomlkit" "shellingham" "python-dotenv" "resolvelib" "installer" "cachecontrol" "tomli" "importlib-resources" "importlib-metadata" ];
+        optional-dependencies = {
+          all = [ "pdm" ];
+          cookiecutter = [ "cookiecutter" ];
+          copier = [ "copier" ];
+          doc = [
+            "mkdocs"
+            "mkdocs-material"
+            "mkdocstrings"
+            "mike"
+            "setuptools"
+            "markdown-exec"
+            "mkdocs-redirects"
+          ];
+          keyring = [ "keyring" ];
+          pytest = [
+            "pytest"
+            "pytest-mock"
+          ];
+          template = [ "pdm" ];
+          test = [
+            "pdm"
+            "pytest-cov"
+            "pytest-xdist"
+            "pytest-rerunfailures"
+            "pytest-httpserver"
+          ];
+          tox = [
+            "tox"
+            "tox-pdm"
+          ];
+          truststore = [ "truststore" ];
+          workflow = [
+            "pdm-pep517"
+            "parver"
+            "towncrier"
+            "pycomplete"
+          ];
+        };
+        dependencies = [
+          "blinker"
+          "certifi"
+          "packaging"
+          "platformdirs"
+          "rich"
+          "virtualenv"
+          "pyproject-hooks"
+          "requests-toolbelt"
+          "unearth"
+          "findpython"
+          "tomlkit"
+          "shellingham"
+          "python-dotenv"
+          "resolvelib"
+          "installer"
+          "cachecontrol"
+          "tomli"
+          "importlib-resources"
+          "importlib-metadata"
+        ];
       };
     };
   };

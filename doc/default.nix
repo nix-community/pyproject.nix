@@ -1,10 +1,11 @@
-{ stdenv
-, nixdoc
-, self
-, mdbook
-, mdbook-nixdoc
-, mdbook-open-on-gh
-, git
+{
+  stdenv,
+  nixdoc,
+  self,
+  mdbook,
+  mdbook-nixdoc,
+  mdbook-open-on-gh,
+  git,
 }:
 
 stdenv.mkDerivation {

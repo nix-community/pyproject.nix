@@ -1,13 +1,19 @@
-{ project
-, fixtures
-, renderers
-, mocks
-, lib
-, pypa
-, ...
+{
+  project,
+  fixtures,
+  renderers,
+  mocks,
+  lib,
+  pypa,
+  ...
 }:
 let
-  inherit (project) loadPyproject loadPoetryPyproject loadPDMPyproject loadPyprojectDynamic;
+  inherit (project)
+    loadPyproject
+    loadPoetryPyproject
+    loadPDMPyproject
+    loadPyprojectDynamic
+    ;
 
   # Get python packages from a set
   getPkgs = set: pnames: map (pname: set.pkgs.${pypa.normalizePackageName pname}) pnames;
@@ -47,28 +53,108 @@ lib.fix (self: {
         {
           pyproject = true;
           disabled = true;
-          meta = { description = "Powerful data structures for data analysis, time series, and statistics"; };
+          meta = {
+            description = "Powerful data structures for data analysis, time series, and statistics";
+          };
           optional-dependencies = lib.mapAttrs (_: getPkgs') {
-            all = [ "beautifulsoup4" "bottleneck" "brotlipy" "fastparquet" "fsspec" "gcsfs" "html5lib" "hypothesis" "Jinja2" "lxml" "matplotlib" "numba" "numexpr" "odfpy" "openpyxl" "pandas-gbq" "psycopg2" "pyarrow" "PyMySQL" "PyQt5" "pyreadstat" "pytest" "pytest-xdist" "pytest-asyncio" "python-snappy" "pyxlsb" "QtPy" "scipy" "s3fs" "SQLAlchemy" "tables" "tabulate" "xarray" "xlrd" "xlsxwriter" "zstandard" ];
+            all = [
+              "beautifulsoup4"
+              "bottleneck"
+              "brotlipy"
+              "fastparquet"
+              "fsspec"
+              "gcsfs"
+              "html5lib"
+              "hypothesis"
+              "Jinja2"
+              "lxml"
+              "matplotlib"
+              "numba"
+              "numexpr"
+              "odfpy"
+              "openpyxl"
+              "pandas-gbq"
+              "psycopg2"
+              "pyarrow"
+              "PyMySQL"
+              "PyQt5"
+              "pyreadstat"
+              "pytest"
+              "pytest-xdist"
+              "pytest-asyncio"
+              "python-snappy"
+              "pyxlsb"
+              "QtPy"
+              "scipy"
+              "s3fs"
+              "SQLAlchemy"
+              "tables"
+              "tabulate"
+              "xarray"
+              "xlrd"
+              "xlsxwriter"
+              "zstandard"
+            ];
             aws = [ "s3fs" ];
-            clipboard = [ "PyQt5" "QtPy" ];
-            compression = [ "brotlipy" "python-snappy" "zstandard" ];
-            computation = [ "scipy" "xarray" ];
-            excel = [ "odfpy" "openpyxl" "pyxlsb" "xlrd" "xlsxwriter" ];
+            clipboard = [
+              "PyQt5"
+              "QtPy"
+            ];
+            compression = [
+              "brotlipy"
+              "python-snappy"
+              "zstandard"
+            ];
+            computation = [
+              "scipy"
+              "xarray"
+            ];
+            excel = [
+              "odfpy"
+              "openpyxl"
+              "pyxlsb"
+              "xlrd"
+              "xlsxwriter"
+            ];
             feather = [ "pyarrow" ];
             fss = [ "fsspec" ];
-            gcp = [ "gcsfs" "pandas-gbq" ];
+            gcp = [
+              "gcsfs"
+              "pandas-gbq"
+            ];
             hdf5 = [ "tables" ];
-            html = [ "beautifulsoup4" "html5lib" "lxml" ];
-            mysql = [ "SQLAlchemy" "PyMySQL" ];
-            output_formatting = [ "Jinja2" "tabulate" ];
+            html = [
+              "beautifulsoup4"
+              "html5lib"
+              "lxml"
+            ];
+            mysql = [
+              "SQLAlchemy"
+              "PyMySQL"
+            ];
+            output_formatting = [
+              "Jinja2"
+              "tabulate"
+            ];
             parquet = [ "pyarrow" ];
-            performance = [ "bottleneck" "numba" "numexpr" ];
+            performance = [
+              "bottleneck"
+              "numba"
+              "numexpr"
+            ];
             plot = [ "matplotlib" ];
-            postgresql = [ "SQLAlchemy" "psycopg2" ];
+            postgresql = [
+              "SQLAlchemy"
+              "psycopg2"
+            ];
             spss = [ "pyreadstat" ];
             sql-other = [ "SQLAlchemy" ];
-            test = [ "hypothesis" "pytest" "pytest-xdist" "pytest-asyncio" ];
+            test = [
+              "hypothesis"
+              "pytest"
+              "pytest-xdist"
+              "pytest-asyncio"
+            ];
             xml = [ "lxml" ];
           };
           build-system = getPkgs' [
@@ -105,7 +191,8 @@ lib.fix (self: {
           };
 
         in
-        attrs // {
+        attrs
+        // {
           # Assert shape for src, not exact equality
           src = lib.isStorePath "${attrs.src}";
         };
@@ -122,14 +209,39 @@ lib.fix (self: {
             all = [ "pdm" ];
             cookiecutter = [ "cookiecutter" ];
             copier = [ "copier" ];
-            doc = [ "mkdocs" "mkdocs-material" "mkdocstrings" "mike" "setuptools" "markdown-exec" "mkdocs-redirects" ];
+            doc = [
+              "mkdocs"
+              "mkdocs-material"
+              "mkdocstrings"
+              "mike"
+              "setuptools"
+              "markdown-exec"
+              "mkdocs-redirects"
+            ];
             keyring = [ "keyring" ];
-            pytest = [ "pytest" "pytest-mock" ];
+            pytest = [
+              "pytest"
+              "pytest-mock"
+            ];
             template = [ "pdm" ];
-            test = [ "pdm" "pytest-cov" "pytest-xdist" "pytest-rerunfailures" "pytest-httpserver" ];
-            tox = [ "tox" "tox-pdm" ];
+            test = [
+              "pdm"
+              "pytest-cov"
+              "pytest-xdist"
+              "pytest-rerunfailures"
+              "pytest-httpserver"
+            ];
+            tox = [
+              "tox"
+              "tox-pdm"
+            ];
             truststore = [ "truststore" ];
-            workflow = [ "pdm-pep517" "parver" "towncrier" "pycomplete" ];
+            workflow = [
+              "pdm-pep517"
+              "parver"
+              "towncrier"
+              "pycomplete"
+            ];
           };
           meta = {
             description = "A modern Python package and dependency manager supporting the latest PEP standards";
@@ -144,9 +256,7 @@ lib.fix (self: {
             };
             mainProgram = "pdm";
           };
-          build-system = getPkgs mocks.cpythonLinux38 [
-            "pdm-backend"
-          ];
+          build-system = getPkgs mocks.cpythonLinux38 [ "pdm-backend" ];
           pname = "pdm";
           dependencies = getPkgs mocks.cpythonLinux38 [
             "blinker"
@@ -193,8 +303,25 @@ lib.fix (self: {
           optional-dependencies = lib.mapAttrs (_: getPkgs') {
             dev = [ "pre-commit" ];
             github-actions = [ "pytest-github-actions-annotate-failures" ];
-            test = [ "cachy" "deepdiff" "deepdiff" "httpretty" "pytest" "pytest-cov" "pytest-mock" "pytest-randomly" "pytest-xdist" "zipp" ];
-            typing = [ "mypy" "types-html5lib" "types-jsonschema" "types-requests" "typing-extensions" ];
+            test = [
+              "cachy"
+              "deepdiff"
+              "deepdiff"
+              "httpretty"
+              "pytest"
+              "pytest-cov"
+              "pytest-mock"
+              "pytest-randomly"
+              "pytest-xdist"
+              "zipp"
+            ];
+            typing = [
+              "mypy"
+              "types-html5lib"
+              "types-jsonschema"
+              "types-requests"
+              "typing-extensions"
+            ];
           };
           meta = {
             description = "Python dependency management and packaging made easy.";
@@ -209,9 +336,7 @@ lib.fix (self: {
             };
             mainProgram = "poetry";
           };
-          build-system = getPkgs mocks.cpythonLinux38 [
-            "poetry-core"
-          ];
+          build-system = getPkgs mocks.cpythonLinux38 [ "poetry-core" ];
           pname = "poetry";
           dependencies = getPkgs mocks.cpythonLinux38 [
             "build"
@@ -264,18 +389,15 @@ lib.fix (self: {
     };
 
     testPep621 = {
-      expr =
-        (loadPyprojectDynamic { pyproject = fixtures."pandas.toml"; }).renderers.buildPythonPackage {
-          inherit project;
-          python = mocks.cpythonLinux38;
-        };
+      expr = (loadPyprojectDynamic { pyproject = fixtures."pandas.toml"; }).renderers.buildPythonPackage {
+        inherit project;
+        python = mocks.cpythonLinux38;
+      };
       inherit (self.loadPyproject.testPandas) expected;
     };
 
     testError = {
-      expr = loadPyprojectDynamic {
-        pyproject = { };
-      };
+      expr = loadPyprojectDynamic { pyproject = { }; };
       expectedError.type = "ThrownError";
       expectedError.msg = "Project is neither Poetry nor PEP-621";
     };
@@ -285,16 +407,18 @@ lib.fix (self: {
     testRecursive = {
       expr =
         let
-          self = project.loadRequirementsTxt {
-            requirements = ./fixtures/requirements-recursive.txt;
-          };
+          self = project.loadRequirementsTxt { requirements = ./fixtures/requirements-recursive.txt; };
         in
-        self // {
+        self
+        // {
           renderers = lib.attrNames self.renderers;
           validators = lib.attrNames self.validators;
         };
       expected = {
-        renderers = [ "buildPythonPackage" "withPackages" ];
+        renderers = [
+          "buildPythonPackage"
+          "withPackages"
+        ];
         requires-python = null;
         validators = [ "validateVersionConstraints" ];
         dependencies = {
@@ -310,7 +434,11 @@ lib.fix (self: {
                     local = null;
                     post = null;
                     pre = null;
-                    release = [ 10 1 0 ];
+                    release = [
+                      10
+                      1
+                      0
+                    ];
                   };
                 }
               ];
@@ -329,7 +457,11 @@ lib.fix (self: {
                     local = null;
                     post = null;
                     pre = null;
-                    release = [ 2 31 0 ];
+                    release = [
+                      2
+                      31
+                      0
+                    ];
                   };
                 }
               ];

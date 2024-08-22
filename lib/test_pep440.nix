@@ -1,6 +1,12 @@
 { pep440, ... }:
 let
-  inherit (pep440) parseVersion parseVersionCond parseVersionConds compareVersions comparators;
+  inherit (pep440)
+    parseVersion
+    parseVersionCond
+    parseVersionConds
+    compareVersions
+    comparators
+    ;
 
 in
 
@@ -15,7 +21,11 @@ in
         local = null;
         post = null;
         pre = null;
-        release = [ 3 0 0 ];
+        release = [
+          3
+          0
+          0
+        ];
       };
     };
 
@@ -30,7 +40,11 @@ in
           value = 2;
         };
         pre = null;
-        release = [ 3 0 0 ];
+        release = [
+          3
+          0
+          0
+        ];
       };
     };
 
@@ -45,7 +59,11 @@ in
           type = "rc";
           value = 1;
         };
-        release = [ 3 0 0 ];
+        release = [
+          3
+          0
+          0
+        ];
       };
     };
 
@@ -60,7 +78,11 @@ in
           type = "rc";
           value = 1;
         };
-        release = [ 3 0 0 ];
+        release = [
+          3
+          0
+          0
+        ];
       };
     };
 
@@ -75,7 +97,11 @@ in
           value = 1;
         };
         pre = null;
-        release = [ 3 0 0 ];
+        release = [
+          3
+          0
+          0
+        ];
       };
     };
 
@@ -90,7 +116,11 @@ in
         local = null;
         post = null;
         pre = null;
-        release = [ 1 2 0 ];
+        release = [
+          1
+          2
+          0
+        ];
       };
     };
 
@@ -105,7 +135,11 @@ in
         local = null;
         post = null;
         pre = null;
-        release = [ 1 2 0 ];
+        release = [
+          1
+          2
+          0
+        ];
       };
     };
 
@@ -120,7 +154,11 @@ in
         local = null;
         post = null;
         pre = null;
-        release = [ 1 2 0 ];
+        release = [
+          1
+          2
+          0
+        ];
       };
     };
 
@@ -132,7 +170,10 @@ in
         local = "4.3";
         post = null;
         pre = null;
-        release = [ 1 2 ];
+        release = [
+          1
+          2
+        ];
       };
     };
 
@@ -144,7 +185,11 @@ in
         local = null;
         post = null;
         pre = null;
-        release = [ 3 2 "*" ];
+        release = [
+          3
+          2
+          "*"
+        ];
       };
     };
 
@@ -165,7 +210,10 @@ in
           type = "b";
           value = 2;
         };
-        release = [ 1 0 ];
+        release = [
+          1
+          0
+        ];
       };
     };
 
@@ -177,7 +225,10 @@ in
         local = null;
         post = null;
         pre = null;
-        release = [ 2 0 ];
+        release = [
+          2
+          0
+        ];
       };
     };
   };
@@ -263,7 +314,11 @@ in
             type = "rc";
             value = 1;
           };
-          release = [ 3 0 0 ];
+          release = [
+            3
+            0
+            0
+          ];
         };
       };
     };
@@ -299,7 +354,11 @@ in
               type = "rc";
               value = 1;
             };
-            release = [ 3 0 0 ];
+            release = [
+              3
+              0
+              0
+            ];
           };
         }
         {
@@ -310,7 +369,10 @@ in
             local = null;
             post = null;
             pre = null;
-            release = [ 4 0 ];
+            release = [
+              4
+              0
+            ];
           };
         }
       ];

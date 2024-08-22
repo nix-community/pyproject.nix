@@ -1,7 +1,8 @@
-{ lib
-, pep508
-, mocks
-, ...
+{
+  lib,
+  pep508,
+  mocks,
+  ...
 }:
 
 let
@@ -82,7 +83,11 @@ fix (self: {
               local = null;
               post = null;
               pre = null;
-              release = [ 12 3 0 ];
+              release = [
+                12
+                3
+                0
+              ];
             };
           }
         ];
@@ -116,7 +121,10 @@ fix (self: {
               local = null;
               post = null;
               pre = null;
-              release = [ 20 9 ];
+              release = [
+                20
+                9
+              ];
             };
           }
           {
@@ -127,7 +135,10 @@ fix (self: {
               local = null;
               post = null;
               pre = null;
-              release = [ 22 0 ];
+              release = [
+                22
+                0
+              ];
             };
           }
         ];
@@ -150,7 +161,11 @@ fix (self: {
               local = null;
               post = null;
               pre = null;
-              release = [ 0 13 0 ];
+              release = [
+                0
+                13
+                0
+              ];
             };
           }
         ];
@@ -172,7 +187,11 @@ fix (self: {
               local = null;
               post = null;
               pre = null;
-              release = [ 1 1 0 ];
+              release = [
+                1
+                1
+                0
+              ];
             };
           }
         ];
@@ -190,7 +209,10 @@ fix (self: {
               local = null;
               post = null;
               pre = null;
-              release = [ 3 11 ];
+              release = [
+                3
+                11
+              ];
             };
           };
           type = "compare";
@@ -241,13 +263,19 @@ fix (self: {
               local = null;
               post = null;
               pre = null;
-              release = [ 2 7 ];
+              release = [
+                2
+                7
+              ];
             };
           };
           type = "compare";
         };
         name = "name";
-        extras = [ "fred" "bar" ];
+        extras = [
+          "fred"
+          "bar"
+        ];
         url = "http://foo.com";
       };
     };
@@ -331,7 +359,10 @@ fix (self: {
                 local = null;
                 post = null;
                 pre = null;
-                release = [ 2 7 ];
+                release = [
+                  2
+                  7
+                ];
               };
             };
             type = "compare";
@@ -359,7 +390,10 @@ fix (self: {
           type = "boolOp";
         };
         name = "name";
-        extras = [ "quux" "strange" ];
+        extras = [
+          "quux"
+          "strange"
+        ];
         url = null;
       };
     };
@@ -601,7 +635,11 @@ fix (self: {
             local = null;
             post = null;
             pre = null;
-            release = [ 3 8 2 ];
+            release = [
+              3
+              8
+              2
+            ];
           };
         };
         os_name = {
@@ -643,7 +681,11 @@ fix (self: {
             local = null;
             post = null;
             pre = null;
-            release = [ 3 8 2 ];
+            release = [
+              3
+              8
+              2
+            ];
           };
         };
         python_version = {
@@ -654,7 +696,10 @@ fix (self: {
             local = null;
             post = null;
             pre = null;
-            release = [ 3 8 ];
+            release = [
+              3
+              8
+            ];
           };
         };
         sys_platform = {
@@ -679,7 +724,11 @@ fix (self: {
             local = null;
             post = null;
             pre = null;
-            release = [ 3 11 4 ];
+            release = [
+              3
+              11
+              4
+            ];
           };
         };
         os_name = {
@@ -721,7 +770,11 @@ fix (self: {
             local = null;
             post = null;
             pre = null;
-            release = [ 3 11 4 ];
+            release = [
+              3
+              11
+              4
+            ];
           };
         };
         python_version = {
@@ -732,7 +785,10 @@ fix (self: {
             local = null;
             post = null;
             pre = null;
-            release = [ 3 11 ];
+            release = [
+              3
+              11
+            ];
           };
         };
         sys_platform = {
@@ -767,7 +823,11 @@ fix (self: {
             local = null;
             post = null;
             pre = null;
-            release = [ 7 3 11 ];
+            release = [
+              7
+              3
+              11
+            ];
           };
         };
         os_name = {
@@ -809,7 +869,11 @@ fix (self: {
             local = null;
             post = null;
             pre = null;
-            release = [ 7 3 11 ];
+            release = [
+              7
+              3
+              11
+            ];
           };
         };
         python_version = {
@@ -820,7 +884,10 @@ fix (self: {
             local = null;
             post = null;
             pre = null;
-            release = [ 3 9 ];
+            release = [
+              3
+              9
+            ];
           };
         };
         sys_platform = {
@@ -831,87 +898,89 @@ fix (self: {
     };
   };
 
-  evalMarkers = mapAttrs (_: case: case // { expr = pep508.evalMarkers case.input.environ case.input.markers; }) {
-    testTrivial = {
-      input = {
-        environ = self.mkEnviron.testPython38Linux.expected;
-        inherit (self.parseString.testVersionedWithMarker.expected) markers;
-      };
-      expected = true;
-    };
-
-    testDoubleMarkers = {
-      input = {
-        environ = self.mkEnviron.testPython38Linux.expected;
-        inherit (self.parseString.testDoubleMarkersWithExtras.expected) markers;
-      };
-      expected = false;
-    };
-
-    testMarkerWithExtra = {
-      input = {
-        environ = self.mkEnviron.testPython38Linux.expected // {
-          extra = {
-            type = "extra";
-            value = "socks";
+  evalMarkers =
+    mapAttrs (_: case: case // { expr = pep508.evalMarkers case.input.environ case.input.markers; })
+      {
+        testTrivial = {
+          input = {
+            environ = self.mkEnviron.testPython38Linux.expected;
+            inherit (self.parseString.testVersionedWithMarker.expected) markers;
           };
+          expected = true;
         };
-        markers = pep508.parseMarkers "extra == 'socks'";
-      };
-      expected = true;
-    };
 
-    testMarkerWithExtraNe = {
-      input = {
-        environ = self.mkEnviron.testPython38Linux.expected // {
-          extra = {
-            type = "extra";
-            value = "socks";
+        testDoubleMarkers = {
+          input = {
+            environ = self.mkEnviron.testPython38Linux.expected;
+            inherit (self.parseString.testDoubleMarkersWithExtras.expected) markers;
           };
+          expected = false;
         };
-        markers = pep508.parseMarkers "extra != 'socks'";
-      };
-      expected = false;
-    };
 
-    testMarkerWithMultipleExtra = {
-      input = {
-        environ = self.mkEnviron.testPython38Linux.expected // {
-          extra = {
-            type = "extra";
-            value = [ "socks" ];
+        testMarkerWithExtra = {
+          input = {
+            environ = self.mkEnviron.testPython38Linux.expected // {
+              extra = {
+                type = "extra";
+                value = "socks";
+              };
+            };
+            markers = pep508.parseMarkers "extra == 'socks'";
           };
+          expected = true;
         };
-        markers = pep508.parseMarkers "extra == 'socks'";
-      };
-      expected = true;
-    };
 
-    testMarkerWithoutExtra = {
-      input = {
-        environ = self.mkEnviron.testPython38Linux.expected // {
-          extra = {
-            type = "extra";
-            value = "pants";
+        testMarkerWithExtraNe = {
+          input = {
+            environ = self.mkEnviron.testPython38Linux.expected // {
+              extra = {
+                type = "extra";
+                value = "socks";
+              };
+            };
+            markers = pep508.parseMarkers "extra != 'socks'";
           };
+          expected = false;
         };
-        markers = pep508.parseMarkers "extra == 'socks'";
-      };
-      expected = false;
-    };
 
-    testMarkerWithoutMultipleExtra = {
-      input = {
-        environ = self.mkEnviron.testPython38Linux.expected // {
-          extra = {
-            type = "extra";
-            value = [ "pants" ];
+        testMarkerWithMultipleExtra = {
+          input = {
+            environ = self.mkEnviron.testPython38Linux.expected // {
+              extra = {
+                type = "extra";
+                value = [ "socks" ];
+              };
+            };
+            markers = pep508.parseMarkers "extra == 'socks'";
           };
+          expected = true;
         };
-        markers = pep508.parseMarkers "extra == 'socks'";
-      };
-      expected = false;
-    };
 
-  };
+        testMarkerWithoutExtra = {
+          input = {
+            environ = self.mkEnviron.testPython38Linux.expected // {
+              extra = {
+                type = "extra";
+                value = "pants";
+              };
+            };
+            markers = pep508.parseMarkers "extra == 'socks'";
+          };
+          expected = false;
+        };
+
+        testMarkerWithoutMultipleExtra = {
+          input = {
+            environ = self.mkEnviron.testPython38Linux.expected // {
+              extra = {
+                type = "extra";
+                value = [ "pants" ];
+              };
+            };
+            markers = pep508.parseMarkers "extra == 'socks'";
+          };
+          expected = false;
+        };
+
+      };
 })

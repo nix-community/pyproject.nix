@@ -39,22 +39,34 @@ in
 
   manyLinuxTagCompatible = {
     testSimpleIncompatible = {
-      expr = manyLinuxTagCompatible mockStdenvs.x86_64-linux.glibc_2_4.targetPlatform mockStdenvs.x86_64-linux.glibc_2_4.cc.libc "manylinux1_x86_64";
+      expr =
+        manyLinuxTagCompatible mockStdenvs.x86_64-linux.glibc_2_4.targetPlatform
+          mockStdenvs.x86_64-linux.glibc_2_4.cc.libc
+          "manylinux1_x86_64";
       expected = false;
     };
 
     testMusl = {
-      expr = manyLinuxTagCompatible mockStdenvs.x86_64-linux.musl_1_2_3.targetPlatform mockStdenvs.x86_64-linux.musl_1_2_3.cc.libc "manylinux1_x86_64";
+      expr =
+        manyLinuxTagCompatible mockStdenvs.x86_64-linux.musl_1_2_3.targetPlatform
+          mockStdenvs.x86_64-linux.musl_1_2_3.cc.libc
+          "manylinux1_x86_64";
       expected = false;
     };
 
     testSimpleCompatible = {
-      expr = manyLinuxTagCompatible mockStdenvs.x86_64-linux.glibc_2_5.targetPlatform mockStdenvs.x86_64-linux.glibc_2_5.cc.libc "manylinux1_x86_64";
+      expr =
+        manyLinuxTagCompatible mockStdenvs.x86_64-linux.glibc_2_5.targetPlatform
+          mockStdenvs.x86_64-linux.glibc_2_5.cc.libc
+          "manylinux1_x86_64";
       expected = true;
     };
 
     testSimpleArchIncompatible = {
-      expr = manyLinuxTagCompatible mockStdenvs.x86_64-linux.glibc_2_5.targetPlatform mockStdenvs.x86_64-linux.glibc_2_5.cc.libc "manylinux2014_armv7l";
+      expr =
+        manyLinuxTagCompatible mockStdenvs.x86_64-linux.glibc_2_5.targetPlatform
+          mockStdenvs.x86_64-linux.glibc_2_5.cc.libc
+          "manylinux2014_armv7l";
       expected = false;
     };
   };

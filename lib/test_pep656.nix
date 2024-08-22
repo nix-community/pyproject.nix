@@ -27,23 +27,35 @@ in
 {
   muslLinuxTagCompatible = {
     testSimpleIncompatible = {
-      expr = muslLinuxTagCompatible mockStdenvs.x86_64-linux.glibc_2_4.targetPlatform mockStdenvs.x86_64-linux.glibc_2_4.cc.libc "musllinux_1_1_x86_64";
+      expr =
+        muslLinuxTagCompatible mockStdenvs.x86_64-linux.glibc_2_4.targetPlatform
+          mockStdenvs.x86_64-linux.glibc_2_4.cc.libc
+          "musllinux_1_1_x86_64";
       expected = false;
     };
 
     testManyLinux = {
-      expr = muslLinuxTagCompatible mockStdenvs.x86_64-linux.musl_1_2_3.targetPlatform mockStdenvs.x86_64-linux.musl_1_2_3.cc.libc "manylinux1_x86_64";
+      expr =
+        muslLinuxTagCompatible mockStdenvs.x86_64-linux.musl_1_2_3.targetPlatform
+          mockStdenvs.x86_64-linux.musl_1_2_3.cc.libc
+          "manylinux1_x86_64";
       expectedError.type = "ThrownError";
       expectedError.msg = ".* is not a valid musllinux tag";
     };
 
     testSimpleCompatible = {
-      expr = muslLinuxTagCompatible mockStdenvs.x86_64-linux.musl_1_2_3.targetPlatform mockStdenvs.x86_64-linux.musl_1_2_3.cc.libc "musllinux_1_1_x86_64";
+      expr =
+        muslLinuxTagCompatible mockStdenvs.x86_64-linux.musl_1_2_3.targetPlatform
+          mockStdenvs.x86_64-linux.musl_1_2_3.cc.libc
+          "musllinux_1_1_x86_64";
       expected = true;
     };
 
     testSimpleArchIncompatible = {
-      expr = muslLinuxTagCompatible mockStdenvs.x86_64-linux.musl_1_2_3.targetPlatform mockStdenvs.x86_64-linux.musl_1_2_3.cc.libc "musllinux_1_1_armv7l";
+      expr =
+        muslLinuxTagCompatible mockStdenvs.x86_64-linux.musl_1_2_3.targetPlatform
+          mockStdenvs.x86_64-linux.musl_1_2_3.cc.libc
+          "musllinux_1_1_armv7l";
       expected = false;
     };
   };

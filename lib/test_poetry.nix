@@ -1,9 +1,11 @@
-{ fixtures
-, poetry
-, ...
-}:
+{ fixtures, poetry, ... }:
 let
-  inherit (poetry) translatePoetryProject parseDependencies parseVersionCond parseVersionConds;
+  inherit (poetry)
+    translatePoetryProject
+    parseDependencies
+    parseVersionCond
+    parseVersionConds
+    ;
 in
 {
   translatePoetryProject = {
@@ -16,11 +18,22 @@ in
             name = "Sébastien Eustace";
           }
         ];
-        classifiers = [ "Topic :: Software Development :: Build Tools" "Topic :: Software Development :: Libraries :: Python Modules" ];
+        classifiers = [
+          "Topic :: Software Development :: Build Tools"
+          "Topic :: Software Development :: Libraries :: Python Modules"
+        ];
         description = "Python dependency management and packaging made easy.";
-        keywords = [ "packaging" "dependency" "poetry" ];
-        license = { text = "MIT"; };
-        scripts = { poetry = "poetry.console.application:main"; };
+        keywords = [
+          "packaging"
+          "dependency"
+          "poetry"
+        ];
+        license = {
+          text = "MIT";
+        };
+        scripts = {
+          poetry = "poetry.console.application:main";
+        };
         maintainers = [
           {
             email = "arun.neelicattu@gmail.com";
@@ -79,7 +92,11 @@ in
             local = null;
             post = null;
             pre = null;
-            release = [ 3 2 1 ];
+            release = [
+              3
+              2
+              1
+            ];
           };
         }
         {
@@ -90,7 +107,11 @@ in
             local = null;
             post = null;
             pre = null;
-            release = [ 3 3 0 ];
+            release = [
+              3
+              3
+              0
+            ];
           };
         }
       ];
@@ -108,7 +129,11 @@ in
             local = null;
             post = null;
             pre = null;
-            release = [ 3 2 1 ];
+            release = [
+              3
+              2
+              1
+            ];
           };
         }
       ];
@@ -125,7 +150,11 @@ in
             local = null;
             post = null;
             pre = null;
-            release = [ 3 2 1 ];
+            release = [
+              3
+              2
+              1
+            ];
           };
         }
         {
@@ -136,7 +165,11 @@ in
             local = null;
             post = null;
             pre = null;
-            release = [ 4 0 0 ];
+            release = [
+              4
+              0
+              0
+            ];
           };
         }
       ];
@@ -146,7 +179,68 @@ in
   parseVersionConds = {
     testAll = {
       expr = parseVersionConds "^3.2.1,~3.2.1";
-      expected = [{ op = ">="; version = { dev = null; epoch = 0; local = null; post = null; pre = null; release = [ 3 2 1 ]; }; } { op = "<"; version = { dev = null; epoch = 0; local = null; post = null; pre = null; release = [ 4 0 0 ]; }; } { op = ">="; version = { dev = null; epoch = 0; local = null; post = null; pre = null; release = [ 3 2 1 ]; }; } { op = "<"; version = { dev = null; epoch = 0; local = null; post = null; pre = null; release = [ 3 3 0 ]; }; }];
+      expected = [
+        {
+          op = ">=";
+          version = {
+            dev = null;
+            epoch = 0;
+            local = null;
+            post = null;
+            pre = null;
+            release = [
+              3
+              2
+              1
+            ];
+          };
+        }
+        {
+          op = "<";
+          version = {
+            dev = null;
+            epoch = 0;
+            local = null;
+            post = null;
+            pre = null;
+            release = [
+              4
+              0
+              0
+            ];
+          };
+        }
+        {
+          op = ">=";
+          version = {
+            dev = null;
+            epoch = 0;
+            local = null;
+            post = null;
+            pre = null;
+            release = [
+              3
+              2
+              1
+            ];
+          };
+        }
+        {
+          op = "<";
+          version = {
+            dev = null;
+            epoch = 0;
+            local = null;
+            post = null;
+            pre = null;
+            release = [
+              3
+              3
+              0
+            ];
+          };
+        }
+      ];
     };
   };
 
@@ -165,7 +259,11 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 1 1 0 ];
+                  release = [
+                    1
+                    1
+                    0
+                  ];
                 };
               }
             ];
@@ -186,7 +284,11 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 1 0 2 ];
+                  release = [
+                    1
+                    0
+                    2
+                  ];
                 };
               }
               {
@@ -197,7 +299,11 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 2 0 0 ];
+                  release = [
+                    2
+                    0
+                    0
+                  ];
                 };
               }
             ];
@@ -217,7 +323,10 @@ in
                     local = null;
                     post = null;
                     pre = null;
-                    release = [ 3 8 ];
+                    release = [
+                      3
+                      8
+                    ];
                   };
                 };
                 type = "compare";
@@ -242,7 +351,11 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 0 10 0 ];
+                  release = [
+                    0
+                    10
+                    0
+                  ];
                 };
               }
               {
@@ -253,7 +366,11 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 0 11 0 ];
+                  release = [
+                    0
+                    11
+                    0
+                  ];
                 };
               }
             ];
@@ -272,7 +389,11 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 0 12 9 ];
+                  release = [
+                    0
+                    12
+                    9
+                  ];
                 };
               }
               {
@@ -283,7 +404,11 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 0 13 0 ];
+                  release = [
+                    0
+                    13
+                    0
+                  ];
                 };
               }
             ];
@@ -302,7 +427,11 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 2 0 0 ];
+                  release = [
+                    2
+                    0
+                    0
+                  ];
                 };
               }
               {
@@ -313,7 +442,11 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 3 0 0 ];
+                  release = [
+                    3
+                    0
+                    0
+                  ];
                 };
               }
             ];
@@ -332,7 +465,11 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 0 4 1 ];
+                  release = [
+                    0
+                    4
+                    1
+                  ];
                 };
               }
               {
@@ -343,7 +480,11 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 0 5 0 ];
+                  release = [
+                    0
+                    5
+                    0
+                  ];
                 };
               }
             ];
@@ -362,7 +503,11 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 0 21 2 ];
+                  release = [
+                    0
+                    21
+                    2
+                  ];
                 };
               }
               {
@@ -373,7 +518,11 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 0 22 0 ];
+                  release = [
+                    0
+                    22
+                    0
+                  ];
                 };
               }
             ];
@@ -392,7 +541,11 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 3 8 0 ];
+                  release = [
+                    3
+                    8
+                    0
+                  ];
                 };
               }
               {
@@ -403,7 +556,11 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 4 0 0 ];
+                  release = [
+                    4
+                    0
+                    0
+                  ];
                 };
               }
             ];
@@ -422,7 +579,11 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 1 0 0 ];
+                  release = [
+                    1
+                    0
+                    0
+                  ];
                 };
               }
               {
@@ -433,7 +594,11 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 2 0 0 ];
+                  release = [
+                    2
+                    0
+                    0
+                  ];
                 };
               }
             ];
@@ -452,7 +617,10 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 4 4 ];
+                  release = [
+                    4
+                    4
+                  ];
                 };
               }
             ];
@@ -472,7 +640,10 @@ in
                     local = null;
                     post = null;
                     pre = null;
-                    release = [ 3 10 ];
+                    release = [
+                      3
+                      10
+                    ];
                   };
                 };
                 type = "compare";
@@ -497,7 +668,11 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 0 7 0 ];
+                  release = [
+                    0
+                    7
+                    0
+                  ];
                 };
               }
               {
@@ -508,7 +683,11 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 0 8 0 ];
+                  release = [
+                    0
+                    8
+                    0
+                  ];
                 };
               }
             ];
@@ -527,7 +706,11 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 4 10 0 ];
+                  release = [
+                    4
+                    10
+                    0
+                  ];
                 };
               }
               {
@@ -538,7 +721,11 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 5 0 0 ];
+                  release = [
+                    5
+                    0
+                    0
+                  ];
                 };
               }
             ];
@@ -557,7 +744,11 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 23 9 0 ];
+                  release = [
+                    23
+                    9
+                    0
+                  ];
                 };
               }
               {
@@ -568,7 +759,11 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 24 0 0 ];
+                  release = [
+                    24
+                    0
+                    0
+                  ];
                 };
               }
             ];
@@ -587,7 +782,11 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 0 12 2 ];
+                  release = [
+                    0
+                    12
+                    2
+                  ];
                 };
               }
               {
@@ -598,7 +797,11 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 0 13 0 ];
+                  release = [
+                    0
+                    13
+                    0
+                  ];
                 };
               }
             ];
@@ -617,7 +820,10 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 20 4 ];
+                  release = [
+                    20
+                    4
+                  ];
                 };
               }
             ];
@@ -636,7 +842,11 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 4 7 0 ];
+                  release = [
+                    4
+                    7
+                    0
+                  ];
                 };
               }
               {
@@ -647,7 +857,11 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 5 0 0 ];
+                  release = [
+                    5
+                    0
+                    0
+                  ];
                 };
               }
             ];
@@ -666,7 +880,11 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 1 9 4 ];
+                  release = [
+                    1
+                    9
+                    4
+                  ];
                 };
               }
               {
@@ -677,7 +895,11 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 2 0 0 ];
+                  release = [
+                    2
+                    0
+                    0
+                  ];
                 };
               }
             ];
@@ -696,7 +918,11 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 2 5 2 ];
+                  release = [
+                    2
+                    5
+                    2
+                  ];
                 };
               }
               {
@@ -707,7 +933,11 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 3 0 0 ];
+                  release = [
+                    3
+                    0
+                    0
+                  ];
                 };
               }
             ];
@@ -726,7 +956,11 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 1 5 2 ];
+                  release = [
+                    1
+                    5
+                    2
+                  ];
                 };
               }
             ];
@@ -745,7 +979,11 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 1 3 0 ];
+                  release = [
+                    1
+                    3
+                    0
+                  ];
                 };
               }
               {
@@ -756,7 +994,11 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 2 0 0 ];
+                  release = [
+                    2
+                    0
+                    0
+                  ];
                 };
               }
             ];
@@ -775,7 +1017,11 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 1 0 0 ];
+                  release = [
+                    1
+                    0
+                    0
+                  ];
                 };
               }
               {
@@ -786,7 +1032,11 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 2 0 0 ];
+                  release = [
+                    2
+                    0
+                    0
+                  ];
                 };
               }
             ];
@@ -805,7 +1055,11 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 3 7 0 ];
+                  release = [
+                    3
+                    7
+                    0
+                  ];
                 };
               }
               {
@@ -816,7 +1070,11 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 4 0 0 ];
+                  release = [
+                    4
+                    0
+                    0
+                  ];
                 };
               }
             ];
@@ -835,7 +1093,11 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 2 18 0 ];
+                  release = [
+                    2
+                    18
+                    0
+                  ];
                 };
               }
               {
@@ -846,7 +1108,11 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 3 0 0 ];
+                  release = [
+                    3
+                    0
+                    0
+                  ];
                 };
               }
             ];
@@ -865,7 +1131,11 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 0 9 1 ];
+                  release = [
+                    0
+                    9
+                    1
+                  ];
                 };
               }
               {
@@ -876,7 +1146,11 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 0 11 0 ];
+                  release = [
+                    0
+                    11
+                    0
+                  ];
                 };
               }
             ];
@@ -895,7 +1169,11 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 1 5 0 ];
+                  release = [
+                    1
+                    5
+                    0
+                  ];
                 };
               }
               {
@@ -906,7 +1184,11 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 2 0 0 ];
+                  release = [
+                    2
+                    0
+                    0
+                  ];
                 };
               }
             ];
@@ -925,7 +1207,11 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 2 0 1 ];
+                  release = [
+                    2
+                    0
+                    1
+                  ];
                 };
               }
               {
@@ -936,7 +1222,11 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 3 0 0 ];
+                  release = [
+                    3
+                    0
+                    0
+                  ];
                 };
               }
             ];
@@ -956,7 +1246,10 @@ in
                     local = null;
                     post = null;
                     pre = null;
-                    release = [ 3 11 ];
+                    release = [
+                      3
+                      11
+                    ];
                   };
                 };
                 type = "compare";
@@ -981,7 +1274,11 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 0 11 1 ];
+                  release = [
+                    0
+                    11
+                    1
+                  ];
                 };
               }
               {
@@ -992,7 +1289,11 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 1 0 0 ];
+                  release = [
+                    1
+                    0
+                    0
+                  ];
                 };
               }
               {
@@ -1003,7 +1304,11 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 0 11 2 ];
+                  release = [
+                    0
+                    11
+                    2
+                  ];
                 };
               }
               {
@@ -1014,7 +1319,11 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 0 11 3 ];
+                  release = [
+                    0
+                    11
+                    3
+                  ];
                 };
               }
             ];
@@ -1033,7 +1342,11 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 2022 5 19 ];
+                  release = [
+                    2022
+                    5
+                    19
+                  ];
                 };
               }
             ];
@@ -1052,7 +1365,11 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 1 26 0 ];
+                  release = [
+                    1
+                    26
+                    0
+                  ];
                 };
               }
               {
@@ -1063,7 +1380,11 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 2 0 0 ];
+                  release = [
+                    2
+                    0
+                    0
+                  ];
                 };
               }
             ];
@@ -1082,7 +1403,11 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 20 4 3 ];
+                  release = [
+                    20
+                    4
+                    3
+                  ];
                 };
               }
               {
@@ -1093,7 +1418,11 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 21 0 0 ];
+                  release = [
+                    21
+                    0
+                    0
+                  ];
                 };
               }
               {
@@ -1104,7 +1433,11 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 20 4 5 ];
+                  release = [
+                    20
+                    4
+                    5
+                  ];
                 };
               }
               {
@@ -1115,7 +1448,11 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 20 4 6 ];
+                  release = [
+                    20
+                    4
+                    6
+                  ];
                 };
               }
             ];
@@ -1134,7 +1471,11 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 20 16 6 ];
+                  release = [
+                    20
+                    16
+                    6
+                  ];
                 };
               }
             ];
@@ -1167,7 +1508,10 @@ in
                     local = null;
                     post = null;
                     pre = null;
-                    release = [ 3 9 ];
+                    release = [
+                      3
+                      9
+                    ];
                   };
                 };
                 type = "compare";
@@ -1187,7 +1531,11 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 0 10 0 ];
+                  release = [
+                    0
+                    10
+                    0
+                  ];
                 };
               }
               {
@@ -1198,7 +1546,11 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 0 11 0 ];
+                  release = [
+                    0
+                    11
+                    0
+                  ];
                 };
               }
             ];
@@ -1231,7 +1583,11 @@ in
                     local = null;
                     post = null;
                     pre = null;
-                    release = [ 2 6 0 ];
+                    release = [
+                      2
+                      6
+                      0
+                    ];
                   };
                 }
                 {
@@ -1242,7 +1598,11 @@ in
                     local = null;
                     post = null;
                     pre = null;
-                    release = [ 3 0 0 ];
+                    release = [
+                      3
+                      0
+                      0
+                    ];
                   };
                 }
               ];
@@ -1263,7 +1623,11 @@ in
                     local = null;
                     post = null;
                     pre = null;
-                    release = [ 0 1 7 ];
+                    release = [
+                      0
+                      1
+                      7
+                    ];
                   };
                 }
                 {
@@ -1274,7 +1638,11 @@ in
                     local = null;
                     post = null;
                     pre = null;
-                    release = [ 0 2 0 ];
+                    release = [
+                      0
+                      2
+                      0
+                    ];
                   };
                 }
               ];
@@ -1295,7 +1663,11 @@ in
                     local = null;
                     post = null;
                     pre = null;
-                    release = [ 0 3 0 ];
+                    release = [
+                      0
+                      3
+                      0
+                    ];
                   };
                 }
               ];
@@ -1314,7 +1686,11 @@ in
                     local = null;
                     post = null;
                     pre = null;
-                    release = [ 6 2 0 ];
+                    release = [
+                      6
+                      2
+                      0
+                    ];
                   };
                 }
                 {
@@ -1325,7 +1701,11 @@ in
                     local = null;
                     post = null;
                     pre = null;
-                    release = [ 7 0 0 ];
+                    release = [
+                      7
+                      0
+                      0
+                    ];
                   };
                 }
               ];
@@ -1344,7 +1724,11 @@ in
                     local = null;
                     post = null;
                     pre = null;
-                    release = [ 6 2 3 ];
+                    release = [
+                      6
+                      2
+                      3
+                    ];
                   };
                 }
               ];
@@ -1374,7 +1758,11 @@ in
                     local = null;
                     post = null;
                     pre = null;
-                    release = [ 1 0 0 ];
+                    release = [
+                      1
+                      0
+                      0
+                    ];
                   };
                 }
                 {
@@ -1385,7 +1773,11 @@ in
                     local = null;
                     post = null;
                     pre = null;
-                    release = [ 2 0 0 ];
+                    release = [
+                      2
+                      0
+                      0
+                    ];
                   };
                 }
               ];
@@ -1404,7 +1796,11 @@ in
                     local = null;
                     post = null;
                     pre = null;
-                    release = [ 7 1 0 ];
+                    release = [
+                      7
+                      1
+                      0
+                    ];
                   };
                 }
                 {
@@ -1415,7 +1811,11 @@ in
                     local = null;
                     post = null;
                     pre = null;
-                    release = [ 8 0 0 ];
+                    release = [
+                      8
+                      0
+                      0
+                    ];
                   };
                 }
               ];
@@ -1434,7 +1834,11 @@ in
                     local = null;
                     post = null;
                     pre = null;
-                    release = [ 4 0 0 ];
+                    release = [
+                      4
+                      0
+                      0
+                    ];
                   };
                 }
                 {
@@ -1445,7 +1849,11 @@ in
                     local = null;
                     post = null;
                     pre = null;
-                    release = [ 5 0 0 ];
+                    release = [
+                      5
+                      0
+                      0
+                    ];
                   };
                 }
               ];
@@ -1464,7 +1872,11 @@ in
                     local = null;
                     post = null;
                     pre = null;
-                    release = [ 3 9 0 ];
+                    release = [
+                      3
+                      9
+                      0
+                    ];
                   };
                 }
                 {
@@ -1475,7 +1887,11 @@ in
                     local = null;
                     post = null;
                     pre = null;
-                    release = [ 4 0 0 ];
+                    release = [
+                      4
+                      0
+                      0
+                    ];
                   };
                 }
               ];
@@ -1494,7 +1910,11 @@ in
                     local = null;
                     post = null;
                     pre = null;
-                    release = [ 3 12 0 ];
+                    release = [
+                      3
+                      12
+                      0
+                    ];
                   };
                 }
                 {
@@ -1505,7 +1925,11 @@ in
                     local = null;
                     post = null;
                     pre = null;
-                    release = [ 4 0 0 ];
+                    release = [
+                      4
+                      0
+                      0
+                    ];
                   };
                 }
               ];
@@ -1524,7 +1948,11 @@ in
                     local = null;
                     post = null;
                     pre = null;
-                    release = [ 3 1 0 ];
+                    release = [
+                      3
+                      1
+                      0
+                    ];
                   };
                 }
                 {
@@ -1535,7 +1963,11 @@ in
                     local = null;
                     post = null;
                     pre = null;
-                    release = [ 4 0 0 ];
+                    release = [
+                      4
+                      0
+                      0
+                    ];
                   };
                 }
               ];
@@ -1554,7 +1986,11 @@ in
                     local = null;
                     post = null;
                     pre = null;
-                    release = [ 3 4 0 ];
+                    release = [
+                      3
+                      4
+                      0
+                    ];
                   };
                 }
                 {
@@ -1565,7 +2001,11 @@ in
                     local = null;
                     post = null;
                     pre = null;
-                    release = [ 4 0 0 ];
+                    release = [
+                      4
+                      0
+                      0
+                    ];
                   };
                 }
               ];
@@ -1585,7 +2025,10 @@ in
                       local = null;
                       post = null;
                       pre = null;
-                      release = [ 3 8 ];
+                      release = [
+                        3
+                        8
+                      ];
                     };
                   };
                   type = "compare";
@@ -1612,7 +2055,10 @@ in
                     local = null;
                     post = null;
                     pre = null;
-                    release = [ 1 0 ];
+                    release = [
+                      1
+                      0
+                    ];
                   };
                 }
               ];
@@ -1631,7 +2077,11 @@ in
                     local = null;
                     post = null;
                     pre = null;
-                    release = [ 1 1 9 ];
+                    release = [
+                      1
+                      1
+                      9
+                    ];
                   };
                 }
               ];
@@ -1650,7 +2100,11 @@ in
                     local = null;
                     post = null;
                     pre = null;
-                    release = [ 4 9 0 ];
+                    release = [
+                      4
+                      9
+                      0
+                    ];
                   };
                 }
               ];
@@ -1669,7 +2123,11 @@ in
                     local = null;
                     post = null;
                     pre = null;
-                    release = [ 2 28 8 ];
+                    release = [
+                      2
+                      28
+                      8
+                    ];
                   };
                 }
               ];
@@ -1688,7 +2146,11 @@ in
                     local = null;
                     post = null;
                     pre = null;
-                    release = [ 4 0 0 ];
+                    release = [
+                      4
+                      0
+                      0
+                    ];
                   };
                 }
                 {
@@ -1699,7 +2161,11 @@ in
                     local = null;
                     post = null;
                     pre = null;
-                    release = [ 5 0 0 ];
+                    release = [
+                      5
+                      0
+                      0
+                    ];
                   };
                 }
               ];
@@ -1719,7 +2185,10 @@ in
                       local = null;
                       post = null;
                       pre = null;
-                      release = [ 3 8 ];
+                      release = [
+                        3
+                        8
+                      ];
                     };
                   };
                   type = "compare";

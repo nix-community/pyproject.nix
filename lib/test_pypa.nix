@@ -1,25 +1,47 @@
-{ lib, pypa, mocks, ... }:
+{
+  lib,
+  pypa,
+  mocks,
+  ...
+}:
 let
-  inherit (pypa) normalizePackageName parsePythonTag parseABITag parseWheelFileName isWheelFileName isPythonTagCompatible isABITagCompatible isPlatformTagCompatible isWheelFileCompatible selectWheels isSdistFileName matchWheelFileName;
+  inherit (pypa)
+    normalizePackageName
+    parsePythonTag
+    parseABITag
+    parseWheelFileName
+    isWheelFileName
+    isPythonTagCompatible
+    isABITagCompatible
+    isPlatformTagCompatible
+    isWheelFileCompatible
+    selectWheels
+    isSdistFileName
+    matchWheelFileName
+    ;
   inherit (lib) mapAttrs';
 
 in
 
 {
-  normalizePackageName = mapAttrs'
-    (n: _: {
-      name = "testNormalize${n}";
-      value = { expr = normalizePackageName n; expected = "friendly-bard"; };
-    })
-    {
-      "friendly-bard" = { };
-      "Friendly-Bard" = { };
-      "FRIENDLY-BARD" = { };
-      "friendly.bard" = { };
-      "friendly_bard" = { };
-      "friendly--bard" = { };
-      "FrIeNdLy-._.-bArD" = { };
-    };
+  normalizePackageName =
+    mapAttrs'
+      (n: _: {
+        name = "testNormalize${n}";
+        value = {
+          expr = normalizePackageName n;
+          expected = "friendly-bard";
+        };
+      })
+      {
+        "friendly-bard" = { };
+        "Friendly-Bard" = { };
+        "FRIENDLY-BARD" = { };
+        "friendly.bard" = { };
+        "friendly_bard" = { };
+        "friendly--bard" = { };
+        "FrIeNdLy-._.-bArD" = { };
+      };
 
   parsePythonTag = {
     testWithFlags = {
@@ -90,7 +112,10 @@ in
             version = "37";
           }
         ];
-        platformTags = [ "manylinux_2_17_aarch64" "manylinux2014_aarch64" ];
+        platformTags = [
+          "manylinux_2_17_aarch64"
+          "manylinux2014_aarch64"
+        ];
         version = "41.0.1";
         filename = "cryptography-41.0.1-cp37-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl";
       };
@@ -126,7 +151,15 @@ in
   matchWheelFileName = {
     testSimple = {
       expr = matchWheelFileName "distribution-1.0-1-py27-none-any.whl";
-      expected = [ "distribution" "1.0" "-1" "1" "py27" "none" "any" ];
+      expected = [
+        "distribution"
+        "1.0"
+        "-1"
+        "1"
+        "py27"
+        "none"
+        "any"
+      ];
     };
 
     testSimpleNoMatch = {
@@ -136,7 +169,13 @@ in
 
     testComplex = {
       expr = matchWheelFileName "cryptography-41.0.1-cp37-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl";
-      expected = [ "cryptography" "41.0.1" "cp37" "abi3" "manylinux_2_17_aarch64.manylinux2014_aarch64" ];
+      expected = [
+        "cryptography"
+        "41.0.1"
+        "cp37"
+        "abi3"
+        "manylinux_2_17_aarch64.manylinux2014_aarch64"
+      ];
     };
 
     testComplexNoMatch = {
@@ -235,64 +274,104 @@ in
 
   isPlatformTagCompatible = {
     testCompatible = {
-      expr = isPlatformTagCompatible mocks.cpythonLinux38.stdenv.targetPlatform mocks.cpythonLinux38.stdenv.cc.libc "manylinux_2_5_x86_64";
+      expr =
+        isPlatformTagCompatible mocks.cpythonLinux38.stdenv.targetPlatform
+          mocks.cpythonLinux38.stdenv.cc.libc
+          "manylinux_2_5_x86_64";
       expected = true;
     };
 
     testCompatible2 = {
-      expr = isPlatformTagCompatible mocks.cpythonLinux38.stdenv.targetPlatform mocks.cpythonLinux38.stdenv.cc.libc "manylinux1_x86_64";
+      expr =
+        isPlatformTagCompatible mocks.cpythonLinux38.stdenv.targetPlatform
+          mocks.cpythonLinux38.stdenv.cc.libc
+          "manylinux1_x86_64";
       expected = true;
     };
 
     testIncompatibleArch = {
-      expr = isPlatformTagCompatible mocks.cpythonLinux38.stdenv.targetPlatform mocks.cpythonLinux38.stdenv.cc.libc "manylinux_2_5_armv7l";
+      expr =
+        isPlatformTagCompatible mocks.cpythonLinux38.stdenv.targetPlatform
+          mocks.cpythonLinux38.stdenv.cc.libc
+          "manylinux_2_5_armv7l";
       expected = false;
     };
 
     testIncompatibleLibc = {
-      expr = isPlatformTagCompatible mocks.cpythonLinux38.stdenv.targetPlatform mocks.cpythonLinux38.stdenv.cc.libc "musllinux_1_1_x86_64";
+      expr =
+        isPlatformTagCompatible mocks.cpythonLinux38.stdenv.targetPlatform
+          mocks.cpythonLinux38.stdenv.cc.libc
+          "musllinux_1_1_x86_64";
       expected = false;
     };
 
     testMacos = {
-      expr = isPlatformTagCompatible mocks.cpythonDarwin311.stdenv.targetPlatform mocks.cpythonDarwin311.stdenv.cc.libc "macosx_11_0_x86_64";
+      expr =
+        isPlatformTagCompatible mocks.cpythonDarwin311.stdenv.targetPlatform
+          mocks.cpythonDarwin311.stdenv.cc.libc
+          "macosx_11_0_x86_64";
       expected = true;
     };
 
     testMacosIncomatibleArch = {
-      expr = isPlatformTagCompatible mocks.cpythonDarwin311.stdenv.targetPlatform mocks.cpythonDarwin311.stdenv.cc.libc "macosx_11_0_arm64";
+      expr =
+        isPlatformTagCompatible mocks.cpythonDarwin311.stdenv.targetPlatform
+          mocks.cpythonDarwin311.stdenv.cc.libc
+          "macosx_11_0_arm64";
       expected = false;
     };
 
     testMacosIncomatibleSdk = {
-      expr = isPlatformTagCompatible mocks.cpythonDarwin311.stdenv.targetPlatform mocks.cpythonDarwin311.stdenv.cc.libc "macosx_12_0_x86_64";
+      expr =
+        isPlatformTagCompatible mocks.cpythonDarwin311.stdenv.targetPlatform
+          mocks.cpythonDarwin311.stdenv.cc.libc
+          "macosx_12_0_x86_64";
       expected = false;
     };
 
     testMacosUniversal2 = {
-      expr = isPlatformTagCompatible mocks.cpythonDarwin311.stdenv.targetPlatform mocks.cpythonDarwin311.stdenv.cc.libc "macosx_11_0_universal2";
+      expr =
+        isPlatformTagCompatible mocks.cpythonDarwin311.stdenv.targetPlatform
+          mocks.cpythonDarwin311.stdenv.cc.libc
+          "macosx_11_0_universal2";
       expected = true;
     };
   };
 
   isWheelFileCompatible = {
     testIncompatible = {
-      expr = isWheelFileCompatible mocks.cpythonLinux38.stdenv.targetPlatform mocks.cpythonLinux38.stdenv.cc.libc mocks.cpythonLinux38 (parseWheelFileName "cryptography-41.0.1-cp37-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl");
+      expr =
+        isWheelFileCompatible mocks.cpythonLinux38.stdenv.targetPlatform mocks.cpythonLinux38.stdenv.cc.libc
+          mocks.cpythonLinux38
+          (
+            parseWheelFileName "cryptography-41.0.1-cp37-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl"
+          );
       expected = false;
     };
 
     testCompatible = {
-      expr = isWheelFileCompatible mocks.cpythonLinux38.stdenv.targetPlatform mocks.cpythonLinux38.stdenv.cc.libc mocks.cpythonLinux38 (parseWheelFileName "cryptography-41.0.1-cp38-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl");
+      expr =
+        isWheelFileCompatible mocks.cpythonLinux38.stdenv.targetPlatform mocks.cpythonLinux38.stdenv.cc.libc
+          mocks.cpythonLinux38
+          (parseWheelFileName "cryptography-41.0.1-cp38-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl");
       expected = true;
     };
   };
 
   selectWheels =
     let
-      mkTest = { input, output, python }: {
-        expr = map (wheel: wheel.filename) (selectWheels python.stdenv.targetPlatform python (map parseWheelFileName input));
-        expected = output;
-      };
+      mkTest =
+        {
+          input,
+          output,
+          python,
+        }:
+        {
+          expr = map (wheel: wheel.filename) (
+            selectWheels python.stdenv.targetPlatform python (map parseWheelFileName input)
+          );
+          expected = output;
+        };
 
       zmqWheels = [
         "pyzmq-24.0.1-cp310-cp310-macosx_10_15_universal2.whl"
@@ -409,14 +488,26 @@ in
         expectedError.msg = "SelectWheel was called with wrong type for its first argument 'platform'";
       };
       testPyNoneAny = mkTest {
-        input = [ "distribution-1.0-1-py37-none-any.whl" "distribution-1.0-1-py38-none-any.whl" ];
-        output = [ "distribution-1.0-1-py38-none-any.whl" "distribution-1.0-1-py37-none-any.whl" ];
+        input = [
+          "distribution-1.0-1-py37-none-any.whl"
+          "distribution-1.0-1-py38-none-any.whl"
+        ];
+        output = [
+          "distribution-1.0-1-py38-none-any.whl"
+          "distribution-1.0-1-py37-none-any.whl"
+        ];
         python = mocks.cpythonLinux38;
       };
 
       testPyNoneAnyReverseInput = mkTest {
-        input = [ "distribution-1.0-1-py38-none-any.whl" "distribution-1.0-1-py37-none-any.whl" ];
-        output = [ "distribution-1.0-1-py38-none-any.whl" "distribution-1.0-1-py37-none-any.whl" ];
+        input = [
+          "distribution-1.0-1-py38-none-any.whl"
+          "distribution-1.0-1-py37-none-any.whl"
+        ];
+        output = [
+          "distribution-1.0-1-py38-none-any.whl"
+          "distribution-1.0-1-py37-none-any.whl"
+        ];
         python = mocks.cpythonLinux38;
       };
 

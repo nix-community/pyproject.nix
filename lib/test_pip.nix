@@ -1,6 +1,4 @@
-{ pip
-, ...
-}:
+{ pip, ... }:
 let
   inherit (pip) parseRequirementsTxt;
 
@@ -33,7 +31,10 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 1 2 ];
+                  release = [
+                    1
+                    2
+                  ];
                 };
               }
             ];
@@ -58,7 +59,10 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 3 2 ];
+                  release = [
+                    3
+                    2
+                  ];
                 };
               }
             ];
@@ -86,7 +90,11 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 10 1 0 ];
+                  release = [
+                    10
+                    1
+                    0
+                  ];
                 };
               }
             ];
@@ -108,7 +116,11 @@ in
                   local = null;
                   post = null;
                   pre = null;
-                  release = [ 2 31 0 ];
+                  release = [
+                    2
+                    31
+                    0
+                  ];
                 };
               }
             ];

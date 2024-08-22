@@ -1,8 +1,9 @@
-{ project
-, fixtures
-, validators
-, mocks
-, ...
+{
+  project,
+  fixtures,
+  validators,
+  mocks,
+  ...
 }:
 let
   inherit (project) loadPyproject;
@@ -25,11 +26,43 @@ in
       };
       expected = {
         resolvelib = {
-          conditions = [{ op = ">="; version = { dev = null; epoch = 0; local = null; post = null; pre = null; release = [ 1 0 1 ]; }; }];
+          conditions = [
+            {
+              op = ">=";
+              version = {
+                dev = null;
+                epoch = 0;
+                local = null;
+                post = null;
+                pre = null;
+                release = [
+                  1
+                  0
+                  1
+                ];
+              };
+            }
+          ];
           version = "0.5.5";
         };
         unearth = {
-          conditions = [{ op = ">="; version = { dev = null; epoch = 0; local = null; post = null; pre = null; release = [ 0 10 0 ]; }; }];
+          conditions = [
+            {
+              op = ">=";
+              version = {
+                dev = null;
+                epoch = 0;
+                local = null;
+                post = null;
+                pre = null;
+                release = [
+                  0
+                  10
+                  0
+                ];
+              };
+            }
+          ];
           version = "0.9.1";
         };
       };

@@ -6,9 +6,7 @@ in
 {
   parseBuildSystems = {
     testSimple = {
-      expr = parseBuildSystems {
-        build-system.requires = [ "blinker" ];
-      };
+      expr = parseBuildSystems { build-system.requires = [ "blinker" ]; };
       expected = [
         {
           name = "blinker";
