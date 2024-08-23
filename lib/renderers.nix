@@ -93,24 +93,23 @@ in
       project,
       # Python derivation
       python,
-      # Python extras (optionals) to enable
+      # Python extras (markers) to enable. Note that optional-dependencies are in passthru.
+      # This is is for dependencies activated solely by markers.
       extras ? [ ],
       # Map a Python extras group name to a Nix attribute set like:
       # { dev = "checkInputs"; }
       # This is intended to be used with optionals such as test dependencies that you might
-      # want to add to checkInputs instead of dependencies
+      # want to remap to checkInputs.
       extrasAttrMappings ? { },
       # Which package format to pass to buildPythonPackage
       # If the format is "wheel" PEP-518 build-systems are excluded from the build.
       format ? "pyproject",
       # PEP-508 environment
       environ ? pep508.mkEnviron python,
+    #
     }:
     let
-      filteredDeps = pep621.filterDependencies {
-        inherit (project) dependencies;
-        inherit environ extras;
-      };
+      filteredDeps = pep621.filterDependenciesByEnviron environ extras project.dependencies;
 
       pythonVersion = environ.python_full_version.value;
 
@@ -158,10 +157,13 @@ in
         let
           attr = extrasAttrMappings.${group} or "dependencies";
         in
-        attrs
-        // {
-          ${attr} = attrs.${attr} or [ ] ++ map (dep: python.pkgs.${dep}) namedDeps.extras.${group};
-        }
+        if !extrasAttrMappings ? ${group} then
+          attrs
+        else
+          attrs
+          // {
+            ${attr} = attrs.${attr} or [ ] ++ map (dep: python.pkgs.${dep}) namedDeps.extras.${group};
+          }
       )
       (
         {
