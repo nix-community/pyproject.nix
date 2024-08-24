@@ -20,6 +20,7 @@ let
     fix
     nameValuePair
     mapAttrs'
+    length
     ;
 
   splitAttrPath = path: filter isString (split "\\." path);
@@ -59,7 +60,9 @@ fix (self: {
         foldl' (acc: attr: acc // getAttrPath attr { } pyproject) (pyproject.project.optional-dependencies
           or { }
         ) extrasAttrPaths
-        // mapAttrs' (path: attr: nameValuePair attr (getAttrPath path [ ] pyproject)) extrasListPaths;
+        // filterAttrs (_: deps: length deps > 0) (
+          mapAttrs' (path: attr: nameValuePair attr (getAttrPath path [ ] pyproject)) extrasListPaths
+        );
     in
     {
       dependencies = map pep508.parseString (pyproject.project.dependencies or [ ]);

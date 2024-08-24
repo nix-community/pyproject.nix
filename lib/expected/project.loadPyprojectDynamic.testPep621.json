@@ -234,7 +234,6 @@
         "version": "2024.6.0"
       }
     ],
-    "dev-dependencies": [],
     "excel": [
       {
         "pname": "odfpy",
