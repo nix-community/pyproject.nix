@@ -30,8 +30,8 @@
       # To use packages from local sources see "Overriding Python packages" in the nixpkgs manual:
       # https://nixos.org/manual/nixpkgs/stable/#reference
       #
-      # Or use an overlay generator such as pdm2nix:
-      # https://github.com/adisbladis/pdm2nix
+      # Or use an overlay generator such as uv2nix:
+      # https://github.com/adisbladis/uv2nix
       python = pkgs.python3;
 
     in
