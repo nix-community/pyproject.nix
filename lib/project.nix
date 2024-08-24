@@ -226,13 +226,13 @@ lib.fix (self: {
       isPep621 = pyproject ? project;
     in
     if isPoetry then
-        self.loadPoetryPyproject { inherit pyproject projectRoot; }
-      else if isPep621 then
-        self.loadPyproject {
-          inherit pyproject projectRoot;
-          extrasListPaths = uvListPaths;
-          extrasAttrPaths = pdmAttrPaths;
-        }
-      else
-        throw "Project is neither Poetry nor PEP-621";
+      self.loadPoetryPyproject { inherit pyproject projectRoot; }
+    else if isPep621 then
+      self.loadPyproject {
+        inherit pyproject projectRoot;
+        extrasListPaths = uvListPaths;
+        extrasAttrPaths = pdmAttrPaths;
+      }
+    else
+      throw "Project is neither Poetry nor PEP-621";
 })
