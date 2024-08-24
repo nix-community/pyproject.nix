@@ -44,7 +44,7 @@ let
 
             tox-pdm = {
               pname = "tox-pdm";
-              version = "0.1.0";
+              version = "0.5.0";
             };
 
             pdm = {
@@ -90,6 +90,11 @@ let
             types-jsonschema = {
               pname = "types-jsonschema";
               version = "0.1.0";
+            };
+
+            mike = {
+              pname = "mike";
+              version = "1.1.2";
             };
 
             unearth = {

@@ -11,7 +11,6 @@ let
     foldl'
     split
     filter
-    elem
     ;
   inherit (lib)
     isString
@@ -26,7 +25,7 @@ let
   getAttrPath = path: lib.attrByPath (splitAttrPath path);
 
 in
-fix (self: {
+fix (_self: {
   /*
     Parse dependencies from pyproject.toml.
 
@@ -98,12 +97,17 @@ fix (self: {
     dependencies:
     (
       let
-        environ' = environ // {
-          extra = {
-            type = "extra";
-            value = extras;
-          };
-        };
+        environ' =
+          if extras == [ ] then
+            environ
+          else
+            environ
+            // {
+              extra = {
+                type = "extra";
+                value = extras;
+              };
+            };
 
         filterList = filter (dep: dep.markers == null || pep508.evalMarkers environ' dep.markers);
       in
@@ -112,47 +116,5 @@ fix (self: {
         extras = mapAttrs (_: filterList) dependencies.extras;
         build-systems = filterList dependencies.build-systems;
       }
-    );
-
-  /*
-    Filter dependencies by their extras groups.
-
-    Type: filterDependenciesByExtras :: list[string] -> AttrSet -> AttrSet
-
-    Example:
-      # filterDependenciesByExtras [ "dev" ] (lib.pep621.parseDependencies (lib.importTOML ./pyproject.toml))
-      { }  # Structure omitted in docs
-  */
-  filterDependenciesByExtras =
-    # Extras groups as a list of strings.
-    extras:
-    # Dependencies as parsed by `lib.pep621.parseDependencies`.
-    dependencies:
-    dependencies // { extras = filterAttrs (group: _: elem group extras) dependencies.extras; };
-
-  /*
-    Aggregate of `filterDependencies` & `filterDependenciesByExtras`
-
-    Type: filterDependencies :: AttrSet -> AttrSet
-
-    Example:
-      # filterDependencies {
-      #   dependencies = lib.pep621.parseDependencies (lib.importTOML ./pyproject.toml);
-      #   environ = lib.pep508.mkEnviron pkgs.python;
-      #   extras = [ "dev" ];
-      # }
-      { }  # Structure omitted in docs
-  */
-  filterDependencies =
-    {
-      # Dependencies as parsed by `lib.pep621.parseDependencies`
-      dependencies,
-      # Environ as created by `lib.pep508.mkEnviron`
-      environ,
-      # Extras as a list of strings
-      extras ? [ ],
-    }:
-    self.filterDependenciesByEnviron environ extras (
-      self.filterDependenciesByExtras extras dependencies
     );
 })

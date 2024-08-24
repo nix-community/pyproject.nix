@@ -65,10 +65,7 @@ in
       environ ? pep508.mkEnviron python,
     }:
     let
-      filteredDeps = pep621.filterDependencies {
-        inherit (project) dependencies;
-        inherit environ extras;
-      };
+      filteredDeps = pep621.filterDependenciesByEnviron environ extras project.dependencies;
       getDependencies = getDependencies' python.pkgs;
     in
     ps:

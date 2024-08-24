@@ -138,56 +138,60 @@ fix (self: {
   */
   parseVersion =
     version:
-    let
-      # Split input into (_, epoch, release, modifiers)
-      tokens = match "(([0-9]+)!)?([^-\+a-zA-Z]+)(.*)" version;
-      tokenAt = elemAt tokens;
-
-      # Segments
-      epochSegment = tokenAt 1;
-      releaseSegment = tokenAt 2;
-      modifierLocalSegment = tokenAt 3;
-
-      # Split modifier/local segment
-      mLocalAt = elemAt (match "([^\\+]*)\\+?(.*)" modifierLocalSegment);
-      modifiersSegment = mLocalAt 0;
-      local = mLocalAt 1;
-
-      # Parse each post345/dev1 string into attrset
-      modifiers = map (
-        mod:
-        let
-          # Split post345 into ["post" "345"]
-          m = match "-?([^0-9]+)([0-9]+)" mod;
-          mAt = elemAt m;
-        in
-        assert m != null;
-        {
-          type = normalizedReleaseType (mAt 0);
-          value = toIntRelease (mAt 1);
-        }
-      ) (filter (s: isString s && s != "") (split "\\." modifiersSegment));
-
-    in
     if version == "" then
       emptyVersion
     else
-      {
-        # Return epoch defaulting to 0
-        epoch = if epochSegment != null then toInt epochSegment else 0;
+      let
+        # Split input into (_, epoch, release, modifiers)
+        tokens = match "(([0-9]+)!)?([^-\+a-zA-Z]+)(.*)" version;
+        tokenAt = elemAt tokens;
 
-        # Parse release segments delimited by dots into list of ints
-        release = map toIntRelease (filter (s: isString s && s != "") (split "\\." releaseSegment));
+        # Segments
+        epochSegment = tokenAt 1;
+        releaseSegment = tokenAt 2;
+        modifierLocalSegment = tokenAt 3;
 
-        # Find modifiers in modifiers list
-        pre = findFirst (mod: mod.type == "rc" || mod.type == "b" || mod.type == "a") null modifiers;
-        post = findFirst (mod: mod.type == "post") null modifiers;
-        dev = findFirst (mod: mod.type == "dev") null modifiers;
+        # Split modifier/local segment
+        mLocal = match "([^\\+]*)\\+?(.*)" modifierLocalSegment;
+        mLocalAt = elemAt mLocal;
+        modifiersSegment = mLocalAt 0;
+        local = mLocalAt 1;
 
-        # Local releases needs to be treated specially.
-        # The value isn't just a straight up number, but an arbitrary string.
-        local = if local != "" then local else null;
-      };
+        # Parse each post345/dev1 string into attrset
+        modifiers = map (
+          mod:
+          let
+            # Split post345 into ["post" "345"]
+            m = match "-?([^0-9]+)([0-9]+)" mod;
+            mAt = elemAt m;
+          in
+          assert m != null;
+          {
+            type = normalizedReleaseType (mAt 0);
+            value = toIntRelease (mAt 1);
+          }
+        ) (filter (s: isString s && s != "") (split "\\." modifiersSegment));
+
+      in
+      if tokens == null || mLocal == null then
+        throw "Invalid PEP-440 version: ${version}"
+      else
+        {
+          # Return epoch defaulting to 0
+          epoch = if epochSegment != null then toInt epochSegment else 0;
+
+          # Parse release segments delimited by dots into list of ints
+          release = map toIntRelease (filter (s: isString s && s != "") (split "\\." releaseSegment));
+
+          # Find modifiers in modifiers list
+          pre = findFirst (mod: mod.type == "rc" || mod.type == "b" || mod.type == "a") null modifiers;
+          post = findFirst (mod: mod.type == "post") null modifiers;
+          dev = findFirst (mod: mod.type == "dev") null modifiers;
+
+          # Local releases needs to be treated specially.
+          # The value isn't just a straight up number, but an arbitrary string.
+          local = if local != "" then local else null;
+        };
 
   /*
     Parse a version conditional.

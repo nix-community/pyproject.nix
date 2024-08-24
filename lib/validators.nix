@@ -44,11 +44,8 @@ in
       extras ? [ ],
     }:
     let
-      filteredDeps = pep621.filterDependencies {
-        inherit (project) dependencies;
-        environ = pep508.mkEnviron python;
-        inherit extras;
-      };
+      environ = pep508.mkEnviron python;
+      filteredDeps = pep621.filterDependenciesByEnviron environ [ ] project.dependencies;
       flatDeps =
         filteredDeps.dependencies
         ++ concatLists (attrValues filteredDeps.extras)

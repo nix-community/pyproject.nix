@@ -9,12 +9,7 @@
 }:
 let
   inherit (builtins) mapAttrs readDir;
-  inherit (pep621)
-    parseDependencies
-    parseRequiresPython
-    filterDependenciesByExtras
-    filterDependenciesByEnviron
-    ;
+  inherit (pep621) parseDependencies parseRequiresPython filterDependenciesByEnviron;
   inherit (lib) fix;
 
   getDependenciesNames =
@@ -85,30 +80,7 @@ fix (_self: {
     };
   };
 
-  # Note that we're not strictly using the supported data structure here just to make the tests smaller.
-  # It's just a special case application of filterAttrs anyway so it's a simple function.
-  filterDependenciesByExtras = {
-    testSimple = {
-      expr = filterDependenciesByExtras [ ] {
-        dependencies = [ "requests" ];
-        extras = {
-          dev = [ "pytest" ];
-        };
-      };
-      expected = {
-        dependencies = [ "requests" ];
-        extras = { };
-      };
-    };
-  };
-
   # Covered by the other tests, mock for coverage
-  filterDependencies = {
-    testDummy = {
-      expr = true;
-      expected = true;
-    };
-  };
   filterDependenciesListByEnviron = {
     testDummy = {
       expr = true;
