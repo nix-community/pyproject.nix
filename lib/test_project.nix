@@ -367,7 +367,7 @@ lib.fix (self: {
         inherit project;
         python = mocks.cpythonLinux38;
       };
-      inherit (self.loadPyproject.testPandas) expected;
+      expected = lib.importJSON ./expected/project.loadPyprojectDynamic.testPep621.json;
     };
 
     testError = {

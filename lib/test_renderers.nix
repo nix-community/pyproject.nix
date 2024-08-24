@@ -247,6 +247,8 @@ in
           "tomli"
           "importlib-resources"
           "importlib-metadata"
+          "tox"
+          "tox-pdm"
         ];
       };
     };

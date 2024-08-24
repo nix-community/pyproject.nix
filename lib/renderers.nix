@@ -18,6 +18,7 @@ let
     concatLists
     mapAttrs'
     filterAttrs
+    concatMap
     ;
 
   # Group licenses by their SPDX IDs for easy lookup
@@ -93,8 +94,7 @@ in
       project,
       # Python derivation
       python,
-      # Python extras (markers) to enable. Note that optional-dependencies are in passthru.
-      # This is is for dependencies activated solely by markers.
+      # Python extras (markers) to enable.
       extras ? [ ],
       # Map a Python extras group name to a Nix attribute set like:
       # { dev = "checkInputs"; }
@@ -150,6 +150,10 @@ in
             optionalAttrs (project' ? scripts && length scriptNames == 1) { mainProgram = head scriptNames; }
           );
 
+      optional-dependencies = lib.mapAttrs (
+        _group: deps: map (dep: python.pkgs.${dep.name}) deps
+      ) project.dependencies.extras;
+
     in
     foldl'
       (
@@ -168,11 +172,10 @@ in
       (
         {
           pyproject = format == "pyproject";
-          dependencies = map (dep: python.pkgs.${dep}) namedDeps.dependencies;
-          optional-dependencies = lib.mapAttrs (
-            _group: deps: map (dep: python.pkgs.${dep.name}) deps
-          ) project.dependencies.extras;
-          inherit meta;
+          dependencies =
+            map (dep: python.pkgs.${dep}) namedDeps.dependencies
+            ++ concatMap (group: optional-dependencies.${group} or [ ]) extras;
+          inherit optional-dependencies meta;
         }
         // optionalAttrs (format != "pyproject") { inherit format; }
         // optionalAttrs (format != "wheel") {

@@ -117,6 +117,10 @@
     {
       "pname": "virtualenv",
       "version": "20.26.2"
+    },
+    {
+      "pname": "pre-commit",
+      "version": "3.3.3"
     }
   ],
   "meta": {
