@@ -21,6 +21,13 @@ let
       func (args // { inherit project; })
     ) attrs;
 
+  # Package manager specific extensions.
+  # Remap extension fields to optional-dependencies
+  uvListPaths = {
+    "tool.uv.dev-dependencies" = "dev-dependencies";
+  };
+  pdmAttrPaths = [ "tool.pdm.dev-dependencies" ];
+
 in
 lib.fix (self: {
   /*
@@ -73,18 +80,16 @@ lib.fix (self: {
       }
   */
   loadUVPyproject =
-    let
-      extrasListPaths = {
-        "tool.uv.dev-dependencies" = "dev-dependencies";
-      };
-    in
     {
       # The unmarshaled contents of pyproject.toml
       pyproject ? lib.importTOML (projectRoot + "/pyproject.toml"),
       # Path to project root
       projectRoot ? null,
     }:
-    self.loadPyproject { inherit pyproject projectRoot extrasListPaths; };
+    self.loadPyproject {
+      inherit pyproject projectRoot;
+      extrasListPaths = uvListPaths;
+    };
 
   /*
     Load dependencies from a PDM pyproject.toml.
@@ -112,7 +117,7 @@ lib.fix (self: {
     }:
     self.loadPyproject {
       inherit pyproject projectRoot;
-      extrasAttrPaths = [ "tool.pdm.dev-dependencies" ];
+      extrasAttrPaths = pdmAttrPaths;
     }
     // {
       inherit pdmLock;
@@ -220,13 +225,14 @@ lib.fix (self: {
       isPoetry = pyproject ? tool.poetry;
       isPep621 = pyproject ? project;
     in
-    (
-      if isPoetry then
-        self.loadPoetryPyproject
+    if isPoetry then
+        self.loadPoetryPyproject { inherit pyproject projectRoot; }
       else if isPep621 then
-        self.loadPyproject
+        self.loadPyproject {
+          inherit pyproject projectRoot;
+          extrasListPaths = uvListPaths;
+          extrasAttrPaths = pdmAttrPaths;
+        }
       else
-        throw "Project is neither Poetry nor PEP-621"
-    )
-      { inherit pyproject projectRoot; };
+        throw "Project is neither Poetry nor PEP-621";
 })
