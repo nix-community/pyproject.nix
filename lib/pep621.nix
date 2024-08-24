@@ -3,7 +3,6 @@
   pep440,
   pep508,
   pep518,
-  pypa,
   ...
 }:
 let
@@ -80,33 +79,6 @@ fix (self: {
       [ ]  # List of conditions as returned by `lib.pep440.parseVersionCond`
   */
   parseRequiresPython = pyproject: pep440.parseVersionConds (pyproject.project.requires-python or "");
-
-  /*
-    Takes a dependency structure as returned by `lib.pep621.parseDependencies` and transforms it into
-    a structure with it's package names.
-
-    Type: getDependenciesNames :: AttrSet -> AttrSet
-
-    Example:
-      # getDependenciesNames (pep621.parseDependencies { pyproject = (lib.importTOML ./pyproject.toml); })
-      {
-        dependencies = [ "requests" ];
-        extras = {
-          dev = [ "pytest" ];
-        };
-        build-systems = [ "poetry-core" ];
-      }
-  */
-  getDependenciesNames =
-    let
-      normalize = pypa.normalizePackageName;
-      getNames = map (dep: normalize dep.name);
-    in
-    dependencies: {
-      dependencies = getNames dependencies.dependencies;
-      extras = mapAttrs (_: getNames) dependencies.extras;
-      build-systems = getNames dependencies.build-systems;
-    };
 
   /*
     Filter dependencies not relevant for this environment.

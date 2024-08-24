@@ -63,6 +63,7 @@ let
       in
       {
         inherit (poetry'.plugins) poetry-plugin-export;
+        pdm = null;
       };
   };
 in

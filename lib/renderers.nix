@@ -15,8 +15,8 @@ let
     ;
   inherit (lib)
     optionalAttrs
-    concatLists
     mapAttrs'
+    mapAttrs
     filterAttrs
     concatMap
     ;
@@ -26,6 +26,16 @@ let
     name = license.spdxId;
     value = license;
   }) (filterAttrs (_: license: license ? spdxId) lib.licenses);
+
+  getDependencies' =
+    pythonPackages:
+    concatMap (
+      dep:
+      let
+        pkg = pythonPackages.${dep.name};
+      in
+      [ pkg ] ++ concatMap (extra: pkg.optional-dependencies.${extra} or [ ]) dep.extras
+    );
 
 in
 {
@@ -59,14 +69,12 @@ in
         inherit (project) dependencies;
         inherit environ extras;
       };
-      namedDeps = pep621.getDependenciesNames filteredDeps;
-      flatDeps =
-        namedDeps.dependencies ++ concatLists (attrValues namedDeps.extras) ++ namedDeps.build-systems;
+      getDependencies = getDependencies' python.pkgs;
     in
     ps:
     let
       buildSystems' =
-        if namedDeps.build-systems != [ ] then
+        if filteredDeps.build-systems != [ ] then
           [ ]
         else
           [
@@ -74,7 +82,11 @@ in
             ps.wheel
           ];
     in
-    map (dep: ps.${dep}) flatDeps ++ extraPackages ps ++ buildSystems';
+    getDependencies filteredDeps.dependencies
+    ++ attrValues (mapAttrs (_group: getDependencies) project.dependencies.extras)
+    ++ getDependencies filteredDeps.build-systems
+    ++ extraPackages ps
+    ++ buildSystems';
 
   /*
     Renders a project as an argument that can be passed to buildPythonPackage/buildPythonApplication.
@@ -114,8 +126,7 @@ in
       pythonVersion = environ.python_full_version.value;
 
       pythonPackages = python.pkgs;
-
-      namedDeps = pep621.getDependenciesNames filteredDeps;
+      getDependencies = getDependencies' pythonPackages;
 
       inherit (project) pyproject;
 
@@ -150,9 +161,7 @@ in
             optionalAttrs (project' ? scripts && length scriptNames == 1) { mainProgram = head scriptNames; }
           );
 
-      optional-dependencies = lib.mapAttrs (
-        _group: deps: map (dep: python.pkgs.${dep.name}) deps
-      ) project.dependencies.extras;
+      optional-dependencies = lib.mapAttrs (_group: getDependencies) project.dependencies.extras;
 
     in
     foldl'
@@ -164,24 +173,22 @@ in
         if !extrasAttrMappings ? ${group} then
           attrs
         else
-          attrs
-          // {
-            ${attr} = attrs.${attr} or [ ] ++ map (dep: python.pkgs.${dep}) namedDeps.extras.${group};
-          }
+          attrs // { ${attr} = attrs.${attr} or [ ] ++ getDependencies filteredDeps.extras.${group}; }
       )
       (
         {
           pyproject = format == "pyproject";
           dependencies =
-            map (dep: python.pkgs.${dep}) namedDeps.dependencies
+            getDependencies filteredDeps.dependencies
+            # map (dep: python.pkgs.${dep}) namedDeps.dependencies
             ++ concatMap (group: optional-dependencies.${group} or [ ]) extras;
           inherit optional-dependencies meta;
         }
         // optionalAttrs (format != "pyproject") { inherit format; }
         // optionalAttrs (format != "wheel") {
           build-system =
-            if namedDeps.build-systems != [ ] then
-              map (dep: pythonPackages.${dep}) namedDeps.build-systems
+            if filteredDeps.build-systems != [ ] then
+              getDependencies filteredDeps.build-systems
             else
               [
                 pythonPackages.setuptools
@@ -196,5 +203,5 @@ in
             !lib.all (spec: pep440.comparators.${spec.op} pythonVersion spec.version) project.requires-python;
         }
       )
-      (attrNames namedDeps.extras);
+      (attrNames filteredDeps.extras);
 }
