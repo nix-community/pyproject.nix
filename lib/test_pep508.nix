@@ -8,6 +8,7 @@
 let
   inherit (builtins) mapAttrs;
   inherit (lib) fix;
+  inherit (pep508) setEnviron;
 
 in
 fix (self: {
@@ -897,6 +898,71 @@ fix (self: {
       };
     };
   };
+
+  setEnviron =
+    let
+      environ = pep508.mkEnviron mocks.cpythonLinux38;
+    in
+    {
+      testSetString = {
+        expr = {
+          inherit (setEnviron environ { platform_release = "5.10.65"; }) platform_release;
+        };
+        expected = {
+          platform_release = {
+            type = "string";
+            value = "5.10.65";
+          };
+        };
+      };
+
+      testSetVersion = {
+        expr = {
+          inherit (setEnviron environ { implementation_version = "1.0.0"; }) implementation_version;
+        };
+        expected = {
+          implementation_version = {
+            type = "version";
+            value = {
+              dev = null;
+              epoch = 0;
+              local = null;
+              post = null;
+              pre = null;
+              release = [
+                1
+                0
+                0
+              ];
+            };
+          };
+        };
+      };
+
+      testSetExtraString = {
+        expr = {
+          inherit (setEnviron environ { extra = "foo"; }) extra;
+        };
+        expected = {
+          extra = {
+            type = "extra";
+            value = "foo";
+          };
+        };
+      };
+
+      testSetExtraList = {
+        expr = {
+          inherit (setEnviron environ { extra = [ "foo" ]; }) extra;
+        };
+        expected = {
+          extra = {
+            type = "extra";
+            value = [ "foo" ];
+          };
+        };
+      };
+    };
 
   evalMarkers =
     mapAttrs (_: case: case // { expr = pep508.evalMarkers case.input.environ case.input.markers; })

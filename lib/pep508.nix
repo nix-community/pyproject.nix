@@ -21,6 +21,7 @@ let
     mapAttrs
     elem
     length
+    isList
     ;
   inherit (lib) stringToCharacters fix;
   inherit (import ./util.nix { inherit lib; }) splitComma stripStr;
@@ -46,18 +47,27 @@ let
   # the value is passed through and the type is inferred with builtins.typeOf
   parseValueVersionDynamic =
     name: value:
-    (
-      if match "^.+version" name != null && isString value then
-        {
-          type = "version";
-          value = pep440.parseVersion value;
-        }
-      else
-        {
-          type = typeOf value;
-          inherit value;
-        }
-    );
+    if !isMarkerVariable name then
+      throw "Unknown marker variable: ${name}"
+    else
+      (
+        if name == "extra" then
+          assert isList value || isString value;
+          {
+            type = "extra";
+            inherit value;
+          }
+        else if match "^.+version" name != null && isString value then
+          {
+            type = "version";
+            value = pep440.parseVersion value;
+          }
+        else
+          {
+            type = typeOf value;
+            inherit value;
+          }
+      );
 
   # Remove groupings ( ) from expression
   unparen =
@@ -605,6 +615,14 @@ fix (self: {
       implementation_name = python.passthru.implementation;
       implementation_version = python.version;
     };
+
+  /*
+    Update one or more keys in an environment created by mkEnviron.
+
+    Example:
+      # setEnviron (mkEnviron pkgs.python3) { platform_release = "5.10.65";  }
+  */
+  setEnviron = environ: updates: environ // mapAttrs parseValueVersionDynamic updates;
 
   /*
     Evaluate an environment as returned by `mkEnviron` against markers as returend by `parseMarkers`.
