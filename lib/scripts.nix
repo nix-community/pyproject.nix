@@ -71,7 +71,7 @@ fix (self: {
     });
 
   /*
-    Render a loaded PEP-723 script as a string.
+    Render a loaded PEP-723 script as a string with a shebang line pointing to a wrapped Nix store interpreter.
 
     Example:
       # Using renderScript directly
