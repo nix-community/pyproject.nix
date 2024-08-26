@@ -60,30 +60,35 @@ in
         foldl'
           (
             acc: line:
-            let
-              begin = elemAt acc 0;
-              end = elemAt acc 1;
-              current = elemAt acc 2;
-              next = current + 1;
-            in
-            if begin == (-1) && matchBegin line then
-              [
-                current
-                end
-                next
-              ]
-            else if begin >= 0 && matchEnd line then
-              [
-                begin
-                current
-                next
-              ]
+            # Most script lines are _not_ in the metadata section.
+            # Only create scope/list if we're still searching for it.
+            if (elemAt acc 0) >= 0 && (elemAt acc 1) >= 0 then
+              acc
             else
-              [
-                begin
-                end
-                next
-              ]
+              let
+                begin = elemAt acc 0;
+                end = elemAt acc 1;
+                current = elemAt acc 2;
+                next = current + 1;
+              in
+              if begin == (-1) && matchBegin line then
+                [
+                  current
+                  end
+                  next
+                ]
+              else if begin >= 0 && end == (-1) && matchEnd line then
+                [
+                  begin
+                  current
+                  next
+                ]
+              else
+                [
+                  begin
+                  end
+                  next
+                ]
           )
           # Tuple-like (begin, end, current) for script section
           [
