@@ -55,9 +55,17 @@ fix (self: {
       script = script';
       metadata = pep723.parseScript script';
       render =
-        { python }:
+        {
+          # Python interpreter
+          python,
+          # Customise environment using pep508.setEnviron
+          environ ? { },
+          # Override PEP-508 environment creation
+          __environ ? pep508.setEnviron (pep508.mkEnviron python) environ,
+        }:
         self.renderScript {
           script = scriptSelf;
+          environ = __environ;
           inherit python;
         };
     });
@@ -66,9 +74,15 @@ fix (self: {
     Render a loaded PEP-723 script as a string.
 
     Example:
+      # Using renderScript directly
       let
         script = loadScript { script = ./with-inline-metadata.py; };
-      in pkgs.writeScript script.name (loaded.render { python = pkgs.python3; })
+      in pkgs.writeScript script.name (renderScript { inherit script; python = pkgs.python3; })
+
+      # Using script render function
+      let
+        script = loadScript { script = ./with-inline-metadata.py; };
+      in pkgs.writeScript script.name (script.render { python = pkgs.python3; })
   */
   renderScript =
     {
