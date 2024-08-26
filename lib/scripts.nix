@@ -1,5 +1,7 @@
 {
   lib,
+  pep508,
+  pep621,
   pep723,
   pypa,
   ...
@@ -69,8 +71,14 @@ fix (self: {
       in pkgs.writeScript script.name (loaded.render { python = pkgs.python3; })
   */
   renderScript =
-    { script, python }:
+    { script, python, environ ? pep508.mkEnviron python }:
     let
+      filteredDeps = pep621.filterDependenciesByEnviron environ [ ] {
+        inherit (script.metadata) dependencies;
+        extras = { };
+        build-systems = [ ];
+      };
+
       pythonEnv = python.withPackages (
         pythonPackages:
         concatMap (
@@ -79,7 +87,7 @@ fix (self: {
             pkg = pythonPackages.${dep.name};
           in
           [ pkg ] ++ concatMap (extra: pkg.optional-dependencies.${extra} or [ ]) dep.extras
-        ) script.metadata.dependencies
+        ) filteredDeps.dependencies
       );
     in
     "#!${pythonEnv.interpreter}\n" + script.script;
