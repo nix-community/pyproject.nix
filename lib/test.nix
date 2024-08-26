@@ -185,7 +185,7 @@ let
     import path (
       pyproject
       // {
-        inherit lib mocks;
+        inherit lib mocks pkgs;
         fixtures = import ./fixtures;
       }
     );
@@ -199,6 +199,7 @@ fix (self: {
   project = importTests ./test_project.nix;
   renderers = importTests ./test_renderers.nix;
   validators = importTests ./test_validators.nix;
+  scripts = importTests ./test_scripts.nix;
   poetry = importTests ./test_poetry.nix;
   eggs = importTests ./test_eggs.nix;
 

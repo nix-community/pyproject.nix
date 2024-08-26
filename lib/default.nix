@@ -12,6 +12,7 @@ fix (
     project = ./project.nix;
     renderers = ./renderers.nix;
     validators = ./validators.nix;
+    scripts = ./scripts.nix;
     poetry = ./poetry.nix;
     eggs = ./eggs.nix;
     pep440 = ./pep440.nix;

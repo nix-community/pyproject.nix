@@ -14,6 +14,7 @@
   - [project](./lib/project.nix)
   - [renderers](./lib/renderers.nix)
   - [validators](./lib/validators.nix)
+  - [scripts](./lib/scripts.nix)
 - [Standards APIs](./reference.md)
   - [pep440](./lib/pep440.nix)
   - [pep508](./lib/pep508.nix)
