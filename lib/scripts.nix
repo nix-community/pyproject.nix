@@ -71,7 +71,14 @@ fix (self: {
       in pkgs.writeScript script.name (loaded.render { python = pkgs.python3; })
   */
   renderScript =
-    { script, python, environ ? pep508.mkEnviron python }:
+    {
+      # Script loaded using loadScript
+      script,
+      # Nixpkgs Python interpreter
+      python,
+      # PEP-508 environment
+      environ ? pep508.mkEnviron python,
+    }:
     let
       filteredDeps = pep621.filterDependenciesByEnviron environ [ ] {
         inherit (script.metadata) dependencies;
