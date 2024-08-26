@@ -22,6 +22,7 @@
   - [pep600](./lib/pep600.nix)
   - [pep621](./lib/pep621.nix)
   - [pep656](./lib/pep656.nix)
+  - [pep723](./lib/pep723.nix)
   - [poetry](./lib/poetry.nix)
   - [pypa](./lib/pypa.nix)
   - [eggs](./lib/eggs.nix)

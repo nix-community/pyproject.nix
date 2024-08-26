@@ -21,5 +21,6 @@ fix (
     pep600 = ./pep600.nix;
     pep621 = ./pep621.nix;
     pep656 = ./pep656.nix;
+    pep723 = ./pep723.nix;
   }
 )

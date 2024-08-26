@@ -209,6 +209,7 @@ fix (self: {
   pep600 = importTests ./test_pep600.nix;
   pep656 = importTests ./test_pep656.nix;
   pep621 = importTests ./test_pep621;
+  pep723 = importTests ./test_pep723.nix;
 
   # Yo dawg, I heard you like tests...
   #
