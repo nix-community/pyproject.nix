@@ -317,8 +317,7 @@ fix (self: {
         let
           m = split re.operators (unparen input);
           mLength = length m;
-          mAt = elemAt m;
-          lhs = stripStr (mAt 0);
+          lhs = stripStr (elemAt m 0);
         in
         if (mLength > 1) then
           assert mLength == 3;
@@ -332,8 +331,8 @@ fix (self: {
                 }
               else
                 unpackValue lhs;
-            op = elemAt (mAt 1) 0;
-            rhs = parseValueVersionDynamic lhs (unpackValue (stripStr (mAt 2)));
+            op = elemAt (elemAt m 1) 0;
+            rhs = parseValueVersionDynamic lhs (unpackValue (stripStr (elemAt m 2)));
           }
         else if isMarkerVariable input then
           {

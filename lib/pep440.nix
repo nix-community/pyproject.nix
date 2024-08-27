@@ -163,12 +163,11 @@ fix (self: {
           let
             # Split post345 into ["post" "345"]
             m = match "-?([^0-9]+)([0-9]+)" mod;
-            mAt = elemAt m;
           in
           assert m != null;
           {
-            type = normalizedReleaseType (mAt 0);
-            value = toIntRelease (mAt 1);
+            type = normalizedReleaseType (elemAt m 0);
+            value = toIntRelease (elemAt m 1);
           }
         ) (filter (s: isString s && s != "") (split "\\." modifiersSegment));
 
@@ -220,11 +219,11 @@ fix (self: {
     (
       let
         m = match " *([=><!~^]*) *(.+)" cond;
-        mAt = elemAt m;
       in
+      assert m != null;
       {
-        op = mAt 0;
-        version = self.parseVersion (mAt 1);
+        op = elemAt m 0;
+        version = self.parseVersion (elemAt m 1);
       }
     );
 

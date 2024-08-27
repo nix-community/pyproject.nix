@@ -82,12 +82,11 @@ lib.fix (self: {
     tag:
     let
       m = match "([a-z]+)([0-9]*)" tag;
-      mAt = elemAt m;
     in
     assert m != null;
     {
-      implementation = normalizeImpl (mAt 0);
-      version = optionalString (mAt 1);
+      implementation = normalizeImpl (elemAt m 0);
+      version = optionalString (elemAt m 1);
     };
 
   /*
@@ -109,13 +108,12 @@ lib.fix (self: {
     tag:
     let
       m = match "([a-z]+)([0-9]*)_?([a-z0-9]*)" tag;
-      mAt = elemAt m;
     in
     assert m != null;
     {
-      implementation = normalizeImpl (mAt 0);
-      version = optionalString (mAt 1);
-      rest = mAt 2;
+      implementation = normalizeImpl (elemAt m 0);
+      version = optionalString (elemAt m 1);
+      rest = elemAt m 2;
     };
 
   /*
@@ -186,16 +184,15 @@ lib.fix (self: {
     name:
     let
       m = matchWheelFileName name;
-      mAt = elemAt m;
     in
     assert m != null;
     {
-      distribution = mAt 0;
-      version = mAt 1;
-      buildTag = mAt 3;
-      languageTags = map self.parsePythonTag (filter isString (split "\\." (mAt 4)));
-      abiTag = self.parseABITag (mAt 5);
-      platformTags = filter isString (split "\\." (mAt 6));
+      distribution = elemAt m 0;
+      version = elemAt m 1;
+      buildTag = elemAt m 3;
+      languageTags = map self.parsePythonTag (filter isString (split "\\." (elemAt m 4)));
+      abiTag = self.parseABITag (elemAt m 5);
+      platformTags = filter isString (split "\\." (elemAt m 6));
       # Keep filename around so selectWheel & such that returns structured filtered
       # data becomes more ergonomic to use
       filename = name;
@@ -258,10 +255,9 @@ lib.fix (self: {
       (
         let
           m = match "macosx_([0-9]+)_([0-9]+)_(.+)" platformTag;
-          mAt = elemAt m;
-          major = mAt 0;
-          minor = mAt 1;
-          arch = mAt 2;
+          major = elemAt m 0;
+          minor = elemAt m 1;
+          arch = elemAt m 2;
         in
         assert m != null;
         (

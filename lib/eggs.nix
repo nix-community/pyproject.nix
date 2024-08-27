@@ -59,18 +59,17 @@ lib.fix (self: {
     name:
     let
       m = self.matchEggFileName name;
-      mAt = elemAt m;
-      langM = match "([^0-9]*)(.+)" (mAt 2);
-      langAt = elemAt langM;
+      langM = match "([^0-9]*)(.+)" (elemAt m 2);
     in
     assert m != null;
+    assert langM != null;
     {
       filename = name;
-      distribution = mAt 0;
-      version = mAt 1;
+      distribution = elemAt m 0;
+      version = elemAt m 1;
       languageTag = {
-        implementation = normalizeImpl (langAt 0);
-        version = langAt 1;
+        implementation = normalizeImpl (elemAt langM 0);
+        version = elemAt langM 1;
       };
     };
 

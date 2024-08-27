@@ -29,11 +29,12 @@ lib.fix (
     translateAuthor =
       a:
       let
-        mAt = elemAt (match "^(.+) <(.+)>$" a);
+        m = match "^(.+) <(.+)>$" a;
       in
+      assert m != null;
       {
-        name = mAt 0;
-        email = mAt 1;
+        name = elemAt m 0;
+        email = elemAt m 1;
       };
 
     # Normalize dependecy from poetry dependencies table from (string || set) -> set
@@ -248,9 +249,8 @@ lib.fix (
       (
         let
           m = match "^([~^])?([a-zA-Z0-9].+)$" cond;
-          mAt = elemAt m;
-          c = mAt 0;
-          rest = mAt 1;
+          c = elemAt m 0;
+          rest = elemAt m 1;
           # Pad version before parsing as it's _much_ easier to reason about
           # once they're the same length
           version = pep440.parseVersion (lib.versions.pad 3 rest);

@@ -28,10 +28,9 @@ in
     tag:
     let
       m = match "musllinux_([0-9]+)_([0-9]+)_(.*)" tag;
-      mAt = elemAt m;
-      tagMajor = mAt 0;
-      tagMinor = mAt 1;
-      tagArch = mAt 2;
+      tagMajor = elemAt m 0;
+      tagMinor = elemAt m 1;
+      tagArch = elemAt m 2;
       sysVersion' = elemAt (splitVersion libc.version);
       sysMajor = sysVersion' 0;
       sysMinor = sysVersion' 1;
