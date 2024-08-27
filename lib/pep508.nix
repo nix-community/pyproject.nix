@@ -218,7 +218,8 @@ fix (self: {
               pos' = elemAt acc 2;
               cond' = elemAt acc 3;
 
-              openP = if inString' then
+              openP =
+                if inString' then
                   openP'
                 else
                   (
@@ -231,18 +232,19 @@ fix (self: {
                   );
 
               # # Look ahead to find the operator (either "and", "not" or "or").
+              condSub = substring pos' 8 input; # 8 is the length of " not  in "
               cond =
                 if openP > 0 || inString' then
                   ""
-                else if substring pos' 5 input == " and " then
+                else if match " and .+" condSub != null then
                   "and"
-                else if substring pos' 4 input == " or " then
+                else if match " or .+" condSub != null then
                   "or"
-                else if substring pos' 4 input == " in " then
+                else if match " in .+" condSub != null then
                   "in"
-                else if substring pos' 8 input == " not in " then
+                else if match " not in .+" condSub != null then
                   "not in"
-                else if substring pos' 5 input == " not " then
+                else if match " not .+" condSub != null then
                   "not"
                 else
                   "";
