@@ -208,31 +208,48 @@ fix (self: {
     input:
     let
       # Find the positions of lhs/op/rhs in the input string
-      pos =
+      pos' =
         foldl'
           (
             acc: c:
             let
+              openP' = elemAt acc 0;
+              inString' = elemAt acc 1;
+              pos' = elemAt acc 2;
+              cond' = elemAt acc 3;
+
+              openP = if inString' then
+                  openP'
+                else
+                  (
+                    if c == "(" then
+                      openP' + 1
+                    else if c == ")" then
+                      openP' - 1
+                    else
+                      openP'
+                  );
+
               # # Look ahead to find the operator (either "and", "not" or "or").
               cond =
-                if self.openP > 0 || acc.inString then
+                if openP > 0 || inString' then
                   ""
-                else if substring acc.pos 5 input == " and " then
+                else if substring pos' 5 input == " and " then
                   "and"
-                else if substring acc.pos 4 input == " or " then
+                else if substring pos' 4 input == " or " then
                   "or"
-                else if substring acc.pos 4 input == " in " then
+                else if substring pos' 4 input == " in " then
                   "in"
-                else if substring acc.pos 8 input == " not in " then
+                else if substring pos' 8 input == " not in " then
                   "not in"
-                else if substring acc.pos 5 input == " not " then
+                else if substring pos' 5 input == " not " then
                   "not"
                 else
                   "";
 
               # When we've reached the operator we know the start/end positions of lhs/op/rhs
               rhsOffset =
-                if cond != "" && condGt cond acc.cond then
+                if cond != "" && condGt cond cond' then
                   (
                     if (cond == "and" || cond == "not") then
                       5
@@ -246,59 +263,54 @@ fix (self: {
                 else
                   -1;
 
-              self = {
-                # If we are inside a string don't track the opening and closing of parens
-                openP =
-                  if acc.inString then
-                    acc.openP
-                  else
-                    (
-                      if c == "(" then
-                        acc.openP + 1
-                      else if c == ")" then
-                        acc.openP - 1
-                      else
-                        acc.openP
-                    );
-
-                # Check opening and closing of strings
-                inString =
-                  if acc.inString && c == "'" then
-                    true
-                  else if !acc.inString && c == "'" then
-                    false
-                  else
-                    acc.inString;
-
-                pos = acc.pos + 1;
-
-                cond = if cond != "" then cond else acc.cond;
-
-                lhs = if (rhsOffset != -1) then acc.pos else acc.lhs;
-                rhs = if (rhsOffset != -1) then (acc.pos + rhsOffset) else acc.rhs;
-              };
-
             in
-            self
+            [
+              # If we are inside a string don't track the opening and closing of parens
+              # openP =
+              openP
+
+              # Check opening and closing of strings
+              # inString =
+              (
+                if inString' && c == "'" then
+                  true
+                else if !inString' && c == "'" then
+                  false
+                else
+                  inString'
+              )
+
+              #pos =
+              (pos' + 1)
+
+              # cond =
+              (if cond != "" then cond else cond')
+
+              # lhs =
+              (if (rhsOffset != -1) then pos' else (elemAt acc 4))
+              #rhs =
+              (if (rhsOffset != -1) then (pos' + rhsOffset) else (elemAt acc 5))
+            ]
           )
-          {
-            openP = 0; # Number of open parens
-            inString = false; # If the parser is inside a string
-            pos = 0; # Parser position
-            done = false;
+          [
+            0 # openP: Number of open parens
+            false # inString: If the parser is inside a string
+            0 # pos: Parser position
 
             # Keep track of last logical condition to do precedence ordering
-            cond = "";
+            "" # cond
 
             # Stop positions for each value
-            lhs = -1;
-            rhs = -1;
-
-          }
+            (-1) # lhs
+            (-1) # rhs
+          ]
           (stringToCharacters input);
 
+      posLhs = elemAt pos' 4;
+      posRhs = elemAt pos' 5;
+
     in
-    if pos.lhs == -1 then # No right hand value to extract
+    if posLhs == -1 then # No right hand value to extract
       (
         let
           m = split re.operators (unparen input);
@@ -335,9 +347,9 @@ fix (self: {
     else
       {
         type = "boolOp";
-        lhs = self.parseMarkers (unparen (substring 0 pos.lhs input));
-        op = substring (pos.lhs + 1) (pos.rhs - pos.lhs - 2) input;
-        rhs = self.parseMarkers (unparen (substring pos.rhs (stringLength input) input));
+        lhs = self.parseMarkers (unparen (substring 0 posLhs input));
+        op = substring (posLhs + 1) (posRhs - posLhs - 2) input;
+        rhs = self.parseMarkers (unparen (substring posRhs (stringLength input) input));
       };
 
   /*
