@@ -210,62 +210,71 @@ fix (self: {
       # Find the positions of lhs/op/rhs in the input string
       pos =
         foldl'
-          (acc: c: rec {
-            # If we are inside a string don't track the opening and closing of parens
-            openP =
-              if acc.inString then
-                acc.openP
-              else
-                (
-                  if c == "(" then
-                    acc.openP + 1
-                  else if c == ")" then
-                    acc.openP - 1
-                  else
+          (
+            acc: c:
+            if acc.skip > 0 then
+              (acc // { skip = acc.skip - 1; })
+            else
+              rec {
+                # If we are inside a string don't track the opening and closing of parens
+                openP =
+                  if acc.inString then
                     acc.openP
-                );
-
-            # Check opening and closing of strings
-            inString = if acc.inString && c == "'" then
-                true
-              else if !acc.inString && c == "'" then
-                false
-              else
-                acc.inString;
-
-            pos = acc.pos + 1;
-            cond = if cond' != "" then cond' else acc.cond;
-            lhs = if (rhsOffset' != -1) then acc.pos else acc.lhs;
-            rhs = if (rhsOffset' != -1) then (acc.pos + rhsOffset') else acc.rhs;
-
-            # "Private" fields below. It's more efficient to use a rec than a let/attrset combo, so we stick fields not strictly
-            # treated as accumulator fields in here too.
-            # # Look ahead to find the operator (either "and", "not" or "or").
-            condSub = match " (and|or|in|not in|not) .*" (substring acc.pos 8 input); # 8 is the length of " not  in "
-            cond' =
-              if openP > 0 || acc.inString then
-                ""
-              else if condSub != null then
-                head condSub
-              else
-                "";
-
-            # When we've reached the operator we know the start/end positions of lhs/op/rhs
-            rhsOffset' =
-              if cond' != "" && condGt cond' acc.cond then
-                (
-                  if (cond' == "and" || cond' == "not") then
-                    5
-                  else if (cond' == "or" || cond' == "in") then
-                    4
-                  else if cond' == "not in" then
-                    8
                   else
-                    throw "Unknown cond: ${cond'}"
-                )
-              else
-                -1;
-          })
+                    (
+                      if c == "(" then
+                        acc.openP + 1
+                      else if c == ")" then
+                        acc.openP - 1
+                      else
+                        acc.openP
+                    );
+
+                # Check opening and closing of strings
+                inString =
+                  if acc.inString && c == "'" then
+                    true
+                  else if !acc.inString && c == "'" then
+                    false
+                  else
+                    acc.inString;
+
+                pos = acc.pos + 1;
+                cond = if cond' != "" then cond' else acc.cond;
+                lhs = if (rhsOffset' != -1) then acc.pos else acc.lhs;
+                rhs = if (rhsOffset' != -1) then (acc.pos + rhsOffset') else acc.rhs;
+
+                # "Private" fields below. It's more efficient to use a rec than a let/attrset combo, so we stick fields not strictly
+                # treated as accumulator fields in here too.
+                # # Look ahead to find the operator (either "and", "not" or "or").
+                condSub = match " (and|or|in|not in|not) .*" (substring acc.pos 8 input); # 8 is the length of " not  in "
+                cond' =
+                  if openP > 0 || acc.inString then
+                    ""
+                  else if c == " " && condSub != null then
+                    head condSub
+                  else
+                    "";
+
+                skip = rhsOffset' - 2;
+
+                # When we've reached the operator we know the start/end positions of lhs/op/rhs
+                rhsOffset' =
+                  if cond' != "" && condGt cond' acc.cond then
+                    (
+                      if (cond' == "and" || cond' == "not") then
+                        5
+                      else if (cond' == "or" || cond' == "in") then
+                        4
+                      else if cond' == "not in" then
+                        8
+                      else
+                        throw "Unknown cond: ${cond'}"
+                    )
+                  else
+                    -1;
+              }
+          )
           {
             openP = 0; # openP: Number of open parens
             inString = false; # inString: If the parser is inside a string
@@ -273,6 +282,7 @@ fix (self: {
 
             # Keep track of last logical condition to do precedence ordering
             cond = ""; # cond
+            skip = 0;
 
             # Stop positions for each value
             lhs = -1; # lhs
