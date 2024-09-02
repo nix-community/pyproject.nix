@@ -9,9 +9,10 @@ let
     ;
   inherit (lib) isString;
 
-  isEmptyStr = s: isString s && match " *" s == null;
 in
-{
+rec {
+  isEmptyStr = s: isString s && match " *" s == null;
+
   splitComma = s: if s == "" then [ ] else filter isEmptyStr (split " *, *" s);
 
   stripStr =

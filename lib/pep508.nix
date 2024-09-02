@@ -10,20 +10,20 @@ let
   inherit (builtins)
     match
     elemAt
-    split
     foldl'
     substring
-    stringLength
     typeOf
     fromJSON
+    toJSON
     isString
     head
     mapAttrs
     elem
     length
     isList
+    any
     ;
-  inherit (lib) stringToCharacters fix;
+  inherit (lib) stringToCharacters fix sublist;
   inherit (import ./util.nix { inherit lib; }) splitComma stripStr;
 
   re = {
@@ -31,87 +31,38 @@ let
     version = "([0-9.*x]+)";
   };
 
-  # Assign numerical priority values to logical conditions so we can do proper precedence ordering
-  condPrio = {
-    and = 5;
-    or = 10;
-    not = 1;
-    "in" = -1;
-    "not in" = -1;
-    "" = -1;
-  };
-  condGt = l: r: if l == "" then false else condPrio.${l} >= condPrio.${r};
-
-  # Parse a value into an attrset of { type = "valueType"; value = ...; }
-  # Will parse any field name suffixed with "version" as a PEP-440 version, otherwise
-  # the value is passed through and the type is inferred with builtins.typeOf
-  parseValueVersionDynamic =
-    name: value:
-    if !isMarkerVariable name then
-      throw "Unknown marker variable: ${name}"
-    else
-      (
-        if name == "extra" then
-          assert isList value || isString value;
-          {
-            type = "extra";
-            inherit value;
-          }
-        else if match "^.+version" name != null && isString value then
-          {
-            type = "version";
-            value = pep440.parseVersion value;
-          }
-        else
-          {
-            type = typeOf value;
-            inherit value;
-          }
-      );
-
-  # Remove groupings ( ) from expression
-  unparen =
+  # Marker fields + their parsers
+  markerFields =
     let
-      matchParen = match "[\t ]*\\((.+)\\)[\t ]*";
+      default = value: {
+        type = typeOf value;
+        inherit value;
+      };
+      version = value: {
+        type = "version";
+        value = pep440.parseVersion value;
+      };
     in
-    expr:
-    let
-      m = matchParen expr;
-    in
-    if m != null then head m else expr;
-
-  isMarkerVariable =
-    let
-      markerFields = [
-        "implementation_name"
-        "implementation_version"
-        "os_name"
-        "platform_machine"
-        "platform_python_implementation"
-        "platform_release"
-        "platform_system"
-        "platform_version"
-        "python_full_version"
-        "python_version"
-        "sys_platform"
-        "extra"
-      ];
-    in
-    s: elem s markerFields;
-
-  unpackValue =
-    value:
-    if isMarkerVariable value then
-      value
-    else
-      (
-        let
-          # If the value is a single ticked string we can't pass it plainly to toJSON.
-          # Normalise to a double quoted.
-          singleTicked = match "^'(.+)'$" value; # TODO: Account for escaped ' in input (unescape)
-        in
-        fromJSON (if singleTicked != null then "\"" + head singleTicked + "\"" else value)
-      );
+    {
+      "implementation_name" = default;
+      "implementation_version" = version;
+      "os_name" = default;
+      "platform_machine" = default;
+      "platform_python_implementation" = default;
+      "platform_release" = default;
+      "platform_system" = default;
+      "platform_version" = version;
+      "python_full_version" = version;
+      "python_version" = version;
+      "sys_platform" = default;
+      "extra" =
+        value:
+        assert isList value || isString value;
+        {
+          type = "extra";
+          inherit value;
+        };
+    };
 
   # Comparators for simple equality
   # For versions see pep440.comparators
@@ -136,6 +87,7 @@ let
     "and" = x: y: x && y;
     "or" = x: y: x || y;
     "in" = x: y: lib.strings.hasInfix x y;
+    "not in" = x: y: !lib.strings.hasInfix x y;
   };
 
   isPrimitiveType =
@@ -148,6 +100,24 @@ let
       ];
     in
     type: elem type primitives;
+
+  # Copied from nixpkgs lib.findFirstIndex internals to save on a little bit of environment allocations.
+  resultIndex' =
+    pred:
+    foldl' (
+      index: el:
+      if index < 0 then
+        # No match yet before the current index, we need to check the element
+        if pred el then
+          # We have a match! Turn it into the actual index to prevent future iterations from modifying it
+          -index - 1
+        else
+          # Still no match, update the index to the next element (we're counting down, so minus one)
+          index - 1
+      else
+        # There's already a match, propagate the index without evaluating anything
+        index
+    ) (-1);
 
 in
 fix (self: {
@@ -205,135 +175,208 @@ fix (self: {
       }
   */
   parseMarkers =
-    input:
     let
-      # Find the positions of lhs/op/rhs in the input string
-      pos =
-        foldl'
-          (
-            acc: c:
-            if acc.skip > 0 then
-              (acc // { skip = acc.skip - 1; })
-            else
-              rec {
-                # If we are inside a string don't track the opening and closing of parens
-                openP =
-                  if acc.inString then
-                    acc.openP
-                  else
-                    (
-                      if c == "(" then
-                        acc.openP + 1
-                      else if c == ")" then
-                        acc.openP - 1
-                      else
-                        acc.openP
-                    );
+      opChars = [
+        "="
+        ">"
+        "<"
+        "!"
+        "~"
+        "^"
+      ];
 
-                # Check opening and closing of strings
-                inString =
-                  if acc.inString && c == "'" then
-                    true
-                  else if !acc.inString && c == "'" then
-                    false
-                  else
-                    acc.inString;
-
-                pos = acc.pos + 1;
-                cond = if cond' != "" then cond' else acc.cond;
-                lhs = if (rhsOffset' != -1) then acc.pos else acc.lhs;
-                rhs = if (rhsOffset' != -1) then (acc.pos + rhsOffset') else acc.rhs;
-
-                # "Private" fields below. It's more efficient to use a rec than a let/attrset combo, so we stick fields not strictly
-                # treated as accumulator fields in here too.
-                # # Look ahead to find the operator (either "and", "not" or "or").
-                condSub = match " (and|or|in|not in|not) .*" (substring acc.pos 8 input); # 8 is the length of " not  in "
-                cond' =
-                  if openP > 0 || acc.inString then
-                    ""
-                  else if c == " " && condSub != null then
-                    head condSub
-                  else
-                    "";
-
-                skip = rhsOffset' - 2;
-
-                # When we've reached the operator we know the start/end positions of lhs/op/rhs
-                rhsOffset' =
-                  if cond' != "" && condGt cond' acc.cond then
-                    (
-                      if (cond' == "and" || cond' == "not") then
-                        5
-                      else if (cond' == "or" || cond' == "in") then
-                        4
-                      else if cond' == "not in" then
-                        8
-                      else
-                        throw "Unknown cond: ${cond'}"
-                    )
-                  else
-                    -1;
-              }
-          )
-          {
-            openP = 0; # openP: Number of open parens
-            inString = false; # inString: If the parser is inside a string
-            pos = 0; # pos: Parser position
-
-            # Keep track of last logical condition to do precedence ordering
-            cond = ""; # cond
-            skip = 0;
-
-            # Stop positions for each value
-            lhs = -1; # lhs
-            rhs = -1; # rhs
-          }
-          (stringToCharacters input);
-
-      posLhs = pos.lhs;
-      posRhs = pos.rhs;
+      # State exit conditions
+      emptyOrOp = _pos: c: c == " " || c == "(" || c == ")" || elem c opChars;
+      nonOp = _pos: c: !elem c opChars;
+      anyCond = _pos: _c: true;
+      # Use look-behind to assess whether a string was closed
+      stringCond' =
+        char: chars: startPos: pos: _c:
+        pos - 1 != startPos && (elemAt chars (pos - 1)) == char;
+      singleStringCond' = stringCond' "'";
+      doubleStringCond' = stringCond' "\"";
 
     in
-    if posLhs == -1 then # No right hand value to extract
-      (
-        let
-          m = split re.operators (unparen input);
-          mLength = length m;
-          lhs = stripStr (elemAt m 0);
-        in
-        if (mLength > 1) then
-          assert mLength == 3;
-          {
-            type = "compare";
-            lhs =
-              if isMarkerVariable lhs then
-                {
-                  type = "variable";
-                  value = lhs;
-                }
-              else
-                unpackValue lhs;
-            op = elemAt (elemAt m 1) 0;
-            rhs = parseValueVersionDynamic lhs (unpackValue (stripStr (elemAt m 2)));
-          }
-        else if isMarkerVariable input then
-          {
-            type = "variable";
-            value = input;
-          }
-        else
-          rec {
-            value = unpackValue input;
-            type = typeOf value;
-          }
-      )
+    input:
+    if input == "" then
+      [ ]
     else
-      {
-        type = "boolOp";
-        lhs = self.parseMarkers (unparen (substring 0 posLhs input));
-        op = substring (posLhs + 1) (posRhs - posLhs - 2) input;
-        rhs = self.parseMarkers (unparen (substring posRhs (stringLength input) input));
-      };
+      let
+        chars = stringToCharacters input;
+        cmax = (length chars) - 1;
+        last = elemAt chars cmax;
+        singleStringCond = singleStringCond' chars;
+        doubleStringCond = doubleStringCond' chars;
+
+        # Find tokens in character stream
+        tokens' =
+          foldl'
+            (acc: c: rec {
+              # Current position
+              pos = acc.pos + 1;
+
+              # Set start position of token to current position if exit condition matches
+              start =
+                if acc.cond pos c then
+                  (if c == " " then -1 else pos) # If character is whitespace keep seeking
+                else
+                  acc.start; # Else propagate start position
+
+              # Assign new exit condition on state change
+              cond =
+                if start == pos || start == -1 then
+                  (
+                    if c == " " || c == "(" || c == ")" then
+                      anyCond
+                    else if c == "\"" then
+                      (doubleStringCond pos)
+                    else if c == "'" then
+                      (singleStringCond pos)
+                    else if elem c opChars then
+                      nonOp
+                    else
+                      emptyOrOp
+                  )
+                else
+                  acc.cond;
+
+              tokens =
+                # Reached end of token
+                if acc.start != -1 && start != acc.start then
+                  acc.tokens ++ [ (substring acc.start (pos - acc.start) input) ]
+                # Reached end of input
+                else if pos == cmax && acc.start != -1 then
+                  acc.tokens ++ [ (substring acc.start (cmax + 1 - acc.start) input) ]
+                else
+                  acc.tokens;
+
+            })
+            {
+              pos = -1; # Parser position
+              start = -1; # Start position for current token (-1 indicates searching through whitespace)
+              cond = anyCond; # Function condition ending current parser state
+              tokens = [ ]; # List of discovered tokens as strings
+            }
+            chars;
+
+        # Special case: Single character tail token
+        tokens =
+          if tokens'.start == cmax && last != " " then tokens'.tokens ++ [ last ] else tokens'.tokens;
+
+        # Group tokens according to paren expression groups
+        ltokens = length tokens;
+        groupTokens =
+          stack: i:
+          if i == ltokens then
+            stack
+          else
+            let
+              token = elemAt tokens i;
+            in
+            # New group, initialize a new stack
+            if token == "(" then
+              (
+                let
+                  group' = groupTokens [ ] (i + 1);
+                in
+                groupTokens (stack ++ [ (elemAt group' 0) ]) (elemAt group' 1)
+              )
+            # Closing group, return stack
+            else if token == ")" then
+              # Return a tuple of stack and next so the "(" branch above can know where the list is closed
+              [
+                stack
+                (i + 1)
+              ]
+            # Append all other token types to stack.
+            else
+              groupTokens (stack ++ [ token ]) (i + 1);
+
+        # The grouping routine is a tad slow and uses recursion.
+        # We can completely avoid it if the input doesn't contain any grouped subexpressions.
+        groupedTokens = if any (token: token == "(") tokens then groupTokens [ ] 0 else tokens;
+
+        # Reduce values into AST
+        reduceValue =
+          lhs': value:
+          if isList value then
+            (
+              if length value == 1 then
+                reduceValue lhs' (head value)
+              else
+                (
+                  let
+                    # Find different kinds of infix operators & comparisons
+                    orIdx = resultIndex' (token: token == "or") value;
+                    andIdx = resultIndex' (token: token == "and") value;
+                    compIdx = resultIndex' (token: match re.operators token != null) value;
+                    inIdx = resultIndex' (token: token == "in") value;
+                    notIdx = # Take possible negation into account
+                      if inIdx > 0 && elemAt value (inIdx - 1) == "not" then inIdx - 1 else -1;
+                  in
+                  # Value has a logical or (takes precedence over and)
+                  if orIdx > 0 then
+                    {
+                      type = "boolOp";
+                      lhs = reduceValue lhs' (sublist 0 orIdx value);
+                      op = elemAt value orIdx;
+                      rhs = reduceValue lhs' (sublist (orIdx + 1) (length value - 1) value);
+                    }
+                  # Value has a logical and
+                  else if andIdx > 0 then
+                    {
+                      type = "boolOp";
+                      lhs = reduceValue lhs' (sublist 0 andIdx value);
+                      op = elemAt value andIdx;
+                      rhs = reduceValue lhs' (sublist (andIdx + 1) (length value - 1) value);
+                    }
+                  # Value has a comparison (==, etc) operator
+                  else if compIdx >= 0 then
+                    rec {
+                      type = "compare";
+                      lhs = reduceValue lhs' (sublist 0 compIdx value);
+                      op = elemAt value compIdx;
+                      rhs = reduceValue lhs (sublist (compIdx + 1) (length value - 1) value);
+                    }
+                  else if notIdx > 0 then
+                    rec {
+                      type = "boolOp";
+                      lhs = reduceValue lhs' (sublist 0 notIdx value);
+                      op = "not in";
+                      rhs = reduceValue lhs (sublist (inIdx + 1) (length value - 1) value);
+                    }
+                  else if inIdx > 0 then
+                    rec {
+                      type = "boolOp";
+                      lhs = reduceValue lhs' (sublist 0 inIdx value);
+                      op = "in";
+                      rhs = reduceValue lhs (sublist (inIdx + 1) (length value - 1) value);
+                    }
+                  else
+                    throw "Unhandled state for input value: ${toJSON value}"
+                )
+            )
+          else if markerFields ? ${value} then
+            {
+              type = "variable";
+              inherit value;
+            }
+          else
+            (
+              let
+                singleTicked = match "^'(.+)'$" value;
+                value' = fromJSON (if singleTicked != null then "\"${head singleTicked}\"" else value);
+              in
+              if lhs' != { } && lhs'.type == "variable" then
+                markerFields.${lhs'.value} value'
+              else
+                {
+                  type = typeOf value';
+                  value = value';
+                }
+            );
+      in
+      reduceValue { } groupedTokens;
 
   /*
     Parse a PEP-508 dependency string.
@@ -575,7 +618,7 @@ fix (self: {
       inherit (stdenv) targetPlatform;
       impl = python.passthru.implementation;
     in
-    mapAttrs parseValueVersionDynamic {
+    mapAttrs (name: markerFields.${name}) {
       os_name = if python.pname == "jython" then "java" else "posix";
       sys_platform =
         if stdenv.isLinux then
@@ -617,7 +660,7 @@ fix (self: {
     Example:
       # setEnviron (mkEnviron pkgs.python3) { platform_release = "5.10.65";  }
   */
-  setEnviron = environ: updates: environ // mapAttrs parseValueVersionDynamic updates;
+  setEnviron = environ: updates: environ // mapAttrs (name: markerFields.${name}) updates;
 
   /*
     Evaluate an environment as returned by `mkEnviron` against markers as returend by `parseMarkers`.

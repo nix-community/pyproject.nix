@@ -10,17 +10,200 @@ let
   inherit (lib) fix;
   inherit (pep508) setEnviron;
 
+  testMarkers = {
+    notInOp = "python_version >= \"3\" and platform_machine not in \"x86_64 X86_64 aarch64 AARCH64 ppc64le PPC64LE amd64 AMD64 win32 WIN32\"";
+    inOp = "python_version >= \"3\" and platform_machine in \"x86_64 X86_64 aarch64 AARCH64 ppc64le PPC64LE amd64 AMD64 win32 WIN32\"";
+    trivial = "python_version >= \"3\"";
+    trivialWithSpaces = " python_version  >=  \"3\" ";
+
+    singleTicked = "python_version >= '3'";
+    doubleTicked = "python_version >= \"3\"";
+
+    # Overriding precedence -> a and (b or c)
+    # overridingPrecedence = "os_name=='a' and (os_name=='b' or os_name=='c')";
+    overridingPrecedence = "os_name=='a' and (os_name=='b' or os_name=='c')";
+    overridingPrecedenceWithSpace = " os_name=='a' and  (os_name=='b'     or    os_name=='c' )   ";
+
+    nestedGroups = "((os_name=='b' or os_name=='c') or (os_name=='b' or os_name=='c'))";
+  };
+
 in
 fix (self: {
-  # parseMarkers is implicitly covered by parseString but would fail coverage checks otherwise
+
   parseMarkers = {
-    testDummyCoverage = {
-      expected = true;
-      expr = true;
+    testTrivial = {
+      expr = pep508.parseMarkers testMarkers.trivial;
+      expected = {
+        lhs = {
+          type = "variable";
+          value = "python_version";
+        };
+        op = ">=";
+        rhs = {
+          type = "version";
+          value = {
+            dev = null;
+            epoch = 0;
+            local = null;
+            post = null;
+            pre = null;
+            release = [ 3 ];
+          };
+        };
+        type = "compare";
+      };
+    };
+
+    testTrivialWithSpaces = {
+      expr = pep508.parseMarkers testMarkers.trivial;
+      inherit (self.parseMarkers.testTrivial) expected;
+    };
+
+    testSingleTickString = {
+      expr = pep508.parseMarkers testMarkers.singleTicked;
+      expected = {
+        lhs = {
+          type = "variable";
+          value = "python_version";
+        };
+        op = ">=";
+        rhs = {
+          type = "version";
+          value = {
+            dev = null;
+            epoch = 0;
+            local = null;
+            post = null;
+            pre = null;
+            release = [ 3 ];
+          };
+        };
+        type = "compare";
+      };
+    };
+    testDoubleTickString = {
+      expr = pep508.parseMarkers testMarkers.doubleTicked;
+      inherit (self.parseMarkers.testSingleTickString) expected;
+    };
+
+    testOverridingPrecedence = {
+      expr = pep508.parseMarkers testMarkers.overridingPrecedence;
+      expected = {
+        lhs = {
+          lhs = {
+            type = "variable";
+            value = "os_name";
+          };
+          op = "==";
+          rhs = {
+            type = "string";
+            value = "a";
+          };
+          type = "compare";
+        };
+        op = "and";
+        rhs = {
+          lhs = {
+            lhs = {
+              type = "variable";
+              value = "os_name";
+            };
+            op = "==";
+            rhs = {
+              type = "string";
+              value = "b";
+            };
+            type = "compare";
+          };
+          op = "or";
+          rhs = {
+            lhs = {
+              type = "variable";
+              value = "os_name";
+            };
+            op = "==";
+            rhs = {
+              type = "string";
+              value = "c";
+            };
+            type = "compare";
+          };
+          type = "boolOp";
+        };
+        type = "boolOp";
+      };
+    };
+    testOverridingPrecedenceWithSpace = {
+      expr = pep508.parseMarkers testMarkers.overridingPrecedence;
+      inherit (self.parseMarkers.testOverridingPrecedence) expected;
+    };
+
+    testNestedGroups = {
+      expr = pep508.parseMarkers testMarkers.nestedGroups;
+      expected = {
+        lhs = {
+          lhs = {
+            lhs = {
+              type = "variable";
+              value = "os_name";
+            };
+            op = "==";
+            rhs = {
+              type = "string";
+              value = "b";
+            };
+            type = "compare";
+          };
+          op = "or";
+          rhs = {
+            lhs = {
+              type = "variable";
+              value = "os_name";
+            };
+            op = "==";
+            rhs = {
+              type = "string";
+              value = "c";
+            };
+            type = "compare";
+          };
+          type = "boolOp";
+        };
+        op = "or";
+        rhs = {
+          lhs = {
+            lhs = {
+              type = "variable";
+              value = "os_name";
+            };
+            op = "==";
+            rhs = {
+              type = "string";
+              value = "b";
+            };
+            type = "compare";
+          };
+          op = "or";
+          rhs = {
+            lhs = {
+              type = "variable";
+              value = "os_name";
+            };
+            op = "==";
+            rhs = {
+              type = "string";
+              value = "c";
+            };
+            type = "compare";
+          };
+          type = "boolOp";
+        };
+        type = "boolOp";
+      };
     };
 
     testNotInOperator = {
-      expr = pep508.parseMarkers "python_version >= \"3\" and platform_machine not in \"x86_64 X86_64 aarch64 AARCH64 ppc64le PPC64LE amd64 AMD64 win32 WIN32\"";
+      expr = pep508.parseMarkers testMarkers.notInOp;
       expected = {
         lhs = {
           lhs = {
@@ -59,7 +242,7 @@ fix (self: {
     };
 
     testInOperator = {
-      expr = pep508.parseMarkers "python_version >= \"3\" and platform_machine in \"x86_64 X86_64 aarch64 AARCH64 ppc64le PPC64LE amd64 AMD64 win32 WIN32\"";
+      expr = pep508.parseMarkers testMarkers.inOp;
       expected = {
         lhs = {
           lhs = {
