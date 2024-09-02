@@ -57,6 +57,21 @@ let
               version = "0.5.5";
             };
 
+            matplotlib = {
+              pname = "matplotlib";
+              version = "3.9.0";
+            };
+
+            numba = {
+              pname = "numba";
+              version = "0.60.0";
+            };
+
+            cython = {
+              pname = "cython";
+              version = "3.0.10";
+            };
+
             oldest-supported-numpy = {
               pname = "oldest-supported-numpy";
               version = "1.0.0";
@@ -102,6 +117,11 @@ let
               version = "0.9.1";
             };
 
+            keyring = {
+              pname = "keyring";
+              version = "25.2.1";
+            };
+
             pre-commit = {
               pname = "pre-commit";
               version = "3.3.3";
@@ -114,7 +134,7 @@ let
 
             python3 = {
               pname = "python3";
-              inherit (pkgs.python3) version;
+              inherit version;
             };
           };
           stdenv = {
