@@ -1,5 +1,6 @@
 {
   lib,
+  pep508,
   pep440,
   pep599,
   pypa,
@@ -23,13 +24,12 @@ let
     isList
     any
     ;
-  inherit (lib) stringToCharacters fix sublist;
+  inherit (lib)
+    stringToCharacters
+    sublist
+    hasInfix
+    ;
   inherit (import ./util.nix { inherit lib; }) splitComma stripStr;
-
-  re = {
-    operators = "([=><!~^]+)";
-    version = "([0-9.*x]+)";
-  };
 
   # Marker fields + their parsers
   markerFields =
@@ -86,20 +86,16 @@ let
   boolOps = {
     "and" = x: y: x && y;
     "or" = x: y: x || y;
-    "in" = x: y: lib.strings.hasInfix x y;
-    "not in" = x: y: !lib.strings.hasInfix x y;
+    "in" = x: y: hasInfix x y;
+    "not in" = x: y: !(hasInfix x y);
   };
 
-  isPrimitiveType =
-    let
-      primitives = [
-        "int"
-        "float"
-        "string"
-        "bool"
-      ];
-    in
-    type: elem type primitives;
+  primitives = [
+    "int"
+    "float"
+    "string"
+    "bool"
+  ];
 
   # Copied from nixpkgs lib.findFirstIndex internals to save on a little bit of environment allocations.
   resultIndex' =
@@ -119,8 +115,10 @@ let
         index
     ) (-1);
 
+  inherit (pep508) parseMarkers evalMarkers;
+
 in
-fix (self: {
+{
 
   /*
     Parse PEP 508 markers into an AST.
@@ -309,7 +307,7 @@ fix (self: {
                     # Find different kinds of infix operators & comparisons
                     orIdx = resultIndex' (token: token == "or") value;
                     andIdx = resultIndex' (token: token == "and") value;
-                    compIdx = resultIndex' (token: match re.operators token != null) value;
+                    compIdx = resultIndex' (token: comparators ? ${token}) value;
                     inIdx = resultIndex' (token: token == "in") value;
                     notIdx = # Take possible negation into account
                       if inIdx > 0 && elemAt value (inIdx - 1) == "not" then inIdx - 1 else -1;
@@ -519,7 +517,7 @@ fix (self: {
           null;
       inherit (package) conditions extras;
       inherit (tokens) url;
-      markers = if tokens.markerSegment == null then null else self.parseMarkers tokens.markerSegment;
+      markers = if tokens.markerSegment == null then null else parseMarkers tokens.markerSegment;
     };
 
   /*
@@ -674,10 +672,6 @@ fix (self: {
   evalMarkers =
     environ: value:
     (
-      let
-        x = self.evalMarkers environ value.lhs;
-        y = self.evalMarkers environ value.rhs;
-      in
       if value.type == "compare" then
         (
           (
@@ -693,19 +687,19 @@ fix (self: {
             else
               comparators.${value.op}
           )
-          x
-          y
+          (evalMarkers environ value.lhs)
+          (evalMarkers environ value.rhs)
         )
       else if value.type == "boolOp" then
-        boolOps.${value.op} x y
+        boolOps.${value.op} (evalMarkers environ value.lhs) (evalMarkers environ value.rhs)
       else if value.type == "variable" then
-        (self.evalMarkers environ environ.${value.value})
+        (evalMarkers environ environ.${value.value})
       else if value.type == "version" || value.type == "extra" then
         value.value
-      else if isPrimitiveType value.type then
+      else if elem value.type primitives then
         value.value
       else
         throw "Unknown type '${value.type}'"
     );
 
-})
+}
