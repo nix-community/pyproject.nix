@@ -3,6 +3,7 @@
   pep508,
   pep440,
   pep621,
+  renderers,
   ...
 }:
 let
@@ -19,6 +20,8 @@ let
     mapAttrs
     filterAttrs
     concatMap
+    nameValuePair
+    isString
     ;
 
   # Group licenses by their SPDX IDs for easy lookup
@@ -103,7 +106,7 @@ in
       project,
       # Python derivation
       python,
-      # Python extras (markers) to enable.
+      # Python extras (optional-dependencies) to enable.
       extras ? [ ],
       # Map a Python extras group name to a Nix attribute set like:
       # { dev = "checkInputs"; }
@@ -201,4 +204,78 @@ in
         }
       )
       (attrNames filteredDeps.extras);
+
+  /*
+    Renders a project as an argument that can be passed to mkPythonEditablePackage.
+
+    Evaluates PEP-508 environment markers to select correct dependencies for the platform but does not validate version constraints.
+    For validation see `lib.validators`.
+
+    Note for Nix Flake users:
+    Flakes are copied to the store when using pure evaluation, meaning that the project root will point to a store directory.
+    Either set root manually to a string using the returned attribute set, or evaluate using `--impure`.
+
+    Type: mkPythonEditablePackage :: AttrSet -> AttrSet
+
+    Example:
+      # mkPythonEditablePackage { project = lib.project.loadPyproject ...; python = pkgs.python3;  }
+        { pname = "blinker"; version = "1.3.3.7"; dependencies = [ ]; }
+  */
+  mkPythonEditablePackage =
+    let
+      cleanArgs = lib.flip removeAttrs [ "root" ];
+    in
+    {
+      # Project metadata as returned by `lib.project.loadPyproject`
+      project,
+      # Editable root directory as a string
+      root ? toString (
+        # Prefer src layout if available
+        if lib.pathExists (project.projectRoot + "/src") then
+          (project.projectRoot + "/src")
+        # Otherwise assume project root is editable root
+        else
+          project.projectRoot
+      ),
+      # Unknown args passed on verbatim to renderers.buildPythonPackage
+      ...
+    }@args:
+    let
+      # Render using buildPythonPackage
+      attrs = renderers.buildPythonPackage (cleanArgs args);
+
+      project' = project.pyproject.project;
+    in
+    # Reshape into mkPythonEditablePackage
+    assert isString root && root != "";
+    {
+      inherit (attrs)
+        dependencies
+        optional-dependencies
+        build-system
+        meta
+        ;
+      inherit root;
+    }
+    // optionalAttrs (project' ? scripts) {
+      inherit (project') scripts;
+    }
+    // optionalAttrs (project' ? gui-scripts) {
+      inherit (project') gui-scripts;
+    }
+    // optionalAttrs (project' ? entry-points) {
+      inherit (project') entry-points;
+    }
+    // optionalAttrs (attrs ? pname) {
+      inherit (attrs) pname;
+    }
+    // optionalAttrs (attrs ? version) {
+      inherit (attrs) version;
+    }
+    // optionalAttrs (args ? extrasAttrMappings && args.extrasAttrMappings != { }) {
+      # Inject derivationArgs for additional functionality
+      derivationArgs = lib.listToAttrs (
+        map (attr: nameValuePair attr attrs.${attr}) (attrValues args.extrasAttrMappings)
+      );
+    };
 }
