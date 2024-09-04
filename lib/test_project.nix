@@ -391,6 +391,7 @@ lib.fix (self: {
       expected = {
         renderers = [
           "buildPythonPackage"
+          "mkPythonEditablePackage"
           "withPackages"
         ];
         requires-python = null;

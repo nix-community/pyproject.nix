@@ -33,13 +33,38 @@ let
     // optionalAttrs (attrs ? checkInputs) { checkInputs = map (drv: drv.pname) attrs.checkInputs; };
 
 in
-{
+rec {
   # withPackages can't be easily tested by mocks, dummy out.
   # Tested by integration tests.
   withPackages = {
     testDummy = {
       expr = null;
       expected = null;
+    };
+  };
+
+  mkPythonEditablePackage = {
+    testPdm = {
+      expr = clearDrvInputs (
+        renderers.mkPythonEditablePackage {
+          root = "/path/to/my_root";
+          project = projects.pdm;
+          python = mocks.cpythonLinux38;
+        }
+      );
+      expected = {
+        inherit (buildPythonPackage.testPdm.expected)
+          dependencies
+          optional-dependencies
+          build-system
+          meta
+          pname
+          ;
+        root = "/path/to/my_root";
+        scripts = {
+          pdm = "pdm.core:main";
+        };
+      };
     };
   };
 
