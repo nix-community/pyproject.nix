@@ -21,6 +21,7 @@ lib.fix (
       length
       filter
       split
+      concatStringsSep
       ;
     inherit (lib) optionalAttrs concatLists;
     inherit (import ./util.nix { inherit lib; }) splitComma;
@@ -269,7 +270,7 @@ lib.fix (
             }
             {
               op = "<";
-              version = version // {
+              version = version // rec {
                 release = lib.imap0 (
                   i: tok:
                   if i >= segments - 1 then
@@ -279,6 +280,7 @@ lib.fix (
                   else
                     tok
                 ) version.release;
+                str = concatStringsSep "." (map toString release); # Overwrite with upper bounds
               };
             }
           ]
@@ -291,8 +293,9 @@ lib.fix (
             }
             {
               op = "<";
-              version = version // {
+              version = version // rec {
                 release = rewriteCaretRhs version.release;
+                str = concatStringsSep "." (map toString release); # Overwrite with upper bounds
               };
             }
           ]
