@@ -48,6 +48,7 @@ fix (self: {
             post = null;
             pre = null;
             release = [ 3 ];
+            str = "3";
           };
         };
         type = "compare";
@@ -76,6 +77,7 @@ fix (self: {
             post = null;
             pre = null;
             release = [ 3 ];
+            str = "3";
           };
         };
         type = "compare";
@@ -220,6 +222,7 @@ fix (self: {
               post = null;
               pre = null;
               release = [ 3 ];
+              str = "3";
             };
           };
           type = "compare";
@@ -259,6 +262,7 @@ fix (self: {
               post = null;
               pre = null;
               release = [ 3 ];
+              str = "3";
             };
           };
           type = "compare";
@@ -311,6 +315,7 @@ fix (self: {
                 3
                 0
               ];
+              str = "12.3.0";
             };
           }
         ];
@@ -348,6 +353,7 @@ fix (self: {
                 20
                 9
               ];
+              str = "20.9";
             };
           }
           {
@@ -362,6 +368,7 @@ fix (self: {
                 22
                 0
               ];
+              str = "22.0";
             };
           }
         ];
@@ -389,6 +396,7 @@ fix (self: {
                 13
                 0
               ];
+              str = "0.13.0";
             };
           }
         ];
@@ -415,6 +423,7 @@ fix (self: {
                 1
                 0
               ];
+              str = "1.1.0";
             };
           }
         ];
@@ -436,6 +445,7 @@ fix (self: {
                 3
                 11
               ];
+              str = "3.11";
             };
           };
           type = "compare";
@@ -490,6 +500,7 @@ fix (self: {
                 2
                 7
               ];
+              str = "2.7";
             };
           };
           type = "compare";
@@ -586,6 +597,7 @@ fix (self: {
                   2
                   7
                 ];
+                str = "2.7";
               };
             };
             type = "compare";
@@ -598,15 +610,8 @@ fix (self: {
             };
             op = "==";
             rhs = {
-              type = "version";
-              value = {
-                dev = null;
-                epoch = 0;
-                local = null;
-                post = null;
-                pre = null;
-                release = [ 2 ];
-              };
+              type = "string";
+              value = "2";
             };
             type = "compare";
           };
@@ -842,298 +847,56 @@ fix (self: {
     };
   };
 
-  mkEnviron = mapAttrs (_: case: case // { expr = pep508.mkEnviron case.input; }) {
-    testPython38Linux = {
-      input = mocks.cpythonLinux38;
-      expected = {
-        implementation_name = {
-          type = "string";
-          value = "cpython";
-        };
-        implementation_version = {
-          type = "version";
-          value = {
-            dev = null;
-            epoch = 0;
-            local = null;
-            post = null;
-            pre = null;
-            release = [
-              3
-              8
-              2
-            ];
-          };
-        };
-        os_name = {
-          type = "string";
-          value = "posix";
-        };
-        platform_machine = {
-          type = "string";
-          value = "x86_64";
-        };
-        platform_python_implementation = {
-          type = "string";
-          value = "CPython";
-        };
-        platform_release = {
-          type = "string";
-          value = "";
-        };
-        platform_system = {
-          type = "string";
-          value = "Linux";
-        };
-        platform_version = {
-          type = "version";
-          value = {
-            dev = null;
-            epoch = 0;
-            local = null;
-            post = null;
-            pre = null;
-            release = [ ];
-          };
-        };
-        python_full_version = {
-          type = "version";
-          value = {
-            dev = null;
-            epoch = 0;
-            local = null;
-            post = null;
-            pre = null;
-            release = [
-              3
-              8
-              2
-            ];
-          };
-        };
-        python_version = {
-          type = "version";
-          value = {
-            dev = null;
-            epoch = 0;
-            local = null;
-            post = null;
-            pre = null;
-            release = [
-              3
-              8
-            ];
-          };
-        };
-        sys_platform = {
-          type = "string";
-          value = "linux";
-        };
+  mkEnviron =
+    mapAttrs
+      (name: case: {
+        expr = pep508.mkEnviron case;
+        expected = lib.importJSON ./expected/pep508.mkEnviron.${name}.json;
+      })
+      {
+        testPython38Linux = mocks.cpythonLinux38;
+        testPython311Darwin = mocks.cpythonDarwin311;
+        testPython311DarwinAarch64 = mocks.cpythonDarwin311Aarch64;
+        testPypy3Linux = mocks.pypy39Linux;
       };
-    };
-
-    testPython311Darwin = {
-      input = mocks.cpythonDarwin311;
-      expected = {
-        implementation_name = {
-          type = "string";
-          value = "cpython";
-        };
-        implementation_version = {
-          type = "version";
-          value = {
-            dev = null;
-            epoch = 0;
-            local = null;
-            post = null;
-            pre = null;
-            release = [
-              3
-              11
-              4
-            ];
-          };
-        };
-        os_name = {
-          type = "string";
-          value = "posix";
-        };
-        platform_machine = {
-          type = "string";
-          value = "x86_64";
-        };
-        platform_python_implementation = {
-          type = "string";
-          value = "CPython";
-        };
-        platform_release = {
-          type = "string";
-          value = "";
-        };
-        platform_system = {
-          type = "string";
-          value = "Darwin";
-        };
-        platform_version = {
-          type = "version";
-          value = {
-            dev = null;
-            epoch = 0;
-            local = null;
-            post = null;
-            pre = null;
-            release = [ ];
-          };
-        };
-        python_full_version = {
-          type = "version";
-          value = {
-            dev = null;
-            epoch = 0;
-            local = null;
-            post = null;
-            pre = null;
-            release = [
-              3
-              11
-              4
-            ];
-          };
-        };
-        python_version = {
-          type = "version";
-          value = {
-            dev = null;
-            epoch = 0;
-            local = null;
-            post = null;
-            pre = null;
-            release = [
-              3
-              11
-            ];
-          };
-        };
-        sys_platform = {
-          type = "string";
-          value = "darwin";
-        };
-      };
-    };
-
-    testPython311DarwinAarch64 = {
-      input = mocks.cpythonDarwin311Aarch64;
-      expected = self.mkEnviron.testPython311Darwin.expected // {
-        platform_machine = {
-          type = "string";
-          value = "arm64";
-        };
-      };
-    };
-
-    testPypy3Linux = {
-      input = mocks.pypy39Linux;
-      expected = {
-        implementation_name = {
-          type = "string";
-          value = "pypy";
-        };
-        implementation_version = {
-          type = "version";
-          value = {
-            dev = null;
-            epoch = 0;
-            local = null;
-            post = null;
-            pre = null;
-            release = [
-              7
-              3
-              11
-            ];
-          };
-        };
-        os_name = {
-          type = "string";
-          value = "posix";
-        };
-        platform_machine = {
-          type = "string";
-          value = "x86_64";
-        };
-        platform_python_implementation = {
-          type = "string";
-          value = "PyPy";
-        };
-        platform_release = {
-          type = "string";
-          value = "";
-        };
-        platform_system = {
-          type = "string";
-          value = "Linux";
-        };
-        platform_version = {
-          type = "version";
-          value = {
-            dev = null;
-            epoch = 0;
-            local = null;
-            post = null;
-            pre = null;
-            release = [ ];
-          };
-        };
-        python_full_version = {
-          type = "version";
-          value = {
-            dev = null;
-            epoch = 0;
-            local = null;
-            post = null;
-            pre = null;
-            release = [
-              7
-              3
-              11
-            ];
-          };
-        };
-        python_version = {
-          type = "version";
-          value = {
-            dev = null;
-            epoch = 0;
-            local = null;
-            post = null;
-            pre = null;
-            release = [
-              3
-              9
-            ];
-          };
-        };
-        sys_platform = {
-          type = "string";
-          value = "linux";
-        };
-      };
-    };
-  };
 
   setEnviron =
     let
       environ = pep508.mkEnviron mocks.cpythonLinux38;
     in
     {
-      testSetString = {
+      testSetPlatformReleaseValidVersion = {
         expr = {
           inherit (setEnviron environ { platform_release = "5.10.65"; }) platform_release;
         };
         expected = {
           platform_release = {
-            type = "string";
-            value = "5.10.65";
+            type = "platform_release";
+            value = {
+              dev = null;
+              epoch = 0;
+              local = null;
+              post = null;
+              pre = null;
+              release = [
+                5
+                10
+                65
+              ];
+              str = "5.10.65";
+            };
+          };
+        };
+      };
+
+      testSetPlatformReleaseInvalidVersion = {
+        expr = {
+          inherit (setEnviron environ { platform_release = "5.10.65-1025-azure"; }) platform_release;
+        };
+        expected = {
+          platform_release = {
+            type = "platform_release";
+            value = "5.10.65-1025-azure";
           };
         };
       };
@@ -1156,6 +919,7 @@ fix (self: {
                 0
                 0
               ];
+              str = "1.0.0";
             };
           };
         };
@@ -1266,6 +1030,22 @@ fix (self: {
               };
             };
             markers = pep508.parseMarkers "extra == 'socks'";
+          };
+          expected = false;
+        };
+
+        testPlatformRelease = {
+          input = {
+            environ = self.mkEnviron.testPython38Linux.expected;
+            markers = pep508.parseMarkers "platform_release >= '20.0'";
+          };
+          expected = false;
+        };
+
+        testPlatformReleaseInvalidPep440 = {
+          input = {
+            environ = self.mkEnviron.testPython38Linux.expected;
+            markers = pep508.parseMarkers "platform_release >= '6.5.0-1025-azure'";
           };
           expected = false;
         };

@@ -23,6 +23,9 @@ let
     length
     isList
     any
+    isAttrs
+    tryEval
+    deepSeq
     ;
   inherit (lib)
     stringToCharacters
@@ -42,6 +45,25 @@ let
         type = "version";
         value = pep440.parseVersion value;
       };
+
+      emptyPlatformRelease = {
+        type = "platform_release";
+        value = "";
+      };
+
+      platform_release =
+        value:
+        if value == "" then
+          emptyPlatformRelease
+        else
+          let
+            parsed' = pep440.parseVersion value;
+            eval' = tryEval (deepSeq parsed' parsed');
+          in
+          {
+            type = "platform_release";
+            value = if eval'.success then eval'.value else value;
+          };
     in
     {
       "implementation_name" = default;
@@ -49,9 +71,9 @@ let
       "os_name" = default;
       "platform_machine" = default;
       "platform_python_implementation" = default;
-      "platform_release" = default;
+      "platform_release" = platform_release;
       "platform_system" = default;
-      "platform_version" = version;
+      "platform_version" = default;
       "python_full_version" = version;
       "python_version" = version;
       "sys_platform" = default;
@@ -81,6 +103,31 @@ let
     # Check for member in list if list, otherwise simply compare.
     "==" = extras: extra: if typeOf extras == "list" then elem extra extras else extras == extra;
     "!=" = extras: extra: if typeOf extras == "list" then !(elem extra extras) else extras != extra;
+  };
+
+  # Platform_release parsing is more complicated than other fields.
+  #
+  # If both lhs and rhs were correctly parsed as PEP-440 versions run regular version comparison,
+  # otherwise compare lexicographically
+  #
+  # See:
+  # - https://github.com/pypa/packaging/issues/774
+  # - https://github.com/astral-sh/uv/issues/3917#issuecomment-2141754917
+  platformReleaseComparators = {
+    "==" =
+      a: b: if isAttrs a && isAttrs b then pep440.comparators."==" a b else (a.str or a) == (b.str or b);
+    "!=" =
+      a: b: if isAttrs a && isAttrs b then pep440.comparators."!=" a b else (a.str or a) != (b.str or b);
+    "<=" =
+      a: b: if isAttrs a && isAttrs b then pep440.comparators."<=" a b else (a.str or a) <= (b.str or b);
+    ">=" =
+      a: b: if isAttrs a && isAttrs b then pep440.comparators.">=" a b else (a.str or a) >= (b.str or b);
+    "<" =
+      a: b: if isAttrs a && isAttrs b then pep440.comparators."<" a b else (a.str or a) < (b.str or b);
+
+    ">" =
+      a: b: if isAttrs a && isAttrs b then pep440.comparators.">" a b else (a.str or a) > (b.str or b);
+    "===" = a: b: a == b;
   };
 
   boolOps = {
@@ -637,7 +684,10 @@ in
           "PyPy"
         else
           throw "Unsupported implementation ${impl}";
-      platform_release = ""; # Field not reproducible
+      # We have no reliable value to set platform_release to.
+      # In theory this could be set to linuxHeaders.version on Linux, but that's
+      # not correct
+      platform_release = ""; # Non-reproducible field.
       platform_system =
         if stdenv.isLinux then
           "Linux"
@@ -675,8 +725,11 @@ in
       if value.type == "compare" then
         (
           (
+            # platform_release is being compared as foo
+            if value.lhs.type == "variable" && value.lhs.value == "platform_release" then
+              platformReleaseComparators.${value.op}
             # Version comparison
-            if value.lhs.type == "version" || value.rhs.type == "version" then
+            else if value.lhs.type == "version" || value.rhs.type == "version" then
               pep440.comparators.${value.op}
             # `Extra` environment marker comparison requires special casing because it's equality checks can
             # == can be considered a `"key" in set` comparison when multiple extras are activated for a dependency.
@@ -694,7 +747,7 @@ in
         boolOps.${value.op} (evalMarkers environ value.lhs) (evalMarkers environ value.rhs)
       else if value.type == "variable" then
         (evalMarkers environ environ.${value.value})
-      else if value.type == "version" || value.type == "extra" then
+      else if value.type == "version" || value.type == "extra" || value.type == "platform_release" then
         value.value
       else if elem value.type primitives then
         value.value
