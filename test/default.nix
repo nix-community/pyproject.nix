@@ -117,3 +117,25 @@ lib.mapAttrs' (n: project: {
       // project.buildPythonPackage or { }
     );
 }) projects)
+// {
+  # Construct a withPackages environment with extras enabled
+  withPackagesWithExtras =
+    let
+      inherit (projects.pdm-2_8_1) project;
+    in
+    pkgs.runCommand "withPackagesWithExtras"
+      {
+        nativeBuildInputs = [
+          (python.withPackages (
+            pyproject.lib.renderers.withPackages {
+              inherit python project;
+              extras = [ "keyring" ];
+            }
+          ))
+        ];
+      }
+      ''
+        python -c 'import keyring'
+        touch $out
+      '';
+}

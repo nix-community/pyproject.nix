@@ -8,9 +8,9 @@
 }:
 let
   inherit (builtins)
-    attrValues
     length
     attrNames
+    attrValues
     head
     foldl'
     ;
@@ -72,21 +72,21 @@ in
       getDependencies = getDependencies' python.pkgs;
     in
     ps:
-    let
-      buildSystems' =
-        if filteredDeps.build-systems != [ ] then
-          [ ]
-        else
-          [
-            ps.setuptools
-            ps.wheel
-          ];
-    in
     getDependencies filteredDeps.dependencies
-    ++ attrValues (mapAttrs (_group: getDependencies) project.dependencies.extras)
+    ++ concatMap (extra: getDependencies filteredDeps.extras.${extra}) extras
     ++ getDependencies filteredDeps.build-systems
     ++ extraPackages ps
-    ++ buildSystems';
+    ++ (
+      if filteredDeps.build-systems != [ ] then
+        [ ]
+
+      else
+        [
+          ps.setuptools
+          ps.wheel
+        ]
+    );
+  # ++ concatMap (group: filteredDeps.extras.${group} or [ ]) extras);
 
   /*
     Renders a project as an argument that can be passed to buildPythonPackage/buildPythonApplication.
@@ -180,7 +180,6 @@ in
           pyproject = format == "pyproject";
           dependencies =
             getDependencies filteredDeps.dependencies
-            # map (dep: python.pkgs.${dep}) namedDeps.dependencies
             ++ concatMap (group: optional-dependencies.${group} or [ ]) extras;
           inherit optional-dependencies meta;
         }
