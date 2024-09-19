@@ -1,5 +1,56 @@
 {
   "nodes": {
+    "flake-parts": {
+      "inputs": {
+        "nixpkgs-lib": [
+          "lix-unit",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1719745305,
+        "narHash": "sha256-xwgjVUpqSviudEkpQnioeez1Uo2wzrsMaJKJClh+Bls=",
+        "owner": "hercules-ci",
+        "repo": "flake-parts",
+        "rev": "c3c5ecc05edc7dafba779c6c1a61cd08ac6583e9",
+        "type": "github"
+      },
+      "original": {
+        "owner": "hercules-ci",
+        "repo": "flake-parts",
+        "type": "github"
+      }
+    },
+    "lix-unit": {
+      "inputs": {
+        "flake-parts": "flake-parts",
+        "mdbook-nixdoc": [
+          "mdbook-nixdoc"
+        ],
+        "nix-github-actions": [
+          "nix-github-actions"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "treefmt-nix": [
+          "treefmt-nix"
+        ]
+      },
+      "locked": {
+        "lastModified": 1726522583,
+        "narHash": "sha256-zRG0mHsdoJKXRxvuRcPTVEDQDg9tYDR8ozcyNWMoxhg=",
+        "owner": "adisbladis",
+        "repo": "lix-unit",
+        "rev": "90e475ec4e71466653a698e1da2a86502be05cfa",
+        "type": "github"
+      },
+      "original": {
+        "owner": "adisbladis",
+        "repo": "lix-unit",
+        "type": "github"
+      }
+    },
     "mdbook-nixdoc": {
       "inputs": {
         "nix-github-actions": [
@@ -61,6 +112,7 @@
     },
     "root": {
       "inputs": {
+        "lix-unit": "lix-unit",
         "mdbook-nixdoc": "mdbook-nixdoc",
         "nix-github-actions": "nix-github-actions",
         "nixpkgs": "nixpkgs",
