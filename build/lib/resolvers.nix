@@ -1,4 +1,4 @@
-{ lib }:
+{ lib, ... }:
 
 let
   inherit (lib)
@@ -12,7 +12,7 @@ let
     ;
 
   # Most of the packages in pkgs/ are build-systems that we can use to create the memo
-  knownPackages = (attrNames (filterAttrs (_: type: type == "directory") (builtins.readDir ./pkgs)));
+  knownPackages = attrNames (filterAttrs (_: type: type == "directory") (builtins.readDir ../pkgs));
 
 in
 {

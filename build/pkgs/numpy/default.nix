@@ -1,35 +1,35 @@
 {
   stdenv,
-  python,
-  python3Packages,
   pyprojectHook,
   resolveBuildSystem,
+  python3Packages,
+  gfortran,
   pkg-config,
-  libffi,
 }:
 stdenv.mkDerivation {
-  inherit (python3Packages.cffi)
+  inherit (python3Packages.numpy)
     pname
     version
     src
     meta
     patches
     postPatch
+    preConfigure
+    postConfigure
+    preBuild
+    buildInputs
+    enableParallelBuilding
+    passthru
     ;
-
-  env = {
-    inherit (python3Packages.cffi) NIX_CFLAGS_COMPILE;
-  };
-
-  buildInputs = [ libffi ];
 
   nativeBuildInputs =
     [
       pyprojectHook
+      gfortran
       pkg-config
-      python
     ]
     ++ resolveBuildSystem {
-      setuptools = [ ];
+      meson-python = [ ];
+      cython = [ ];
     };
 }

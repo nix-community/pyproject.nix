@@ -43,6 +43,12 @@
         };
       };
 
+      # Note: This build infrastructure is experimental.
+      build = import ./build {
+        pyproject-nix = self;
+        inherit lib;
+      };
+
       lib = import ./lib { inherit lib; };
 
       templates =
@@ -65,25 +71,35 @@
         );
 
       # Expose unit tests for external discovery
-      libTests = import ./lib/test.nix {
-        inherit lib;
-        pyproject = self.lib;
-        pkgs = nixpkgs.legacyPackages.x86_64-linux;
-      };
+      libTests =
+        import ./lib/test.nix {
+          inherit lib;
+          pyproject = self.lib;
+          pkgs = nixpkgs.legacyPackages.x86_64-linux;
+        }
+        // {
+          build = import ./build/lib/test.nix {
+            pyproject-nix = self;
+            inherit lib;
+            pkgs = nixpkgs.legacyPackages.x86_64-linux;
+          };
+        };
 
       devShells = forAllSystems (
         system:
         let
           pkgs = nixpkgs.legacyPackages.${system};
-          mkShell' = { nix-unit }: pkgs.mkShell {
-            packages = [
-              nix-unit
-              inputs.mdbook-nixdoc.packages.${system}.default
-              (pkgs.python3.withPackages (_ps: [ ]))
-              pkgs.hivemind
-              pkgs.reflex
-            ] ++ self.packages.${system}.doc.nativeBuildInputs;
-          };
+          mkShell' =
+            { nix-unit }:
+            pkgs.mkShell {
+              packages = [
+                nix-unit
+                inputs.mdbook-nixdoc.packages.${system}.default
+                (pkgs.python3.withPackages (_ps: [ ]))
+                pkgs.hivemind
+                pkgs.reflex
+              ] ++ self.packages.${system}.doc.nativeBuildInputs;
+            };
 
         in
         {
@@ -98,7 +114,12 @@
         let
           pkgs = nixpkgs.legacyPackages.${system};
         in
-        pkgs.callPackages ./test { pyproject = import ./default.nix { inherit lib; }; }
+        (lib.mapAttrs' (name: drv: lib.nameValuePair "nixpkgs-${name}" drv) (
+          pkgs.callPackages ./test { pyproject = import ./default.nix { inherit lib; }; }
+        ))
+        // (lib.mapAttrs' (name: drv: lib.nameValuePair "build-${name}" drv) (
+          pkgs.callPackages ./build/checks.nix { pyproject-nix = self; }
+        ))
         // {
           formatter = pkgs.writeShellScript "fmt-check" ''
             set -euo pipefail

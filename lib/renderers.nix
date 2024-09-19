@@ -130,37 +130,6 @@ in
 
       inherit (project) pyproject;
 
-      meta =
-        let
-          project' = project.pyproject.project;
-          urls = project'.urls or { };
-        in
-        # Optional changelog
-        optionalAttrs (urls ? changelog) { inherit (urls) changelog; }
-        //
-          # Optional description
-          optionalAttrs (project' ? description) { inherit (project') description; }
-        //
-          # Optional license
-          optionalAttrs (project' ? license.text) (
-            assert !(project'.license ? file);
-            {
-              # From PEP-621:
-              # "The text key has a string value which is the license of the project whose meaning is that of the License field from the core metadata.
-              # These keys are mutually exclusive, so a tool MUST raise an error if the metadata specifies both keys."
-              # Hence the assert above.
-              license = licensesBySpdxId.${project'.license.text} or project'.license.text;
-            }
-          )
-        //
-          # Only set mainProgram if we only have one script, otherwise it's ambigious which one is main
-          (
-            let
-              scriptNames = attrNames project'.scripts;
-            in
-            optionalAttrs (project' ? scripts && length scriptNames == 1) { mainProgram = head scriptNames; }
-          );
-
       optional-dependencies = lib.mapAttrs (_group: getDependencies) project.dependencies.extras;
 
     in
@@ -181,7 +150,8 @@ in
           dependencies =
             getDependencies filteredDeps.dependencies
             ++ concatMap (group: optional-dependencies.${group} or [ ]) extras;
-          inherit optional-dependencies meta;
+          inherit optional-dependencies;
+          meta = renderers.meta { inherit project; };
         }
         // optionalAttrs (format != "pyproject") { inherit format; }
         // optionalAttrs (format != "wheel") {
@@ -277,4 +247,44 @@ in
         map (attr: nameValuePair attr attrs.${attr}) (attrValues args.extrasAttrMappings)
       );
     };
+
+  /*
+    Renders a project as a meta attribute
+
+    This is used internally in renderers.mkPythonPackages
+
+    Type: meta :: AttrSet -> AttrSet
+  */
+  meta =
+    { project }:
+    let
+      project' = project.pyproject.project;
+      urls = project'.urls or { };
+    in
+    # Optional changelog
+    optionalAttrs (urls ? changelog) { inherit (urls) changelog; }
+    //
+      # Optional description
+      optionalAttrs (project' ? description) { inherit (project') description; }
+    //
+      # Optional license
+      optionalAttrs (project' ? license.text) (
+        assert !(project'.license ? file);
+        {
+          # From PEP-621:
+          # "The text key has a string value which is the license of the project whose meaning is that of the License field from the core metadata.
+          # These keys are mutually exclusive, so a tool MUST raise an error if the metadata specifies both keys."
+          # Hence the assert above.
+          license = licensesBySpdxId.${project'.license.text} or project'.license.text;
+        }
+      )
+    //
+      # Only set mainProgram if we only have one script, otherwise it's ambigious which one is main
+      (
+        let
+          scriptNames = attrNames project'.scripts;
+        in
+        optionalAttrs (project' ? scripts && length scriptNames == 1) { mainProgram = head scriptNames; }
+      );
+
 }
