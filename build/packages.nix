@@ -90,6 +90,7 @@ makeScope newScope (
             pyprojectOutputSetupHook
             pyprojectMakeVenvHook
             pyprojectHook
+            pyprojectWheelHook
             ;
         }
         // pythonPackagesFun pkgsFinal

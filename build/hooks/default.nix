@@ -51,6 +51,13 @@ in
     } ./pyproject-build-hook.sh
   ) { };
 
+  pyprojectWheelDistHook = callPackage (
+    _:
+    makeSetupHook {
+      name = "pyproject-wheel-dist-hook";
+    } ./pyproject-wheel-dist-hook.sh
+  ) { };
+
   pyprojectInstallHook =
     callPackage
       (
@@ -149,4 +156,8 @@ in
           pyprojectInstallHook = hooks.pyprojectPypaInstallHook;
         })
       );
+
+  pyprojectWheelHook = hooks.pyprojectHook.override {
+    pyprojectBuildHook = hooks.pyprojectWheelDistHook;
+  };
 }
