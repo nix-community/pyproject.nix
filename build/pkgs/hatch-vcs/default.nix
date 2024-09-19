@@ -17,11 +17,11 @@ stdenv.mkDerivation (_finalAttrs: {
     setuptools-scm = [ ];
   };
 
-  nativeBuildInputs = [
-    pyprojectHook
-  ];
-
-  build_system = resolveBuildSystem {
-    hatchling = [ ];
-  };
+  nativeBuildInputs =
+    [
+      pyprojectHook
+    ]
+    ++ resolveBuildSystem {
+      hatchling = [ ];
+    };
 })

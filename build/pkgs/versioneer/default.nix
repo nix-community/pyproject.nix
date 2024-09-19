@@ -1,26 +1,26 @@
 {
   stdenv,
-  python3Packages,
   pyprojectHook,
   resolveBuildSystem,
+  python3Packages,
 }:
 stdenv.mkDerivation {
-  inherit (python3Packages.setuptools)
+  inherit (python3Packages.versioneer)
     pname
     version
     src
     meta
-    patches
-    preBuild # Skips windows files
     ;
 
-  passthru.dependencies.wheel = [ ];
+  passthru.optional-dependencies.toml = {
+    tomli = [ ];
+  };
 
   nativeBuildInputs =
     [
       pyprojectHook
     ]
     ++ resolveBuildSystem {
-      flit-core = [ ];
+      setuptools = [ ];
     };
 }

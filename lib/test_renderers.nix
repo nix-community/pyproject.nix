@@ -68,6 +68,14 @@ rec {
     };
   };
 
+  # Implicitly tested by buildPythonPackage test
+  meta = {
+    testDummy = {
+      expr = null;
+      expected = null;
+    };
+  };
+
   buildPythonPackage = {
     testPdm = {
       expr = clearDrvInputs (
