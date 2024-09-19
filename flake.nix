@@ -9,6 +9,14 @@
     mdbook-nixdoc.inputs.nixpkgs.follows = "nixpkgs";
     mdbook-nixdoc.inputs.nix-github-actions.follows = "nix-github-actions";
 
+    lix-unit = {
+      url = "github:adisbladis/lix-unit";
+      inputs.mdbook-nixdoc.follows = "mdbook-nixdoc";
+      inputs.nix-github-actions.follows = "nix-github-actions";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.treefmt-nix.follows = "treefmt-nix";
+    };
+
     treefmt-nix.url = "github:numtide/treefmt-nix";
     treefmt-nix.inputs.nixpkgs.follows = "nixpkgs";
   };
@@ -19,6 +27,7 @@
       nixpkgs,
       nix-github-actions,
       treefmt-nix,
+      lix-unit,
       ...
     }@inputs:
     let
@@ -66,17 +75,21 @@
         system:
         let
           pkgs = nixpkgs.legacyPackages.${system};
-        in
-        {
-          default = pkgs.mkShell {
+          mkShell' = { nix-unit }: pkgs.mkShell {
             packages = [
-              pkgs.nix-unit
+              nix-unit
               inputs.mdbook-nixdoc.packages.${system}.default
               (pkgs.python3.withPackages (_ps: [ ]))
               pkgs.hivemind
               pkgs.reflex
             ] ++ self.packages.${system}.doc.nativeBuildInputs;
           };
+
+        in
+        {
+          nix = mkShell' { inherit (pkgs) nix-unit; };
+          lix = mkShell' { nix-unit = lix-unit.packages.${system}.default; };
+          default = self.devShells.${system}.nix;
         }
       );
 
