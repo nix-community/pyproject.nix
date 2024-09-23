@@ -1,9 +1,13 @@
-{ lib, resolvers }:
+{
+  lib,
+  pyproject-nix,
+  resolvers,
+}:
 let
   inherit (resolvers) resolveCyclic resolveNonCyclic;
   inherit (lib) makeScope;
 
-  mkPkgs' = import ./pkgs { inherit lib; };
+  mkPkgs' = import ./pkgs { inherit pyproject-nix lib; };
 
   # Build-system package names to memoise
   memoNames = lib.attrNames (mkPkgs' {
