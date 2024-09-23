@@ -1,6 +1,5 @@
 {
   stdenv,
-  lib,
   python,
   pyprojectInstallHook,
   pyprojectBytecodeHook,

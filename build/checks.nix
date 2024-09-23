@@ -46,7 +46,7 @@ in
     }
   ) { };
 
-  # Bootstrap dependencies need to pyprojectBootstrapHook
+  # Bootstrap dependencies need to use pyprojectBootstrapHook
   overriden-bootstrap-dep =
     let
       overlay = final: _prev: {

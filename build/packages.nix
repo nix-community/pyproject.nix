@@ -3,10 +3,19 @@ let
   inherit (resolvers) resolveCyclic resolveNonCyclic;
   inherit (lib) makeScope;
 
+  mkPkgs' = import ./pkgs { inherit lib; };
+
+  # Build-system package names to memoise
+  memoNames = lib.attrNames (mkPkgs' {
+    # Hack: We only need attrNames
+    pyprojectBootstrapHook = null;
+    callPackage = null;
+  });
+
   mkResolveBuildSystem =
     set:
     let
-      resolveNonCyclic' = resolveNonCyclic set;
+      resolveNonCyclic' = resolveNonCyclic memoNames set;
     in
     spec:
     map (name: set.${name}) (
@@ -24,11 +33,7 @@ let
 
   mkResolveVirtualEnv = set: spec: map (name: set.${name}) (resolveCyclic set spec);
 
-  pkgsFun =
-    let
-      mkPkgs = import ./pkgs { inherit lib; };
-    in
-    final: mkPkgs { inherit (final) callPackage pyprojectBootstrapHook; };
+  pkgsFun = final: mkPkgs' { inherit (final) callPackage pyprojectBootstrapHook; };
 
 in
 

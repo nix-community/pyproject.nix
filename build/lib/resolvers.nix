@@ -2,7 +2,6 @@
 
 let
   inherit (lib)
-    filterAttrs
     concatMap
     attrNames
     elemAt
@@ -11,18 +10,18 @@ let
     genAttrs
     ;
 
-  # Most of the packages in pkgs/ are build-systems that we can use to create the memo
-  knownPackages = attrNames (filterAttrs (_: type: type == "directory") (builtins.readDir ../pkgs));
-
 in
 {
   /*
     Resolve dependencies using a non-circular supporting approach.
 
-    This implementation is faster than the one supporting circular dependencies
-    resolveNonCyclic is intended to resolve build-system dependencies.
+    This implementation is faster than the one supporting circular dependencies, and is memoized.
+
+    `resolveNonCyclic` is intended to resolve build-system dependencies.
   */
   resolveNonCyclic =
+    # List of package names to memoize
+    memoNames:
     # Package set to resolve packages from
     set:
     let
@@ -44,7 +43,7 @@ in
         ) extras;
 
       # Memoise known build systems with no extras enabled for better performance
-      memo = genAttrs knownPackages (name: recurse' name [ ]);
+      memo = genAttrs memoNames (name: recurse' name [ ]);
 
       recurse =
         name: extras: if extras == [ ] then (memo.${name} or (recurse' name [ ])) else recurse' name extras;
@@ -55,17 +54,16 @@ in
   /*
     Resolve dependencies using a cyclic supporting approach.
 
-    resolveCyclic is intended to resolve virtualenv dependencies.
+    `resolveCyclic` is intended to resolve virtualenv dependencies.
   */
   resolveCyclic =
-    let
-      mkKey = key: { inherit key; };
-    in
     # Package set to resolve packages from
     set:
-    # Attribute set of dependencies -> extras { requests = [ "socks" ]; }
+    # Attribute set of dependencies -> extras `{ requests = [ "socks" ]; }`
     spec:
     let
+      mkKey = key: { inherit key; };
+
       # Resolve spec recursively
       closure' = genericClosure {
         startSet = concatMap (
