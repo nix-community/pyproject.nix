@@ -8,13 +8,14 @@
 - [requirements.txt](./use-cases/requirements.md)
 - [FAQ](./FAQ.md)
 
-# Reference
+# Library reference
 
 - [User facing APIs](./reference.md)
   - [project](./lib/project.nix)
-  - [renderers](./lib/renderers.nix)
-  - [validators](./lib/validators.nix)
   - [scripts](./lib/scripts.nix)
+  - [nixpkgs](./nixpkgs-build.md)
+    - [renderers](./lib/renderers.nix)
+    - [validators](./lib/validators.nix)
 - [Standards APIs](./reference.md)
   - [pep440](./lib/pep440.nix)
   - [pep508](./lib/pep508.nix)
@@ -28,6 +29,11 @@
   - [pypa](./lib/pypa.nix)
   - [eggs](./lib/eggs.nix)
   - [pip](./lib/pip.nix)
+
+- [Build](./build.md)
+  - [lib]()
+    - [renderers](./build/lib/renderers.nix)
+    - [resolvers](./build/lib/resolvers.nix)
 
 # Contributing
 

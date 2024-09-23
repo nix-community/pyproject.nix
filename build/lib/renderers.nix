@@ -16,10 +16,20 @@ let
 in
 {
 
+  /*
+    Renders a project as an argument that can be passed to stdenv.mkDerivation.
+
+    Evaluates PEP-508 environment markers to select correct dependencies for the platform but does not validate version constraints.
+
+    Type: mkDerivation :: AttrSet -> AttrSet
+  */
   mkDerivation =
     {
+      # Loaded pyproject.nix project
       project,
+      # PEP-508 environment
       environ,
+      # Extras to enable (markers only, `optional-dependencies` are not enabled by default)
       extras ? [ ],
     }:
     let
