@@ -1,26 +1,25 @@
-{ lib }:
+{ lib, pyproject-nix }:
 
 let
+  inherit (pyproject-nix.build.lib) isBootstrapPackage;
+  inherit (lib) mapAttrs filterAttrs;
+  inherit (builtins) readDir;
+
   # List all packages in directory
-  paths = lib.filterAttrs (_name: type: type == "directory") (builtins.readDir ./.);
+  paths = filterAttrs (_name: type: type == "directory") (readDir ./.);
 
 in
 { callPackage, pyprojectBootstrapHook }:
 # Automatically call all packages
-(lib.mapAttrs (name: _: callPackage (./. + "/${name}") { }) paths)
-//
-  # Override bootstrap packages with bootstrap hook
-  {
-    build = callPackage ./build {
-      pyprojectHook = pyprojectBootstrapHook;
-    };
-    flit-core = callPackage ./flit-core {
-      pyprojectHook = pyprojectBootstrapHook;
-    };
-    packaging = callPackage ./packaging {
-      pyprojectHook = pyprojectBootstrapHook;
-    };
-    pyproject-hooks = callPackage ./pyproject-hooks {
-      pyprojectHook = pyprojectBootstrapHook;
-    };
-  }
+(mapAttrs (
+  name: _:
+  callPackage (./. + "/${name}") (
+    # Override bootstrap packages with bootstrap hook
+    if isBootstrapPackage name then
+      {
+        pyprojectHook = pyprojectBootstrapHook;
+      }
+    else
+      { }
+  )
+) paths)

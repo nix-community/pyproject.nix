@@ -3,7 +3,7 @@
 lib.fix (self: {
   packages = import ./packages.nix {
     inherit (self.lib) resolvers;
-    inherit lib;
+    inherit pyproject-nix lib;
   };
   lib = import ./lib { inherit lib pyproject-nix; };
 })
