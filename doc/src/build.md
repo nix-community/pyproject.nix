@@ -39,6 +39,13 @@ Nix dependency graphs are required to be a [DAG](https://en.wikipedia.org/wiki/D
 Dependency propagation is inherently incompatible with cyclic dependencies.
 In nixpkgs this is commonly worked around by patching packages in various ways.
 
+### Binary wrapping
+
+Nixpkgs Python builders uses wrappers for Python executables in `bin/`, these set environment variables `NIX_PYTHONPATH` & friends
+This is picked up by the interpreter using a [sitecustomize.py](https://docs.python.org/3/library/site.html#module-sitecustomize) in the system `site-packages` directory.
+
+This means that any Python programs executing another child Python interpreter using `sys.executable` will have it's modules lost on import, as `sys.executable` isn't pointing to the environment created by `withPackages`.
+
 ## Solution presented by pyproject.nix's builders
 
 The solution is to decouple the runtime dependency graph from the build time one, by putting runtime dependencies in [passthru](https://nixos.org/manual/nixpkgs/unstable/#chap-passthru):
@@ -106,3 +113,7 @@ For performance reasons two solvers are implemented:
   Used to resolve virtual environments
 
 It's possible to override the resolver used entirely, so even though cyclic build-system's are not supported by default, it can be done with overrides.
+
+### Use virtualenvs
+
+Instead of binary wrappers & environment variables `pyproject.nix`'s builders use standard Python virtual environments.
