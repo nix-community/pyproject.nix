@@ -5,12 +5,14 @@
 Pyproject.nix is a collection of Nix utilities to work with Python project metadata in [Nix](https://nixos.org/).
 It mainly targets [PEP-621](https://peps.python.org/pep-0621/) compliant `pyproject.toml` files and data formats, but also implement support for other & legacy formats such as [Poetry](https://python-poetry.org/) & `requirements.txt`.
 
-Pyproject.nix aims to be a swiss army knife of simple customizable utilities that works together with the [nixpkgs Python infrastructure](https://nixos.org/manual/nixpkgs/stable/#python).
+Pyproject.nix aims to be a swiss army knife of simple customizable utilities that works either together with the [nixpkgs Python infrastructure](https://nixos.org/manual/nixpkgs/stable/#python), or [our own build infrastructure](./build.md).
 
 ## Foreword
 
 This documentation only helps you to get started with `pyproject.nix`.
 As it's a toolkit with many use cases not every use case can be documented fully.
+
+First and foremost `pyproject.nix` is a _Python metadata toolkit_, and not a 2nix tool.
 
 This documentation is centered around packaging Python applications & managing development environments.
 For other use cases see the reference documentation.
@@ -42,7 +44,7 @@ This can be useful to check that a package set is compilant with the specificati
 
 ### [Renderers](./lib/renderers.md)
 
-A `renderer` takes a `project` together with a Python interpreter derivation and renders it into a form understood by various pieces of nixpkgs Python infrastructure.
+A `renderer` takes a `project` together with a Python interpreter derivation and renders it into a form understood by various pieces of Python infrastructure.
 
 For example: The `buildPythonPackage` renderer returns an attribute set that can be passed to either nixpkgs function `buildPythonPackage` or `buildPythonApplication`.
 
