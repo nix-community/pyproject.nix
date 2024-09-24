@@ -97,7 +97,7 @@ in
     {
       python,
       pyprojectHook,
-      pythonPackagesBuildHost,
+      pythonPkgsBuildHost,
       resolveBuildSystem,
     }:
     let
@@ -158,7 +158,7 @@ in
 
       # Convert created JSON format pyproject.toml into TOML and include a generated pth file
       unpackPhase = ''
-        env PYTHONPATH=${pythonPackagesBuildHost.tomli-w}/${python.sitePackages} python -c "import json, tomli_w; print(tomli_w.dumps(json.load(open('$pyprojectContentsPath'))))" > pyproject.toml
+        env PYTHONPATH=${pythonPkgsBuildHost.tomli-w}/${python.sitePackages} python -c "import json, tomli_w; print(tomli_w.dumps(json.load(open('$pyprojectContentsPath'))))" > pyproject.toml
         echo 'import os.path, sys; sys.path.insert(0, os.path.expandvars("${root}"))' > _${pname}.pth
       '';
 

@@ -7,7 +7,7 @@
   resolveBuildSystem,
   stdenv,
   hooks,
-  pythonPackagesBuildHost,
+  pythonPkgsBuildHost,
 }:
 let
   inherit (python) pythonOnBuildForHost isPy3k;
@@ -42,7 +42,7 @@ in
     makeSetupHook {
       name = "pyproject-build-hook";
       substitutions = {
-        inherit (pythonPackagesBuildHost) build;
+        inherit (pythonPkgsBuildHost) build;
         inherit pythonInterpreter;
       };
       propagatedBuildInputs = resolveBuildSystem {
@@ -74,11 +74,11 @@ in
       };
 
   pyprojectPypaInstallHook = callPackage (
-    { pythonPackagesBuildHost }:
+    { pythonPkgsBuildHost }:
     makeSetupHook {
       name = "pyproject-pypa-install-hook";
       substitutions = {
-        inherit (pythonPackagesBuildHost) installer;
+        inherit (pythonPkgsBuildHost) installer;
         inherit pythonInterpreter pythonSitePackages;
       };
     } ./pyproject-pypa-install-hook.sh
