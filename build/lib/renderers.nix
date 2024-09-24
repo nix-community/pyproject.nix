@@ -6,9 +6,16 @@ let
     mapAttrs
     concatMap
     groupBy
+    pathExists
+    isString
+    assertMsg
+    hasPrefix
+    optionalString
+    inPureEvalMode
     ;
   inherit (pyproject-nix.lib.renderers) meta;
   inherit (pyproject-nix.lib) pep621;
+  inherit (builtins) storeDir;
 
   # Make a dependency specification attrset from a list of dependencies
   mkSpec =
@@ -84,13 +91,24 @@ in
       # Editable root directory as a string
       root ? toString (
         # Prefer src layout if available
-        if lib.pathExists (project.projectRoot + "/src") then
+        if pathExists (project.projectRoot + "/src") then
           (project.projectRoot + "/src")
         # Otherwise assume project root is editable root
         else
           project.projectRoot
       ),
     }:
+    assert isString root;
+    assert assertMsg (!hasPrefix storeDir root) ''
+      Editable root was passed as a Nix store path string.
+
+      ${optionalString (inPureEvalMode) ''
+        This is most likely because you are using Flakes, and are automatically inferring the editable root from projectRoot.
+        Flakes are copied to the Nix store on evaluation. This can temporarily be worked around using --impure.
+      ''}
+
+      Pass editable root either as a string pointing to an absolute path non-store path, or use environment variables for relative paths.
+    '';
     let
       filteredDeps = pep621.filterDependenciesByEnviron environ extras project.dependencies;
     in
