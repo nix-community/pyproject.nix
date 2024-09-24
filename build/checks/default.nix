@@ -15,7 +15,7 @@ let
     inherit python;
   };
 
-  testVenv = pythonSet.pythonPackagesHostHost.mkVirtualEnv "test-venv" {
+  testVenv = pythonSet.pythonPkgsHostHost.mkVirtualEnv "test-venv" {
     build = [ ];
   };
 
@@ -39,7 +39,7 @@ in
         touch $out
       '';
 
-  prebuilt-wheel = pythonSet.pythonPackagesHostHost.callPackage (
+  prebuilt-wheel = pythonSet.pythonPkgsHostHost.callPackage (
     {
       stdenv,
       fetchurl,
@@ -84,19 +84,19 @@ in
 
       pythonSet' = pythonSet.overrideScope (
         _final: prev: {
-          pythonPackagesBuildHost = prev.pythonPackagesBuildHost.overrideScope overlay;
+          pythonPkgsBuildHost = prev.pythonPkgsBuildHost.overrideScope overlay;
         }
       );
 
     in
-    pythonSet'.pythonPackagesHostHost.mkVirtualEnv "overriden-bootstrap-venv" {
+    pythonSet'.pythonPkgsHostHost.mkVirtualEnv "overriden-bootstrap-venv" {
       build = [ ];
     };
 
   full-set =
     let
-      pythonSetDrvs = filter isDerivation (attrValues pythonSet.pythonPackagesHostHost);
-      hooks = attrValues pythonSet.pythonPackagesHostHost.hooks;
+      pythonSetDrvs = filter isDerivation (attrValues pythonSet.pythonPkgsHostHost);
+      hooks = attrValues pythonSet.pythonPkgsHostHost.hooks;
       pythonDrvs = filter (
         drv:
         !lib.elem drv hooks
@@ -107,7 +107,7 @@ in
         ]
       ) pythonSetDrvs;
 
-      full-set-venv = pythonSet.pythonPackagesHostHost.mkVirtualEnv "test-venv" (
+      full-set-venv = pythonSet.pythonPkgsHostHost.mkVirtualEnv "test-venv" (
         lib.listToAttrs (map (drv: lib.nameValuePair (drv.pname or drv.name) [ ]) pythonDrvs)
       );
     in
@@ -115,7 +115,7 @@ in
 
   mkderivation =
     let
-      testSet = pythonSet.pythonPackagesHostHost.overrideScope (
+      testSet = pythonSet.pythonPkgsHostHost.overrideScope (
         final: _prev: {
           myapp = final.callPackage (
             {
@@ -153,7 +153,7 @@ in
 
   mkderivation-editable =
     let
-      testSet = pythonSet.pythonPackagesHostHost.overrideScope (
+      testSet = pythonSet.pythonPkgsHostHost.overrideScope (
         final: _prev: {
           myapp = final.callPackage (
             {
@@ -161,7 +161,7 @@ in
               stdenv,
               pyprojectHook,
               resolveBuildSystem,
-              pythonPackagesBuildHost,
+              pythonPkgsBuildHost,
             }:
             stdenv.mkDerivation (
               renderers.mkDerivationEditable
@@ -175,7 +175,7 @@ in
                     python
                     pyprojectHook
                     resolveBuildSystem
-                    pythonPackagesBuildHost
+                    pythonPkgsBuildHost
                     ;
                 }
             )

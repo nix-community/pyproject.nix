@@ -89,7 +89,7 @@ let
     inherit python;
   };
 
-in pythonSet.pythonPackagesHostHost.mkVirtualEnv "test-venv" {
+in pythonSet.pythonPkgsHostHost.mkVirtualEnv "test-venv" {
   build = [ ];
 }
 ```

@@ -55,14 +55,14 @@ makeScope newScope (
         newScope,
         python,
         stdenv,
-        pythonPackagesBuildHost,
+        pythonPkgsBuildHost,
         bootstrapHooks,
-        pythonPackagesFun,
+        pythonPkgsFun,
       }:
       makeScope newScope (
         pkgsFinal:
         {
-          inherit python stdenv pythonPackagesBuildHost;
+          inherit python stdenv pythonPkgsBuildHost;
 
           # Pyproject hook used for bootstrap packages
           pyprojectBootstrapHook = pkgsFinal.pyprojectHook.override {
@@ -70,7 +70,7 @@ makeScope newScope (
           };
 
           # Initialize dependency resolvers
-          resolveBuildSystem = mkResolveBuildSystem pythonPackagesBuildHost;
+          resolveBuildSystem = mkResolveBuildSystem pythonPkgsBuildHost;
           resolveVirtualEnv = mkResolveVirtualEnv pkgsFinal;
 
           # Make a virtual env from resolved dependencies
@@ -102,12 +102,12 @@ makeScope newScope (
             pyprojectWheelHook
             ;
         }
-        // pythonPackagesFun pkgsFinal
+        // pythonPkgsFun pkgsFinal
       );
 
     bootstrapHooks = final.callPackage ./hooks {
       python = final.python.pythonOnBuildForHost;
-      resolveBuildSystem = mkResolveBuildSystem final.pythonPackagesBootstrap;
+      resolveBuildSystem = mkResolveBuildSystem final.pythonPkgsBootstrap;
       hooks = bootstrapHooks;
     };
 
@@ -116,12 +116,12 @@ makeScope newScope (
     # Allows overriding Python by calling overrideScope on the outer scope
     inherit python;
 
-    pythonPackagesBootstrap = mkPythonSet {
+    pythonPkgsBootstrap = mkPythonSet {
       inherit (buildPackages) stdenv newScope;
       inherit bootstrapHooks;
       python = python.pythonOnBuildForHost;
-      pythonPackagesBuildHost = final.pythonPackagesBootstrap;
-      pythonPackagesFun =
+      pythonPkgsBuildHost = final.pythonPkgsBootstrap;
+      pythonPkgsFun =
         _:
         final.callPackage ./bootstrap.nix {
           inherit (bootstrapHooks) pyprojectInstallHook pyprojectBytecodeHook pyprojectOutputSetupHook;
@@ -130,25 +130,25 @@ makeScope newScope (
     };
 
     # Python packages for the build host
-    pythonPackagesBuildHost = mkPythonSet {
+    pythonPkgsBuildHost = mkPythonSet {
       inherit (buildPackages) stdenv newScope;
       python = python.pythonOnBuildForHost;
-      inherit (final) pythonPackagesBuildHost;
-      bootstrapHooks = final.pythonPackagesBootstrap.hooks;
-      pythonPackagesFun = pkgsFun;
+      inherit (final) pythonPkgsBuildHost;
+      bootstrapHooks = final.pythonPkgsBootstrap.hooks;
+      pythonPkgsFun = pkgsFun;
     };
 
     # Python packages for the target host
-    pythonPackagesHostHost =
+    pythonPkgsHostHost =
       # If we're not doing cross reference build host packages
       if stdenv.buildPlatform != stdenv.hostPlatform then
         mkPythonSet {
-          inherit (final) newScope pythonPackagesBuildHost;
+          inherit (final) newScope pythonPkgsBuildHost;
           inherit python stdenv;
-          bootstrapHooks = final.pythonPackagesBuildHost.hooks;
-          pythonPackagesFun = pkgsFun;
+          bootstrapHooks = final.pythonPkgsBuildHost.hooks;
+          pythonPkgsFun = pkgsFun;
         }
       else
-        final.pythonPackagesBuildHost;
+        final.pythonPkgsBuildHost;
   }
 )

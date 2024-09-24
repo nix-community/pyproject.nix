@@ -33,7 +33,7 @@ in
             })
               {
                 pyprojectHook = null;
-                inherit (pythonSet.pythonPackagesHostHost) resolveBuildSystem;
+                inherit (pythonSet.pythonPkgsHostHost) resolveBuildSystem;
               };
         in
         rendered

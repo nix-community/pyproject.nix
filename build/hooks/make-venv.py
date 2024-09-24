@@ -4,6 +4,7 @@ import os.path
 import shutil
 import stat
 import sys
+import typing
 from pathlib import Path
 from venv import EnvBuilder
 
@@ -14,6 +15,16 @@ SITE_PACKAGES = os.path.join("lib", f"python{PYTHON_VERSION}", "site-packages")
 
 # Look for shebangs pointing to Python bin directory, rewrite them to venv directory
 dep_shebang = ("#!" + os.path.dirname(sys.executable)).encode()
+
+
+# Compare the contents of two files by their file descriptors
+def compare_fds(fa: typing.IO, fb: typing.IO) -> bool:
+    while True:
+        ba = fa.read(8192)
+        if ba != fb.read(8192):
+            return False
+        if not ba:
+            return True
 
 
 # Special rules for bin directory:
@@ -30,15 +41,29 @@ def write_bin_dir(bin_dir: Path, bin_out: Path) -> None:
 
         # Copy symlinks
         if stat.S_ISLNK(st_mode):
-            shutil.copy(bin_file, bin_out.joinpath(bin_file.name), follow_symlinks=False)
+            try:
+                shutil.copy(bin_file, bin_file_out, follow_symlinks=False)
+            except FileExistsError:
+                # If the file exists but is pointing to the same symlink continue
+                if bin_file.resolve() != bin_file_out.resolve():
+                    raise
 
         # Rewrite script shebangs
         elif stat.S_ISREG(st_mode):
             # Check if file starts with Python shebang
             with open(bin_file, "rb") as f_in:
                 shebang = f_in.read(len(dep_shebang))
+
                 # If it does, rewrite it to venv interpreter
                 if shebang == dep_shebang:
+                    # Check if the destination file already exists
+                    # If it does compare the contents of the files, modulo shebang
+                    if bin_file_out.exists():
+                        with open(bin_file_out, "wb") as f_exist:
+                            f_exist.read(len(dep_shebang))
+                            if not compare_fds():
+                                raise FileExistsError(f"File '{bin_file_out}' ")
+
                     with open(bin_file_out, "wb") as f_out:
                         f_out.write(out_shebang)
                         shutil.copyfileobj(f_in, f_out)
@@ -46,7 +71,12 @@ def write_bin_dir(bin_dir: Path, bin_out: Path) -> None:
                     continue
 
         # Symlink anything else
-        os.symlink(bin_file, bin_file_out)
+        try:
+            os.symlink(bin_file, bin_file_out)
+        except FileExistsError:
+            # If the file exists but is pointing to the same symlink continue
+            if bin_file.resolve() != bin_file_out.resolve():
+                raise
 
 
 # Special rules for site-packages:
