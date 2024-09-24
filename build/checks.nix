@@ -1,7 +1,12 @@
-{ pyproject-nix, pkgs }:
+{
+  pyproject-nix,
+  lib,
+  pkgs,
+}:
 
 let
   inherit (pyproject-nix.build.lib) isBootstrapPackage;
+  inherit (lib) filter attrValues isDerivation;
 
   python = pkgs.python312;
 
@@ -80,4 +85,24 @@ in
     pythonSet'.pythonPackagesHostHost.mkVirtualEnv "overriden-bootstrap-venv" {
       build = [ ];
     };
+
+  full-set =
+    let
+      pythonSetDrvs = filter isDerivation (attrValues pythonSet.pythonPackagesHostHost);
+      hooks = attrValues pythonSet.pythonPackagesHostHost.hooks;
+      pythonDrvs = filter (
+        drv:
+        !lib.elem drv hooks
+        && !lib.elem (drv.pname or drv.name) [
+          "pyproject-hook"
+          "python3"
+          "stdenv-linux"
+        ]
+      ) pythonSetDrvs;
+
+      full-set-venv = pythonSet.pythonPackagesHostHost.mkVirtualEnv "test-venv" (
+        lib.listToAttrs (map (drv: lib.nameValuePair (drv.pname or drv.name) [ ]) pythonDrvs)
+      );
+    in
+    full-set-venv;
 }

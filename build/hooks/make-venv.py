@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
-from venv import EnvBuilder
-from pathlib import Path
+import os
 import os.path
 import shutil
 import stat
 import sys
-import os
-
+from pathlib import Path
+from venv import EnvBuilder
 
 EXECUTABLE = os.path.basename(sys.executable)
 PYTHON_VERSION = ".".join((str(sys.version_info.major), str(sys.version_info.minor)))
@@ -43,7 +42,7 @@ def write_bin_dir(bin_dir: Path, bin_out: Path) -> None:
                     with open(bin_file_out, "wb") as f_out:
                         f_out.write(out_shebang)
                         shutil.copyfileobj(f_in, f_out)
-                    os.chmod(bin_file_out, st_mode) # Copy mode
+                    os.chmod(bin_file_out, st_mode)  # Copy mode
                     continue
 
         # Symlink anything else
@@ -51,16 +50,50 @@ def write_bin_dir(bin_dir: Path, bin_out: Path) -> None:
 
 
 # Special rules for site-packages:
-# - Rewrite package-local symlinks to venv
-# - Directly symlink regardless of type
-def write_site_packages(site_packages: Path, out_site_packages: Path) -> None:
-    for site_pkg_file in os.listdir(site_packages):
-        src_file = site_packages.joinpath(site_pkg_file)
-        dst_file = out_site_packages.joinpath(site_pkg_file)
-        if stat.S_ISLNK(src_file.lstat().st_mode):
-            shutil.copy(src_file, dst_file, follow_symlinks=False)
-        else:
-            os.symlink(src_file, dst_file)
+# - Symlink packages
+# - If a collision is found replace symlink with a directory containing all members of old directory, merged with new directory
+def write_site_packages(src: Path, dst: Path) -> None:
+    src_stat = src.lstat()
+
+    # Copy symbolic links
+    if stat.S_ISLNK(src_stat.st_mode):
+        shutil.copy(src, dst, follow_symlinks=False)
+
+    # Recursively link directories
+    elif stat.S_ISDIR(src_stat.st_mode):
+        try:
+            dst_st_mode = dst.lstat().st_mode
+        except FileNotFoundError:
+            # No collision (yet?), simply place symlink
+            os.symlink(src, dst)
+            return
+
+        # If we have an existing symlink "upgrade" it into a directory
+        if stat.S_ISLNK(dst_st_mode):
+            dst_target = dst.readlink()
+            if not stat.S_ISDIR(dst_target.stat().st_mode):
+                raise ValueError("Source of site-packages collision was not a directory. Unable to merge.")
+
+            # "Upgrade" symlink to directory
+            dst.unlink()
+            dst.mkdir()
+
+            # Symlink files from old target into directory
+            for src_file_nested in dst_target.iterdir():
+                dst.joinpath(src_file_nested.name).symlink_to(src_file_nested)
+
+        try:
+            dst.mkdir()
+        except FileExistsError:
+            pass
+
+        # Symlink files from new target
+        for src_file_nested in src.iterdir():
+            write_site_packages(src_file_nested, dst.joinpath(src_file_nested.name))
+
+    # For any other type, symlink
+    else:
+        os.symlink(src, dst)
 
 
 def link_dependency(dep_root: Path, out_root: Path) -> None:
@@ -92,7 +125,7 @@ def link_dependency(dep_root: Path, out_root: Path) -> None:
             st_mode = path.lstat().st_mode
 
             if stat.S_ISLNK(st_mode):
-                shutil.copy(path, out.joinpath(path.name))
+                shutil.copy(path, out.joinpath(path.name), follow_symlinks=False)
             elif stat.S_ISREG(st_mode):
                 os.symlink(path, out.joinpath(path.name))
             elif stat.S_ISDIR(st_mode):
@@ -128,9 +161,11 @@ def main():
 
     arg_parser = argparse.ArgumentParser()
     arg_parser.add_argument("out", help="Virtualenv output directory")
-    arg_parser.add_argument("--python", help="Python to link virtualenv to", default=os.path.dirname(os.path.dirname(sys.executable)))
-    arg_parser.add_argument("--env", action="append",  help="Source dependencies from environment variable")
-    arg_parser.add_argument("--deps", action="append",  help="Source dependencies from colon separated list")
+    arg_parser.add_argument(
+        "--python", help="Python to link virtualenv to", default=os.path.dirname(os.path.dirname(sys.executable))
+    )
+    arg_parser.add_argument("--env", action="append", help="Source dependencies from environment variable")
+    arg_parser.add_argument("--deps", action="append", help="Source dependencies from colon separated list")
 
     args = arg_parser.parse_args()
 
@@ -138,11 +173,11 @@ def main():
     python_root = Path(args.python)
     python_executable = python_root.joinpath("bin", EXECUTABLE)
 
-    dependencies: list[Path] = [] # List of dependency roots
-    seen_roots: set[str] = set() # Keep track of unique dependency roots
+    dependencies: list[Path] = []  # List of dependency roots
+    seen_roots: set[str] = set()  # Keep track of unique dependency roots
 
     # Populate dependencies from precisely passed options
-    for dep_roots in (args.deps or []):
+    for dep_roots in args.deps or []:
         for dep_root in dep_roots.split(":"):
             if dep_root in seen_roots:
                 continue
@@ -150,7 +185,7 @@ def main():
             dependencies.append(Path(dep_root))
 
     # Populate dependencies from env
-    for env_var in (args.env or []):
+    for env_var in args.env or []:
         try:
             env_value = os.environ[env_var]
         except KeyError:
