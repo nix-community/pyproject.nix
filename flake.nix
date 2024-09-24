@@ -118,7 +118,7 @@
           pkgs.callPackages ./test { pyproject = import ./default.nix { inherit lib; }; }
         ))
         // (lib.mapAttrs' (name: drv: lib.nameValuePair "build-${name}" drv) (
-          pkgs.callPackages ./build/checks.nix { pyproject-nix = self; }
+          pkgs.callPackages ./build/checks { pyproject-nix = self; }
         ))
         // {
           formatter = pkgs.writeShellScript "fmt-check" ''
