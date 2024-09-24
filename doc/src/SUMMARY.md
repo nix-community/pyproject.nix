@@ -31,7 +31,7 @@
   - [pip](./lib/pip.nix)
 
 - [Build](./build.md)
-  - [lib]()
+  - [lib](./build/lib/default.nix)
     - [renderers](./build/lib/renderers.nix)
     - [resolvers](./build/lib/resolvers.nix)
 
