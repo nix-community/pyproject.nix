@@ -10,4 +10,5 @@ _: {
   # Python
   programs.ruff-format.enable = true;
   programs.ruff-check.enable = true;
+  programs.mypy.enable = true;
 }
