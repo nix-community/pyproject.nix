@@ -1,0 +1,19 @@
+[project]
+name = "myapp"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+  "zipp"
+]
+
+[project.optional-dependencies]
+toml = ["tomli-w"]
+
+[project.scripts]
+hello = "myapp:hello"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
