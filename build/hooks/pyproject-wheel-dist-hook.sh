@@ -2,19 +2,19 @@
 echo "Sourcing pyproject-wheel-dist-hook"
 
 pyprojectWheelDist() {
-    echo "Executing pyprojectWheelDist"
-    runHook preBuild
+  echo "Executing pyprojectWheelDist"
+  runHook preBuild
 
-    echo "Creating dist..."
-    mkdir -p dist
-    ln -s "$src" "dist/$(stripHash "$src")"
+  echo "Creating dist..."
+  mkdir -p dist
+  ln -s "$src" "dist/$(stripHash "$src")"
 
-    runHook postBuild
-    echo "Finished executing pyprojectWheelDist"
+  runHook postBuild
+  echo "Finished executing pyprojectWheelDist"
 }
 
 if [ -z "${dontUsePyprojectWheelDist-}" ] && [ -z "${buildPhase-}" ]; then
-    echo "Using pyprojectWheelDist"
-    buildPhase=pyprojectWheelDist
-    dontUnpack=1
+  echo "Using pyprojectWheelDist"
+  buildPhase=pyprojectWheelDist
+  dontUnpack=1
 fi
