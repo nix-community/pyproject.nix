@@ -1,16 +1,16 @@
 echo "Sourcing pyproject-make-venv-hook"
 
 pyprojectMakeVenv() {
-    echo "Executing pyprojectMakeVenv"
-    runHook preInstall
+  echo "Executing pyprojectMakeVenv"
+  runHook preInstall
 
-    @pythonInterpreter@ @makeVenvScript@ --python @python@ "$out" --env "NIX_PYPROJECT_DEPS"
+  @pythonInterpreter@ @makeVenvScript@ --python @python@ "$out" --env "NIX_PYPROJECT_DEPS"
 
-    runHook postInstall
-    echo "Finished executing pyprojectMakeVenv"
+  runHook postInstall
+  echo "Finished executing pyprojectMakeVenv"
 }
 
 if [ -z "${dontUsePyprojectMakeVenv-}" ] && [ -z "${installPhase-}" ]; then
-    echo "Using pyprojectMakeVenv"
-    installPhase=pyprojectMakeVenv
+  echo "Using pyprojectMakeVenv"
+  installPhase=pyprojectMakeVenv
 fi

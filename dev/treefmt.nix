@@ -11,4 +11,7 @@ _: {
   programs.ruff-format.enable = true;
   programs.ruff-check.enable = true;
   programs.mypy.enable = true;
+
+  # Shell
+  programs.shfmt.enable = true;
 }
