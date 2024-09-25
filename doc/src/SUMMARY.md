@@ -10,6 +10,7 @@
 
 - [Python2nix]()
   - [Builders](./build.md)
+    - [Usage](./builders/usage.md)
 
 # Meta
 - [FAQ](./FAQ.md)
@@ -37,6 +38,7 @@
   - [pip](./lib/pip.nix)
 
 - [Build](./build.md)
+  - [packages](./builders/packages.md)
   - [lib](./build/lib/default.nix)
     - [renderers](./build/lib/renderers.nix)
     - [resolvers](./build/lib/resolvers.nix)
