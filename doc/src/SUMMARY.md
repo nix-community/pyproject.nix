@@ -4,8 +4,14 @@
 
 # Use cases
 
-- [pyproject.toml](./use-cases/pyproject.md)
-- [requirements.txt](./use-cases/requirements.md)
+- [Developing with nixpkgs]()
+  - [pyproject.toml](./use-cases/pyproject.md)
+  - [requirements.txt](./use-cases/requirements.md)
+
+- [Python2nix]()
+  - [Builders](./build.md)
+
+# Meta
 - [FAQ](./FAQ.md)
 
 # Library reference
