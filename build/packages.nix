@@ -46,6 +46,7 @@ in
   newScope,
   buildPackages,
   stdenv,
+  pkgs,
 }:
 makeScope newScope (
   final:
@@ -111,6 +112,17 @@ makeScope newScope (
       hooks = bootstrapHooks;
     };
 
+    isCross = stdenv.buildPlatform != stdenv.hostPlatform;
+
+    # Python packages for the build host
+    pythonPkgsBuildHost = mkPythonSet {
+      inherit (if isCross then buildPackages else pkgs) stdenv newScope;
+      python = python.pythonOnBuildForHost;
+      inherit (final) pythonPkgsBuildHost;
+      bootstrapHooks = final.pythonPkgsBootstrap.hooks;
+      pythonPkgsFun = pkgsFun;
+    };
+
   in
   {
     # Allows overriding Python by calling overrideScope on the outer scope
@@ -129,19 +141,12 @@ makeScope newScope (
         };
     };
 
-    # Python packages for the build host
-    pythonPkgsBuildHost = mkPythonSet {
-      inherit (buildPackages) stdenv newScope;
-      python = python.pythonOnBuildForHost;
-      inherit (final) pythonPkgsBuildHost;
-      bootstrapHooks = final.pythonPkgsBootstrap.hooks;
-      pythonPkgsFun = pkgsFun;
-    };
+    inherit pythonPkgsBuildHost;
 
     # Python packages for the target host
     pythonPkgsHostHost =
       # If we're not doing cross reference build host packages
-      if stdenv.buildPlatform != stdenv.hostPlatform then
+      if isCross then
         mkPythonSet {
           inherit (final) newScope pythonPkgsBuildHost;
           inherit python stdenv;
@@ -149,6 +154,6 @@ makeScope newScope (
           pythonPkgsFun = pkgsFun;
         }
       else
-        final.pythonPkgsBuildHost;
+        pythonPkgsBuildHost;
   }
 )
