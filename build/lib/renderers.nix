@@ -102,7 +102,7 @@ in
     assert assertMsg (!hasPrefix storeDir root) ''
       Editable root was passed as a Nix store path string.
 
-      ${optionalString (inPureEvalMode) ''
+      ${optionalString inPureEvalMode ''
         This is most likely because you are using Flakes, and are automatically inferring the editable root from projectRoot.
         Flakes are copied to the Nix store on evaluation. This can temporarily be worked around using --impure.
       ''}

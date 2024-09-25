@@ -39,6 +39,18 @@ in
         touch $out
       '';
 
+  make-venv-cross =
+    let
+      pkgs' = pkgs.pkgsCross.aarch64-multiplatform;
+      python = pkgs'.python312;
+      crossSet = pkgs'.callPackage pyproject-nix.build.packages {
+        inherit python;
+      };
+    in
+    crossSet.pythonPkgsHostHost.mkVirtualEnv "cross-venv" {
+      build = [ ];
+    };
+
   prebuilt-wheel = pythonSet.pythonPkgsHostHost.callPackage (
     {
       stdenv,
