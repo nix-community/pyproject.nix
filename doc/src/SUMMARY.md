@@ -42,6 +42,7 @@
   - [lib](./build/lib/default.nix)
     - [renderers](./build/lib/renderers.nix)
     - [resolvers](./build/lib/resolvers.nix)
+  - [hooks](./build/hooks/default.nix)
 
 # Contributing
 
