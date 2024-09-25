@@ -60,6 +60,8 @@ in
       project,
       # Python derivation
       python,
+      # Nixpkgs Python package set
+      pythonPackages ? python.pkgs,
       # Python extras (optionals) to enable
       extras ? [ ],
       # Extra withPackages function
@@ -69,7 +71,7 @@ in
     }:
     let
       filteredDeps = pep621.filterDependenciesByEnviron environ extras project.dependencies;
-      getDependencies = getDependencies' python.pkgs;
+      getDependencies = getDependencies' pythonPackages;
     in
     ps:
     getDependencies filteredDeps.dependencies
@@ -106,6 +108,8 @@ in
       project,
       # Python derivation
       python,
+      # Nixpkgs Python package set
+      pythonPackages ? python.pkgs,
       # Python extras (optional-dependencies) to enable.
       extras ? [ ],
       # Map a Python extras group name to a Nix attribute set like:
@@ -125,7 +129,6 @@ in
 
       pythonVersion = environ.python_full_version.value;
 
-      pythonPackages = python.pkgs;
       getDependencies = getDependencies' pythonPackages;
 
       inherit (project) pyproject;

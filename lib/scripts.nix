@@ -90,6 +90,8 @@ fix (self: {
       script,
       # Nixpkgs Python interpreter
       python,
+      # Nixpkgs Python package set
+      # Python extras (optional-dependencies) to enable.
       # PEP-508 environment
       environ ? pep508.mkEnviron python,
     }:
