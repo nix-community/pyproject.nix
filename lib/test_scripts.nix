@@ -37,7 +37,7 @@ in
     };
   };
 
-  renderScript = {
+  renderWithPackages = {
     testRender =
       let
         python = pkgs.python3;
@@ -46,7 +46,7 @@ in
       {
         expr =
           let
-            rendered = (scripts.loadScript { script = contents; }).render { inherit python; };
+            rendered = (scripts.loadScript { script = contents; }).renderWithPackages { inherit python; };
           in
           rendered;
         # Reconstruct rendered script

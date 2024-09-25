@@ -31,7 +31,7 @@ fix (self: {
       {
         name = "with-inline-metadata";
         metadata = { ... }; # Contains dependencies and requires-python
-        render = { python }: ...; # renderScript with loaded script pre-applied
+        renderWithPackages = { python }: ...; # renderWithPackages with loaded script pre-applied
       }
   */
   loadScript =
@@ -54,7 +54,7 @@ fix (self: {
       name = normalizePackageName name;
       script = script';
       metadata = pep723.parseScript script';
-      render =
+      renderWithPackages =
         {
           # Python interpreter
           python,
@@ -63,7 +63,7 @@ fix (self: {
           # Override PEP-508 environment creation
           __environ ? pep508.setEnviron (pep508.mkEnviron python) environ,
         }:
-        self.renderScript {
+        self.renderWithPackages {
           script = scriptSelf;
           environ = __environ;
           inherit python;
@@ -74,17 +74,17 @@ fix (self: {
     Render a loaded PEP-723 script as a string with a shebang line pointing to a wrapped Nix store interpreter.
 
     Example:
-      # Using renderScript directly
+      # Using renderWithPackages directly
       let
         script = loadScript { script = ./with-inline-metadata.py; };
-      in pkgs.writeScript script.name (renderScript { inherit script; python = pkgs.python3; })
+      in pkgs.writeScript script.name (renderWithPackages { inherit script; python = pkgs.python3; })
 
       # Using script render function
       let
         script = loadScript { script = ./with-inline-metadata.py; };
       in pkgs.writeScript script.name (script.render { python = pkgs.python3; })
   */
-  renderScript =
+  renderWithPackages =
     {
       # Script loaded using loadScript
       script,
