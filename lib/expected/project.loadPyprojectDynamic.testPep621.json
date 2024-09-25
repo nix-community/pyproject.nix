@@ -131,7 +131,7 @@
       },
       {
         "pname": "pyreadstat",
-        "version": "1.2.6"
+        "version": "1.2.7"
       },
       {
         "pname": "pytest",
@@ -357,7 +357,7 @@
     "spss": [
       {
         "pname": "pyreadstat",
-        "version": "1.2.6"
+        "version": "1.2.7"
       }
     ],
     "sql-other": [
