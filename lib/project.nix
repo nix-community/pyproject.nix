@@ -112,15 +112,10 @@ lib.fix (self: {
       pyproject ? lib.importTOML (projectRoot + "/pyproject.toml"),
       # Path to project root
       projectRoot ? null,
-      # The unmarshaled contents of pdm.lock
-      pdmLock ? lib.importTOML (projectRoot + "/pdm.lock"),
     }:
     self.loadPyproject {
       inherit pyproject projectRoot;
       extrasAttrPaths = pdmAttrPaths;
-    }
-    // {
-      inherit pdmLock;
     };
 
   /*
@@ -144,8 +139,6 @@ lib.fix (self: {
       pyproject ? lib.importTOML (projectRoot + "/pyproject.toml"),
       # Path to project root
       projectRoot ? null,
-      # The unmarshaled contents of poetry.lock
-      poetryLock ? lib.importTOML (projectRoot + "/poetry.lock"),
     }:
     let
       pyproject-pep621 = poetry.translatePoetryProject pyproject;
@@ -156,7 +149,7 @@ lib.fix (self: {
       pyproject-poetry = pyproject;
       renderers = curryProject renderers project;
       validators = curryProject validators project;
-      inherit projectRoot poetryLock;
+      inherit projectRoot;
       requires-python = null;
     });
 
