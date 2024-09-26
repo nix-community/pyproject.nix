@@ -17,6 +17,7 @@ fix (
       "pyproject-hooks"
       "packaging"
       "build"
+      "tomli"
     ];
   }
   // mapAttrs (_: path: import path ({ inherit pyproject-nix lib; } // self)) {
