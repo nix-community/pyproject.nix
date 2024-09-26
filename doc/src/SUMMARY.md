@@ -39,6 +39,7 @@
 
 - [Build](./build.md)
   - [packages](./builders/packages.md)
+    - [overriding](./builders/overriding.md)
   - [lib](./build/lib/default.nix)
     - [renderers](./build/lib/renderers.nix)
     - [resolvers](./build/lib/resolvers.nix)
