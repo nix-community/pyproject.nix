@@ -7,6 +7,8 @@ import sys
 import typing
 from pathlib import Path
 from venv import EnvBuilder
+import filecmp
+
 
 EXECUTABLE = os.path.basename(sys.executable)
 PYTHON_VERSION = ".".join((str(sys.version_info.major), str(sys.version_info.minor)))
@@ -61,7 +63,7 @@ def write_bin_dir(bin_dir: Path, bin_out: Path) -> None:
                     if bin_file_out.exists():
                         with open(bin_file_out, "wb") as f_exist:
                             f_exist.read(len(dep_shebang))
-                            if not compare_fds():
+                            if not compare_fds(f_exist, f_in):
                                 raise FileExistsError(f"File '{bin_file_out}' ")
 
                     with open(bin_file_out, "wb") as f_out:
@@ -123,7 +125,11 @@ def write_site_packages(src: Path, dst: Path) -> None:
 
     # For any other type, symlink
     else:
-        os.symlink(src, dst)
+        try:
+            os.symlink(src, dst)
+        except FileExistsError:
+            if not filecmp.cmp(src, dst):
+                raise
 
 
 def link_dependency(dep_root: Path, out_root: Path) -> None:
