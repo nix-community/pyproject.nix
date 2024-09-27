@@ -64,43 +64,6 @@ When building from an sdist instead of a wheel build systems will need to be add
 
 ### Basic usage
 
-This demonstrates the basic layout used to implement build fixups.
-Read this before proceeding to wheel/sdist examples.
-
-``` nix
-let
-  # Base python set.
-  # Pretend that something like uv2nix has already added lock file packages
-  pythonSet = pkgs.callPackage pyproject-nix.build.packages {
-    inherit python;
-  };
-
-  pyprojectOverrides =
-    let
-      # Implement build fixups here.
-      #
-      # In this example the same overlay is used for both build-system & final dependencies,
-      # but you can use different overrides if you want to.
-      overlay' = final: prev: {
-        # Implement build fixups here.
-      };
-    in final: prev: {
-      # Override build platform dependencies
-      #
-      # Use this when overriding build-systems that need to run on the build platform.
-      pythonPkgsBuildHost = prev.pythonPkgsBuildHost.overrideScope overlay';
-
-      # Override target platform packages.
-      #
-      # Use this to override packages for the target platform.
-      pythonPkgsHostHost = prev.pythonPkgsHostHost.overrideScope overlay';
-    };
-
-in
-  pythonSet.overrideScope pyprojectOverrides
-```
-
-
 ### Wheels
 When overriding a binary wheel, only runtime dependencies needs to be added. The `build-system.requires` section isn't relevant.
 
@@ -111,17 +74,10 @@ let
     inherit python;
   };
 
-  pyprojectOverrides =
-    let
-      overlay' = final: prev: {
-        pyzmq = prev.pyzmq.overrideAttrs(old: {
-          buildInputs = (old.buildInputs or [ ]) ++ [ pkgs.zeromq ];
-        });
-      };
-    in final: prev: {
-      pythonPkgsBuildHost = prev.pythonPkgsBuildHost.overrideScope overlay';
-      pythonPkgsHostHost = prev.pythonPkgsHostHost.overrideScope overlay';
-    };
+  pyprojectOverrides = final: prev: {
+    pyzmq = prev.pyzmq.overrideAttrs(old: {
+      buildInputs = (old.buildInputs or [ ]) ++ [ pkgs.zeromq ];
+  });
 
 in
   pythonSet.overrideScope pyprojectOverrides
@@ -160,3 +116,30 @@ let
 in
   pythonSet.overrideScope pyprojectOverrides
 ```
+
+### Cross compilation
+
+If cross compiling, build fixups might need to be applied to the build platform as well as the target platform:
+
+``` nix
+{ pkgs, pyproject-nix }:
+let
+  pythonSet = pkgs.callPackage pyproject-nix.build.packages {
+    inherit python;
+  };
+
+  pyprojectOverrides = final: prev: {
+    pyzmq = prev.pyzmq.overrideAttrs(old: {
+      buildInputs = (old.buildInputs or [ ]) ++ [ pkgs.zeromq ];
+  });
+
+  pyprojectCrossOverrides = lib.composeExtensions (_final: prev: {
+    pythonPkgsBuildHost = prev.pythonPkgsBuildHost.overrideScope overlay;
+  }) overlay;
+
+
+in
+  pythonSet.overrideScope pyprojectCrossOverrides
+```
+
+When not cross compiling `pythonPkgsBuildHost` is aliased to the main Python set, so overrides will apply to both automatically.

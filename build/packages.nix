@@ -39,6 +39,58 @@ let
 
   pkgsFun = final: mkPkgs' { inherit (final) callPackage pyprojectBootstrapHook; };
 
+  mkPythonSet =
+    {
+      python,
+      stdenv,
+      pythonPkgsBuildHost,
+      bootstrapHooks,
+      pythonPkgsFun,
+      pkgsFinal,
+    }:
+    {
+      inherit python stdenv pythonPkgsBuildHost;
+
+      # Pyproject hook used for bootstrap packages
+      pyprojectBootstrapHook = pkgsFinal.pyprojectHook.override {
+        inherit (bootstrapHooks) pyprojectConfigureHook pyprojectBuildHook;
+      };
+
+      # Initialize dependency resolvers
+      resolveBuildSystem = mkResolveBuildSystem pythonPkgsBuildHost;
+      resolveVirtualEnv = mkResolveVirtualEnv pkgsFinal;
+
+      # Make a virtual env from resolved dependencies
+      mkVirtualEnv =
+        name: spec:
+        pkgsFinal.stdenv.mkDerivation {
+          inherit name;
+
+          dontConfigure = true;
+          dontUnpack = true;
+          dontBuild = true;
+
+          nativeBuildInputs = [
+            pkgsFinal.pyprojectMakeVenvHook
+          ];
+
+          buildInputs = pkgsFinal.resolveVirtualEnv spec;
+        };
+
+      hooks = pkgsFinal.callPackage ./hooks { };
+      inherit (pkgsFinal.hooks)
+        pyprojectConfigureHook
+        pyprojectBuildHook
+        pyprojectInstallHook
+        pyprojectBytecodeHook
+        pyprojectOutputSetupHook
+        pyprojectMakeVenvHook
+        pyprojectHook
+        pyprojectWheelHook
+        ;
+    }
+    // pythonPkgsFun pkgsFinal;
+
 in
 
 {
@@ -46,66 +98,10 @@ in
   newScope,
   buildPackages,
   stdenv,
-  pkgs,
 }:
 makeScope newScope (
   final:
   let
-    mkPythonSet =
-      {
-        newScope,
-        python,
-        stdenv,
-        pythonPkgsBuildHost,
-        bootstrapHooks,
-        pythonPkgsFun,
-      }:
-      makeScope newScope (
-        pkgsFinal:
-        {
-          inherit python stdenv pythonPkgsBuildHost;
-
-          # Pyproject hook used for bootstrap packages
-          pyprojectBootstrapHook = pkgsFinal.pyprojectHook.override {
-            inherit (bootstrapHooks) pyprojectConfigureHook pyprojectBuildHook;
-          };
-
-          # Initialize dependency resolvers
-          resolveBuildSystem = mkResolveBuildSystem pythonPkgsBuildHost;
-          resolveVirtualEnv = mkResolveVirtualEnv pkgsFinal;
-
-          # Make a virtual env from resolved dependencies
-          mkVirtualEnv =
-            name: spec:
-            pkgsFinal.stdenv.mkDerivation {
-              inherit name;
-
-              dontConfigure = true;
-              dontUnpack = true;
-              dontBuild = true;
-
-              nativeBuildInputs = [
-                pkgsFinal.pyprojectMakeVenvHook
-              ];
-
-              buildInputs = pkgsFinal.resolveVirtualEnv spec;
-            };
-
-          hooks = pkgsFinal.callPackage ./hooks { };
-          inherit (pkgsFinal.hooks)
-            pyprojectConfigureHook
-            pyprojectBuildHook
-            pyprojectInstallHook
-            pyprojectBytecodeHook
-            pyprojectOutputSetupHook
-            pyprojectMakeVenvHook
-            pyprojectHook
-            pyprojectWheelHook
-            ;
-        }
-        // pythonPkgsFun pkgsFinal
-      );
-
     bootstrapHooks = final.callPackage ./hooks {
       python = final.python.pythonOnBuildForHost;
       resolveBuildSystem = mkResolveBuildSystem final.pythonPkgsBootstrap;
@@ -113,75 +109,52 @@ makeScope newScope (
     };
 
   in
-  {
-    # Allows overriding Python by calling overrideScope on the outer scope
-    inherit python stdenv;
+  (mkPythonSet {
+    inherit stdenv;
+    pkgsFinal = final;
+    python = python.pythonOnBuildForHost;
+    pythonPkgsBuildHost = final.pythonPkgsHostHost;
+    bootstrapHooks = final.pythonPkgsBootstrap.hooks;
+    pythonPkgsFun = pkgsFun;
+  })
+  // {
+    # Bootstrap packages used to bootstrap set
+    pythonPkgsBootstrap = makeScope buildPackages.newScope (
+      pkgsFinal:
+      mkPythonSet {
+        inherit (buildPackages) stdenv;
+        inherit bootstrapHooks pkgsFinal;
+        python = python.pythonOnBuildForHost;
+        pythonPkgsBuildHost = final.pythonPkgsBootstrap;
+        pythonPkgsFun =
+          _:
+          final.callPackage ./bootstrap.nix {
+            inherit (bootstrapHooks) pyprojectInstallHook pyprojectBytecodeHook pyprojectOutputSetupHook;
+            python = final.python.pythonOnBuildForHost;
+          };
+      }
+    );
 
-    # Add mkVirtualEnv to top-level for convenience
-    inherit (final.pythonPkgsHostHost) mkVirtualEnv;
+    # Python packages for the build host.
+    # In case of cross compilation this set is instantiated with host packages, otherwise
+    # it's aliasing pythonPkgsHostHost
+    pythonPkgsBuildHost =
+      if stdenv.buildPlatform != stdenv.hostPlatform then
+        (makeScope buildPackages.newScope (
+          pkgsFinal:
+          mkPythonSet {
+            inherit (buildPackages) stdenv;
+            python = python.pythonOnBuildForHost;
+            inherit (final) pythonPkgsBuildHost;
+            bootstrapHooks = final.pythonPkgsBootstrap.hooks;
+            pythonPkgsFun = pkgsFun;
+            inherit pkgsFinal;
+          }
+        ))
+      else
+        final;
 
-    # Adding overlays using plain overrideScope is a bit awkward and makes it harder than necessary to do it correctly in regards to splicing.
-    overridePythonPkgs = overlay: final.overrideScope (_final: prev:
-      let
-        inherit (prev) stdenv;
-      in
-      if stdenv.buildPlatform != stdenv.hostPlatform then {
-        pythonPkgsBuildHost = prev.pythonPkgsBuildHost.overrideScope overlay;
-        pythonPkgsHostHost = prev.pythonPkgsHostHost.overrideScope overlay;
-      } else {
-        pythonPkgsHostHost = prev.pythonPkgsHostHost.overrideScope overlay;
-      });
-
-    pythonPkgsBootstrap = mkPythonSet {
-      inherit (buildPackages) stdenv newScope;
-      inherit bootstrapHooks;
-      python = python.pythonOnBuildForHost;
-      pythonPkgsBuildHost = final.pythonPkgsBootstrap;
-      pythonPkgsFun =
-        _:
-        final.callPackage ./bootstrap.nix {
-          inherit (bootstrapHooks) pyprojectInstallHook pyprojectBytecodeHook pyprojectOutputSetupHook;
-          python = final.python.pythonOnBuildForHost;
-        };
-    };
+    # Alias the host packages (this set) set as pythonPkgsHostHost
+    pythonPkgsHostHost = final;
   }
-  // (
-    # Manually splice for cross
-    if stdenv.buildPlatform != stdenv.hostPlatform then
-      {
-
-        # Python packages for the build host
-        pythonPkgsBuildHost = mkPythonSet {
-          inherit (buildPackages) stdenv newScope;
-          python = python.pythonOnBuildForHost;
-          inherit (final) pythonPkgsBuildHost;
-          bootstrapHooks = final.pythonPkgsBootstrap.hooks;
-          pythonPkgsFun = pkgsFun;
-        };
-
-        # Python packages for the target host
-        pythonPkgsHostHost = mkPythonSet {
-          inherit (final) newScope pythonPkgsBuildHost;
-          inherit python stdenv;
-          bootstrapHooks = final.pythonPkgsBuildHost.hooks;
-          pythonPkgsFun = pkgsFun;
-        };
-
-      }
-    else
-      {
-        # Python packages for the build host
-        pythonPkgsBuildHost = final.pythonPkgsHostHost;
-
-        # When doing native compilation we don't want to instantiate another Python set.
-        # Alias the existing build host set.
-        pythonPkgsHostHost = mkPythonSet {
-          inherit (pkgs) stdenv newScope;
-          python = python.pythonOnBuildForHost;
-          pythonPkgsBuildHost = final.pythonPkgsHostHost;
-          bootstrapHooks = final.pythonPkgsBootstrap.hooks;
-          pythonPkgsFun = pkgsFun;
-        };
-      }
-  )
 )
