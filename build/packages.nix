@@ -112,21 +112,25 @@ makeScope newScope (
       hooks = bootstrapHooks;
     };
 
-    isCross = stdenv.buildPlatform != stdenv.hostPlatform;
-
-    # Python packages for the build host
-    pythonPkgsBuildHost = mkPythonSet {
-      inherit (if isCross then buildPackages else pkgs) stdenv newScope;
-      python = python.pythonOnBuildForHost;
-      inherit (final) pythonPkgsBuildHost;
-      bootstrapHooks = final.pythonPkgsBootstrap.hooks;
-      pythonPkgsFun = pkgsFun;
-    };
-
   in
   {
     # Allows overriding Python by calling overrideScope on the outer scope
-    inherit python;
+    inherit python stdenv;
+
+    # Add mkVirtualEnv to top-level for convenience
+    inherit (final.pythonPkgsHostHost) mkVirtualEnv;
+
+    # Adding overlays using plain overrideScope is a bit awkward and makes it harder than necessary to do it correctly in regards to splicing.
+    overridePythonPkgs = overlay: final.overrideScope (_final: prev:
+      let
+        inherit (prev) stdenv;
+      in
+      if stdenv.buildPlatform != stdenv.hostPlatform then {
+        pythonPkgsBuildHost = prev.pythonPkgsBuildHost.overrideScope overlay;
+        pythonPkgsHostHost = prev.pythonPkgsHostHost.overrideScope overlay;
+      } else {
+        pythonPkgsHostHost = prev.pythonPkgsHostHost.overrideScope overlay;
+      });
 
     pythonPkgsBootstrap = mkPythonSet {
       inherit (buildPackages) stdenv newScope;
@@ -140,20 +144,44 @@ makeScope newScope (
           python = final.python.pythonOnBuildForHost;
         };
     };
+  }
+  // (
+    # Manually splice for cross
+    if stdenv.buildPlatform != stdenv.hostPlatform then
+      {
 
-    inherit pythonPkgsBuildHost;
+        # Python packages for the build host
+        pythonPkgsBuildHost = mkPythonSet {
+          inherit (buildPackages) stdenv newScope;
+          python = python.pythonOnBuildForHost;
+          inherit (final) pythonPkgsBuildHost;
+          bootstrapHooks = final.pythonPkgsBootstrap.hooks;
+          pythonPkgsFun = pkgsFun;
+        };
 
-    # Python packages for the target host
-    pythonPkgsHostHost =
-      # If we're not doing cross reference build host packages
-      if isCross then
-        mkPythonSet {
+        # Python packages for the target host
+        pythonPkgsHostHost = mkPythonSet {
           inherit (final) newScope pythonPkgsBuildHost;
           inherit python stdenv;
           bootstrapHooks = final.pythonPkgsBuildHost.hooks;
           pythonPkgsFun = pkgsFun;
-        }
-      else
-        pythonPkgsBuildHost;
-  }
+        };
+
+      }
+    else
+      {
+        # Python packages for the build host
+        pythonPkgsBuildHost = final.pythonPkgsHostHost;
+
+        # When doing native compilation we don't want to instantiate another Python set.
+        # Alias the existing build host set.
+        pythonPkgsHostHost = mkPythonSet {
+          inherit (pkgs) stdenv newScope;
+          python = python.pythonOnBuildForHost;
+          pythonPkgsBuildHost = final.pythonPkgsHostHost;
+          bootstrapHooks = final.pythonPkgsBootstrap.hooks;
+          pythonPkgsFun = pkgsFun;
+        };
+      }
+  )
 )
