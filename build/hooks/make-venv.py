@@ -129,7 +129,17 @@ def write_site_packages(src: Path, dst: Path) -> None:
             os.symlink(src, dst)
         except FileExistsError:
             if not filecmp.cmp(src, dst):
-                raise
+                raise ValueError(f"""Two packages are trying to provide the same file with differnt contents. 
+     Target: {dst}
+     File 1: {src}
+     File 2: {Path(dst).resolve()}.
+Consider adding an overide to delete it in one (or both) packages. Template:
+pkg = prev.pkg.overrideAttrs (old: {{
+          postInstall = ''
+              rm $out/lib/python${{final.python.pythonVersion}}/site-packages/docs/source/conf.py
+'';
+}});
+""")
 
 
 def link_dependency(dep_root: Path, out_root: Path) -> None:
