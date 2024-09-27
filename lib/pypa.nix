@@ -43,7 +43,7 @@ let
     || tagVersion == sourceVersion.major
     || (
       hasPrefix sourceVersion.major tagVersion
-      && ((toInt (sourceVersion.major + sourceVersion.minor)) >= toInt tagVersion)
+      && ((toInt (sourceVersion.major + sourceVersion.minor)) == toInt tagVersion)
     );
 
 in

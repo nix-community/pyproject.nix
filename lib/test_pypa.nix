@@ -244,6 +244,11 @@ in
       expected = true;
     };
 
+    testCpythonOlder = {
+      expr = isPythonTagCompatible mocks.cpythonLinux38 (parsePythonTag "cp37");
+      expected = false;
+    };
+
     testCpythonWithVersion = {
       expr = isPythonTagCompatible mocks.cpythonLinux38 (parsePythonTag "cp38");
       expected = true;
@@ -494,7 +499,6 @@ in
         ];
         output = [
           "distribution-1.0-1-py38-none-any.whl"
-          "distribution-1.0-1-py37-none-any.whl"
         ];
         python = mocks.cpythonLinux38;
       };
@@ -506,7 +510,6 @@ in
         ];
         output = [
           "distribution-1.0-1-py38-none-any.whl"
-          "distribution-1.0-1-py37-none-any.whl"
         ];
         python = mocks.cpythonLinux38;
       };
@@ -515,8 +518,6 @@ in
         input = zmqWheels;
         output = [
           "pyzmq-24.0.1-cp38-cp38-manylinux_2_12_x86_64.manylinux2010_x86_64.whl"
-          "pyzmq-24.0.1-cp37-cp37m-manylinux_2_5_x86_64.manylinux1_x86_64.whl"
-          "pyzmq-24.0.1-cp36-cp36m-manylinux_2_5_x86_64.manylinux1_x86_64.whl"
         ];
         python = mocks.cpythonLinux38;
       };
@@ -526,14 +527,6 @@ in
         output = [
           "pyzmq-24.0.1-cp311-cp311-macosx_10_15_universal2.whl"
           "pyzmq-24.0.1-cp311-cp311-macosx_10_9_x86_64.whl"
-          "pyzmq-24.0.1-cp310-cp310-macosx_10_15_universal2.whl"
-          "pyzmq-24.0.1-cp310-cp310-macosx_10_9_x86_64.whl"
-          "pyzmq-24.0.1-cp39-cp39-macosx_10_15_universal2.whl"
-          "pyzmq-24.0.1-cp39-cp39-macosx_10_9_x86_64.whl"
-          "pyzmq-24.0.1-cp38-cp38-macosx_10_15_universal2.whl"
-          "pyzmq-24.0.1-cp38-cp38-macosx_10_9_x86_64.whl"
-          "pyzmq-24.0.1-cp37-cp37m-macosx_10_9_x86_64.whl"
-          "pyzmq-24.0.1-cp36-cp36m-macosx_10_9_x86_64.whl"
         ];
         python = mocks.cpythonDarwin311;
       };
@@ -542,8 +535,6 @@ in
         input = zmqWheels;
         output = [
           "pyzmq-24.0.1-pp39-pypy39_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl"
-          "pyzmq-24.0.1-pp38-pypy38_pp73-manylinux_2_12_x86_64.manylinux2010_x86_64.whl"
-          "pyzmq-24.0.1-pp37-pypy37_pp73-manylinux_2_12_x86_64.manylinux2010_x86_64.whl"
         ];
         python = mocks.pypy39Linux;
       };
@@ -562,9 +553,6 @@ in
         input = pyarrowWheels;
         output = [
           "pyarrow-13.0.0-cp311-cp311-macosx_10_14_x86_64.whl"
-          "pyarrow-13.0.0-cp310-cp310-macosx_10_14_x86_64.whl"
-          "pyarrow-13.0.0-cp39-cp39-macosx_10_14_x86_64.whl"
-          "pyarrow-13.0.0-cp38-cp38-macosx_10_14_x86_64.whl"
         ];
         python = mocks.cpythonDarwin311;
       };
