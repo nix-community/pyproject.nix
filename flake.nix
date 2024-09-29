@@ -89,16 +89,31 @@
         system:
         let
           pkgs = nixpkgs.legacyPackages.${system};
+
+          pythonSet = pkgs.callPackage self.build.packages {
+            python = pkgs.python3;
+          };
+
+          venv = pythonSet.mkVirtualEnv "root-venv" {
+            pyproject-hooks = [ ];
+            hatchling = [ ];
+            editables = [ ];
+          };
+
           mkShell' =
             { nix-unit }:
             pkgs.mkShell {
               packages = [
                 nix-unit
                 inputs.mdbook-nixdoc.packages.${system}.default
-                (pkgs.python3.withPackages (_ps: [ ]))
+                venv
                 pkgs.hivemind
                 pkgs.reflex
               ] ++ self.packages.${system}.doc.nativeBuildInputs;
+
+              shellHook = ''
+                source ${venv}/bin/activate
+              '';
             };
 
         in
