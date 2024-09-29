@@ -1,0 +1,17 @@
+[project]
+name = "build-editable"
+version = "0.1.0"
+description = "Build editable package"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "editables>=0.5",
+    "pyproject-hooks>=1.1.0",
+]
+
+[project.scripts]
+build-editable = "build_editable:build-editable"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
