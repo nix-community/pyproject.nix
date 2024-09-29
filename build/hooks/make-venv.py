@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import filecmp
 import os
 import os.path
 import shutil
@@ -7,8 +8,6 @@ import sys
 import typing
 from pathlib import Path
 from venv import EnvBuilder
-import filecmp
-
 
 EXECUTABLE = os.path.basename(sys.executable)
 PYTHON_VERSION = ".".join((str(sys.version_info.major), str(sys.version_info.minor)))
