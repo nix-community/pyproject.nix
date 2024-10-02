@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import filecmp
 import os
 import os.path
 import shutil
@@ -7,8 +8,6 @@ import sys
 import typing
 from pathlib import Path
 from venv import EnvBuilder
-import filecmp
-
 
 EXECUTABLE = os.path.basename(sys.executable)
 PYTHON_VERSION = ".".join((str(sys.version_info.major), str(sys.version_info.minor)))
@@ -127,9 +126,9 @@ def write_site_packages(src: Path, dst: Path) -> None:
     else:
         try:
             os.symlink(src, dst)
-        except FileExistsError:
+        except FileExistsError as exc:
             if not filecmp.cmp(src, dst):
-                raise ValueError(f"""Two packages are trying to provide the same file with differnt contents. 
+                raise ValueError(f"""Two packages are trying to provide the same file with differnt contents.
      Target: {dst}
      File 1: {src}
      File 2: {Path(dst).resolve()}.
@@ -139,7 +138,7 @@ pkg = prev.pkg.overrideAttrs (old: {{
               rm $out/lib/python${{final.python.pythonVersion}}/site-packages/docs/source/conf.py
 '';
 }});
-""")
+""") from exc
 
 
 def link_dependency(dep_root: Path, out_root: Path) -> None:
