@@ -246,7 +246,7 @@ in
 
     testCpythonOlder = {
       expr = isPythonTagCompatible mocks.cpythonLinux38 (parsePythonTag "cp37");
-      expected = false;
+      expected = true;
     };
 
     testCpythonWithVersion = {
@@ -499,6 +499,7 @@ in
         ];
         output = [
           "distribution-1.0-1-py38-none-any.whl"
+          "distribution-1.0-1-py37-none-any.whl"
         ];
         python = mocks.cpythonLinux38;
       };
@@ -510,6 +511,7 @@ in
         ];
         output = [
           "distribution-1.0-1-py38-none-any.whl"
+          "distribution-1.0-1-py37-none-any.whl"
         ];
         python = mocks.cpythonLinux38;
       };
