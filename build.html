@@ -1,0 +1,329 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Build - Pyproject.nix</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">Use cases</li><li class="chapter-item expanded "><div><strong aria-hidden="true">2.</strong> Developing with nixpkgs</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="use-cases/pyproject.html"><strong aria-hidden="true">2.1.</strong> pyproject.toml</a></li><li class="chapter-item expanded "><a href="use-cases/requirements.html"><strong aria-hidden="true">2.2.</strong> requirements.txt</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">3.</strong> Python2nix</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="build.html" class="active"><strong aria-hidden="true">3.1.</strong> Builders</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="builders/usage.html"><strong aria-hidden="true">3.1.1.</strong> Usage</a></li></ol></li></ol></li><li class="chapter-item expanded "><li class="part-title">Meta</li><li class="chapter-item expanded "><a href="FAQ.html"><strong aria-hidden="true">4.</strong> FAQ</a></li><li class="chapter-item expanded affix "><li class="part-title">Library reference</li><li class="chapter-item expanded "><a href="reference.html"><strong aria-hidden="true">5.</strong> User facing APIs</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="lib/project.html"><strong aria-hidden="true">5.1.</strong> project</a></li><li class="chapter-item expanded "><a href="lib/scripts.html"><strong aria-hidden="true">5.2.</strong> scripts</a></li><li class="chapter-item expanded "><a href="nixpkgs-build.html"><strong aria-hidden="true">5.3.</strong> nixpkgs</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="lib/renderers.html"><strong aria-hidden="true">5.3.1.</strong> renderers</a></li><li class="chapter-item expanded "><a href="lib/validators.html"><strong aria-hidden="true">5.3.2.</strong> validators</a></li></ol></li></ol></li><li class="chapter-item expanded "><a href="reference.html"><strong aria-hidden="true">6.</strong> Standards APIs</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="lib/pep440.html"><strong aria-hidden="true">6.1.</strong> pep440</a></li><li class="chapter-item expanded "><a href="lib/pep508.html"><strong aria-hidden="true">6.2.</strong> pep508</a></li><li class="chapter-item expanded "><a href="lib/pep518.html"><strong aria-hidden="true">6.3.</strong> pep518</a></li><li class="chapter-item expanded "><a href="lib/pep599.html"><strong aria-hidden="true">6.4.</strong> pep599</a></li><li class="chapter-item expanded "><a href="lib/pep600.html"><strong aria-hidden="true">6.5.</strong> pep600</a></li><li class="chapter-item expanded "><a href="lib/pep621.html"><strong aria-hidden="true">6.6.</strong> pep621</a></li><li class="chapter-item expanded "><a href="lib/pep656.html"><strong aria-hidden="true">6.7.</strong> pep656</a></li><li class="chapter-item expanded "><a href="lib/pep723.html"><strong aria-hidden="true">6.8.</strong> pep723</a></li><li class="chapter-item expanded "><a href="lib/poetry.html"><strong aria-hidden="true">6.9.</strong> poetry</a></li><li class="chapter-item expanded "><a href="lib/pypa.html"><strong aria-hidden="true">6.10.</strong> pypa</a></li><li class="chapter-item expanded "><a href="lib/eggs.html"><strong aria-hidden="true">6.11.</strong> eggs</a></li><li class="chapter-item expanded "><a href="lib/pip.html"><strong aria-hidden="true">6.12.</strong> pip</a></li></ol></li><li class="chapter-item expanded "><a href="build.html" class="active"><strong aria-hidden="true">7.</strong> Build</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="builders/packages.html"><strong aria-hidden="true">7.1.</strong> packages</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="builders/overriding.html"><strong aria-hidden="true">7.1.1.</strong> overriding</a></li></ol></li><li class="chapter-item expanded "><a href="build/lib/default.html"><strong aria-hidden="true">7.2.</strong> lib</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="build/lib/renderers.html"><strong aria-hidden="true">7.2.1.</strong> renderers</a></li><li class="chapter-item expanded "><a href="build/lib/resolvers.html"><strong aria-hidden="true">7.2.2.</strong> resolvers</a></li></ol></li><li class="chapter-item expanded "><a href="build/hooks/default.html"><strong aria-hidden="true">7.3.</strong> hooks</a></li></ol></li><li class="chapter-item expanded "><li class="part-title">Contributing</li><li class="chapter-item expanded "><a href="HACKING.html"><strong aria-hidden="true">8.</strong> Hacking</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Pyproject.nix</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/nix-community/pyproject.nix" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="build"><a class="header" href="#build">Build</a></h1>
+<div class="warning">
+The pyproject.nix build infrastructure is brand new and experimental.
+At this time it's mainly targeted at python2nix authors, and is being tested in uv2nix.
+</div>
+<p>Pyproject.nix can be used with nixpkgs <code>buildPythonPackage</code>/<code>packageOverrides</code>/<code>withPackages</code>, but also implements it's own build infrastructure that fixes many structural problems with the nixpkgs implementation.</p>
+<h2 id="problems-with-nixpkgs-python-builders"><a class="header" href="#problems-with-nixpkgs-python-builders">Problems with nixpkgs Python builders</a></h2>
+<p>Nixpkgs Python infrastucture relies on <a href="https://nixos.org/manual/nixpkgs/unstable/#ssec-stdenv-dependencies-propagated">dependency propagation</a>.
+The propagation mechanism works through making dependencies available to the builder at build-time, and recording their Nix store paths in <code>$out/nix-support/propagated-build-inputs</code>.
+<a href="https://nixos.org/manual/nixpkgs/unstable/#ssec-setup-hooks">Setup hooks</a> are then used to add these packages to <code>$PYTHONPATH</code> for discovery by the Python interpreter which adds everything from <code>$PYTHONPATH</code> to <code>sys.path</code> at startup.</p>
+<p>This causes several issues downstream.</p>
+<h3 id="pythonpath-leaking-into-unrelated-builds"><a class="header" href="#pythonpath-leaking-into-unrelated-builds"><code>$PYTHONPATH</code> leaking into unrelated builds</a></h3>
+<p>Consider the following development shell using nixpkgs Python builders:</p>
+<pre><code class="language-nix">let
+  pkgs = import &lt;nixpkgs&gt; { };
+  pythonEnv = pkgs.python3.withPackages(ps: [ ps.requests ]);
+in pkgs.mkShell {
+  packages = [
+    pkgs.remarshal
+    pythonEnv
+  ];
+}
+</code></pre>
+<p>Any Python package, such as <code>remarshal</code>, will have their dependencies leaking into <code>$PYTHONPATH</code>, making undeclared dependencies available to the Python interpreter.
+Making matters even worse: Any dependency on <code>$PYTHONPATH</code> takes precedence over virtualenv installed dependencies!</p>
+<h3 id="infinite-recursions"><a class="header" href="#infinite-recursions">Infinite recursions</a></h3>
+<p>Nix dependency graphs are required to be a <a href="https://en.wikipedia.org/wiki/Directed_acyclic_graph">DAG</a>, but Python dependencies can be cyclic.
+Dependency propagation is inherently incompatible with cyclic dependencies.
+In nixpkgs this is commonly worked around by patching packages in various ways.</p>
+<h3 id="binary-wrapping"><a class="header" href="#binary-wrapping">Binary wrapping</a></h3>
+<p>Nixpkgs Python builders uses wrappers for Python executables in <code>bin/</code>, these set environment variables <code>NIX_PYTHONPATH</code> &amp; friends
+This is picked up by the interpreter using a <a href="https://docs.python.org/3/library/site.html#module-sitecustomize">sitecustomize.py</a> in the system <code>site-packages</code> directory.</p>
+<p>This means that any Python programs executing another child Python interpreter using <code>sys.executable</code> will have it's modules lost on import, as <code>sys.executable</code> isn't pointing to the environment created by <code>withPackages</code>.</p>
+<h2 id="solution-presented-by-pyprojectnixs-builders"><a class="header" href="#solution-presented-by-pyprojectnixs-builders">Solution presented by pyproject.nix's builders</a></h2>
+<p>The solution is to decouple the runtime dependency graph from the build time one, by putting runtime dependencies in <a href="https://nixos.org/manual/nixpkgs/unstable/#chap-passthru">passthru</a>:</p>
+<pre><code class="language-nix">stdenv.mkDerivation {
+  pname = "setuptools-scm";
+  version = "8.1.0";
+  src = fetchurl {
+    url = "https://files.pythonhosted.org/packages/4f/a4/00a9ac1b555294710d4a68d2ce8dfdf39d72aa4d769a7395d05218d88a42/setuptools_scm-8.1.0.tar.gz";
+    hash = "";
+  };
+
+  passthru = {
+    dependencies = {
+      packaging = [ ];
+      setuptools = [ ];
+    };
+
+    optional-dependencies = {
+      toml = { toml = [ ]; };
+      rich = { rich = [ ]; };
+    };
+  };
+
+  nativeBuildInputs = [
+    pyprojectHook
+  ] ++ resolveBuildSystem (
+    {
+      setuptools = [ ];
+    }
+  );
+}
+</code></pre>
+<h3 id="resolving"><a class="header" href="#resolving">Resolving</a></h3>
+<p>Because runtime dependencies are not propagated every package needs to resolve the runtime dependencies of their build-system's.</p>
+<p>Additionally packages can't simply be consumed, but must be aggregated into a virtual environment to be useful:</p>
+<pre><code class="language-nix">{ pyproject-nix, pkgs }:
+
+let
+  python = pkgs.python312;
+
+  # Inject your own packages on top with overrideScope
+  pythonSet = pkgs.callPackage pyproject-nix.build.packages {
+    inherit python;
+  };
+
+in pythonSet.pythonPkgsHostHost.mkVirtualEnv "test-venv" {
+  build = [ ];
+}
+</code></pre>
+<h3 id="cyclic-dependencies"><a class="header" href="#cyclic-dependencies">Cyclic dependencies</a></h3>
+<p>Cyclic dependencies are supported thanks to the resolver returning a flat list of required Python packages.
+For performance reasons two solvers are implemented:</p>
+<ul>
+<li>
+<p>One that does not support cyclic dependencies
+This is a much more performant resolver used by resolveBuildSystem and has all known build-systems memoized.</p>
+</li>
+<li>
+<p>One that does support cyclic dependencies
+Used to resolve virtual environments</p>
+</li>
+</ul>
+<p>It's possible to override the resolver used entirely, so even though cyclic build-system's are not supported by default, it can be done with overrides.</p>
+<h3 id="use-virtualenvs"><a class="header" href="#use-virtualenvs">Use virtualenvs</a></h3>
+<p>Instead of binary wrappers &amp; environment variables <code>pyproject.nix</code>'s builders use standard Python virtual environments.</p>
+<footer id="open-on-gh"><hr style="margin-top: 5em;" />
+Found an issue? <a href="https://github.com/nix-community/pyproject.nix/edit/master/doc/src/build.md">Edit this page on GitHub.</a>
+</footer>
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="use-cases/requirements.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="builders/usage.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="use-cases/requirements.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="builders/usage.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

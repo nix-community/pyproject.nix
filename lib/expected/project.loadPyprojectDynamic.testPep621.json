@@ -1,0 +1,396 @@
+{
+  "build-system": [
+    {
+      "pname": "meson-python",
+      "version": "0.16.0"
+    },
+    {
+      "pname": "meson",
+      "version": "1.5.1"
+    },
+    {
+      "pname": "wheel",
+      "version": "0.43.0"
+    },
+    {
+      "pname": "cython",
+      "version": "3.0.10"
+    },
+    {
+      "pname": "oldest-supported-numpy",
+      "version": "1.0.0"
+    },
+    {
+      "pname": "versioneer",
+      "version": "0.29"
+    }
+  ],
+  "dependencies": [
+    {
+      "pname": "numpy",
+      "version": "1.26.4"
+    },
+    {
+      "pname": "python-dateutil",
+      "version": "2.9.0.post0"
+    },
+    {
+      "pname": "pytz",
+      "version": "2024.1"
+    },
+    {
+      "pname": "tzdata",
+      "version": "2024.1"
+    }
+  ],
+  "disabled": true,
+  "meta": {
+    "description": "Powerful data structures for data analysis, time series, and statistics"
+  },
+  "optional-dependencies": {
+    "all": [
+      {
+        "pname": "beautifulsoup4",
+        "version": "4.12.3"
+      },
+      {
+        "pname": "bottleneck",
+        "version": "1.4.0"
+      },
+      {
+        "pname": "brotlipy",
+        "version": "0.7.0"
+      },
+      {
+        "pname": "fastparquet",
+        "version": "2024.5.0"
+      },
+      {
+        "pname": "fsspec",
+        "version": "2024.3.0"
+      },
+      {
+        "pname": "gcsfs",
+        "version": "2024.2.0"
+      },
+      {
+        "pname": "html5lib",
+        "version": "1.1"
+      },
+      {
+        "pname": "hypothesis",
+        "version": "6.108.5"
+      },
+      {
+        "pname": "jinja2",
+        "version": "3.1.4"
+      },
+      {
+        "pname": "lxml",
+        "version": "5.2.2"
+      },
+      {
+        "pname": "matplotlib",
+        "version": "3.9.0"
+      },
+      {
+        "pname": "numba",
+        "version": "0.60.0"
+      },
+      {
+        "pname": "numexpr",
+        "version": "2.10.0"
+      },
+      {
+        "pname": "odfpy",
+        "version": "1.4.1"
+      },
+      {
+        "pname": "openpyxl",
+        "version": "3.1.2"
+      },
+      {
+        "pname": "pandas-gbq",
+        "version": "0.7.0"
+      },
+      {
+        "pname": "psycopg2",
+        "version": "2.9.9"
+      },
+      {
+        "pname": "pyarrow",
+        "version": "17.0.0"
+      },
+      {
+        "pname": "pymysql",
+        "version": "1.1.1"
+      },
+      {
+        "pname": "pyqt5",
+        "version": "5.15.10"
+      },
+      {
+        "pname": "pyreadstat",
+        "version": "1.2.7"
+      },
+      {
+        "pname": "pytest",
+        "version": "8.3.2"
+      },
+      {
+        "pname": "pytest-xdist",
+        "version": "3.6.1"
+      },
+      {
+        "pname": "pytest-asyncio",
+        "version": "0.23.8"
+      },
+      {
+        "pname": "python-snappy",
+        "version": "0.7.1"
+      },
+      {
+        "pname": "pyxlsb",
+        "version": "1.0.10"
+      },
+      {
+        "pname": "qtpy",
+        "version": "2.4.1"
+      },
+      {
+        "pname": "scipy",
+        "version": "1.14.0"
+      },
+      {
+        "pname": "s3fs",
+        "version": "2024.6.1"
+      },
+      {
+        "pname": "sqlalchemy",
+        "version": "2.0.32"
+      },
+      {
+        "pname": "tables",
+        "version": "3.9.2"
+      },
+      {
+        "pname": "tabulate",
+        "version": "0.9.0"
+      },
+      {
+        "pname": "xarray",
+        "version": "2024.6.0"
+      },
+      {
+        "pname": "xlrd",
+        "version": "2.0.1"
+      },
+      {
+        "pname": "xlsxwriter",
+        "version": "3.2.0"
+      },
+      {
+        "pname": "zstandard",
+        "version": "0.22.0"
+      }
+    ],
+    "aws": [
+      {
+        "pname": "s3fs",
+        "version": "2024.6.1"
+      }
+    ],
+    "clipboard": [
+      {
+        "pname": "pyqt5",
+        "version": "5.15.10"
+      },
+      {
+        "pname": "qtpy",
+        "version": "2.4.1"
+      }
+    ],
+    "compression": [
+      {
+        "pname": "brotlipy",
+        "version": "0.7.0"
+      },
+      {
+        "pname": "python-snappy",
+        "version": "0.7.1"
+      },
+      {
+        "pname": "zstandard",
+        "version": "0.22.0"
+      }
+    ],
+    "computation": [
+      {
+        "pname": "scipy",
+        "version": "1.14.0"
+      },
+      {
+        "pname": "xarray",
+        "version": "2024.6.0"
+      }
+    ],
+    "excel": [
+      {
+        "pname": "odfpy",
+        "version": "1.4.1"
+      },
+      {
+        "pname": "openpyxl",
+        "version": "3.1.2"
+      },
+      {
+        "pname": "pyxlsb",
+        "version": "1.0.10"
+      },
+      {
+        "pname": "xlrd",
+        "version": "2.0.1"
+      },
+      {
+        "pname": "xlsxwriter",
+        "version": "3.2.0"
+      }
+    ],
+    "feather": [
+      {
+        "pname": "pyarrow",
+        "version": "17.0.0"
+      }
+    ],
+    "fss": [
+      {
+        "pname": "fsspec",
+        "version": "2024.3.0"
+      }
+    ],
+    "gcp": [
+      {
+        "pname": "gcsfs",
+        "version": "2024.2.0"
+      },
+      {
+        "pname": "pandas-gbq",
+        "version": "0.7.0"
+      }
+    ],
+    "hdf5": [
+      {
+        "pname": "tables",
+        "version": "3.9.2"
+      }
+    ],
+    "html": [
+      {
+        "pname": "beautifulsoup4",
+        "version": "4.12.3"
+      },
+      {
+        "pname": "html5lib",
+        "version": "1.1"
+      },
+      {
+        "pname": "lxml",
+        "version": "5.2.2"
+      }
+    ],
+    "mysql": [
+      {
+        "pname": "sqlalchemy",
+        "version": "2.0.32"
+      },
+      {
+        "pname": "pymysql",
+        "version": "1.1.1"
+      }
+    ],
+    "output_formatting": [
+      {
+        "pname": "jinja2",
+        "version": "3.1.4"
+      },
+      {
+        "pname": "tabulate",
+        "version": "0.9.0"
+      }
+    ],
+    "parquet": [
+      {
+        "pname": "pyarrow",
+        "version": "17.0.0"
+      }
+    ],
+    "performance": [
+      {
+        "pname": "bottleneck",
+        "version": "1.4.0"
+      },
+      {
+        "pname": "numba",
+        "version": "0.60.0"
+      },
+      {
+        "pname": "numexpr",
+        "version": "2.10.0"
+      }
+    ],
+    "plot": [
+      {
+        "pname": "matplotlib",
+        "version": "3.9.0"
+      }
+    ],
+    "postgresql": [
+      {
+        "pname": "sqlalchemy",
+        "version": "2.0.32"
+      },
+      {
+        "pname": "psycopg2",
+        "version": "2.9.9"
+      }
+    ],
+    "spss": [
+      {
+        "pname": "pyreadstat",
+        "version": "1.2.7"
+      }
+    ],
+    "sql-other": [
+      {
+        "pname": "sqlalchemy",
+        "version": "2.0.32"
+      }
+    ],
+    "test": [
+      {
+        "pname": "hypothesis",
+        "version": "6.108.5"
+      },
+      {
+        "pname": "pytest",
+        "version": "8.3.2"
+      },
+      {
+        "pname": "pytest-xdist",
+        "version": "3.6.1"
+      },
+      {
+        "pname": "pytest-asyncio",
+        "version": "0.23.8"
+      }
+    ],
+    "xml": [
+      {
+        "pname": "lxml",
+        "version": "5.2.2"
+      }
+    ]
+  },
+  "pname": "pandas",
+  "pyproject": true
+}
