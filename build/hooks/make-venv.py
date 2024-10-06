@@ -172,7 +172,15 @@ def link_dependency(dep_root: Path, out_root: Path) -> None:
             if stat.S_ISLNK(st_mode):
                 shutil.copy(path, out.joinpath(path.name), follow_symlinks=False)
             elif stat.S_ISREG(st_mode):
-                os.symlink(path, out.joinpath(path.name))
+                target_path = out.joinpath(path.name)
+                try:
+                    os.symlink(path, target_path)
+                except FileExistsError:
+                    msg = f"Linking path {target_path} to {path} failed because it already existed."
+                    if Path(target_path).is_symlink():
+                        msg += f" It is a symlink resolving to {Path(target_path).resolve()}."
+                    raise FileExistsError(msg)
+
             elif stat.S_ISDIR(st_mode):
                 _link(path, out.joinpath(path.name))
             else:
