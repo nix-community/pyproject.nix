@@ -93,25 +93,19 @@ let
     inherit python;
   };
 
-  pyprojectOverrides =
-    let
-      overlay' = final: prev: {
-        pyzmq = prev.pyzmq.overrideAttrs(old: {
-          buildInputs = (old.buildInputs or [ ]) ++ [ pkgs.zeromq ];
-          dontUseCmakeConfigure = true;
-          nativeBuildInputs = (old.nativeBuildInputs or []) ++ final.resolveBuildSystem ({
-            cmake = [];
-            ninja = [];
-            packaging = [];
-            pathspec = [];
-            scikit-build-core = [];
-          } // if python.isPyPy then { cffi = []; } else { cython = []; });
-        });
-      };
-    in final: prev: {
-      pythonPkgsBuildHost = prev.pythonPkgsBuildHost.overrideScope overlay';
-      pythonPkgsHostHost = prev.pythonPkgsHostHost.overrideScope overlay';
-    };
+  pyprojectOverrides = final: prev: {
+    pyzmq = prev.pyzmq.overrideAttrs(old: {
+      buildInputs = (old.buildInputs or [ ]) ++ [ pkgs.zeromq ];
+      dontUseCmakeConfigure = true;
+      nativeBuildInputs = (old.nativeBuildInputs or []) ++ final.resolveBuildSystem ({
+        cmake = [];
+        ninja = [];
+        packaging = [];
+        pathspec = [];
+        scikit-build-core = [];
+      } // if python.isPyPy then { cffi = []; } else { cython = []; });
+    });
+  };
 
 in
   pythonSet.overrideScope pyprojectOverrides
@@ -119,7 +113,10 @@ in
 
 ### Cross compilation
 
-If cross compiling, build fixups might need to be applied to the build platform as well as the target platform:
+If cross compiling, build fixups might need to be applied to the build platform as well as the target platform.
+
+When native compiling `pythonPkgsBuildHost` is aliased to the main set, meaning that overrides automatically apply to both.
+When cross compiling `pythonPkgsBuildHost` is a Python set created for the _build host_.
 
 ``` nix
 { pkgs, pyproject-nix }:
