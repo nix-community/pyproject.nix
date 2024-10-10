@@ -13,7 +13,7 @@ Nixpkgs Python infrastucture relies on [dependency propagation](https://nixos.or
 The propagation mechanism works through making dependencies available to the builder at build-time, and recording their Nix store paths in `$out/nix-support/propagated-build-inputs`.
 [Setup hooks](https://nixos.org/manual/nixpkgs/unstable/#ssec-setup-hooks) are then used to add these packages to `$PYTHONPATH` for discovery by the Python interpreter which adds everything from `$PYTHONPATH` to `sys.path` at startup.
 
-This causes several issues downstream.
+Propagation causes several issues downstream.
 
 ### `$PYTHONPATH` leaking into unrelated builds
 
@@ -37,14 +37,21 @@ Making matters even worse: Any dependency on `$PYTHONPATH` takes precedence over
 
 Nix dependency graphs are required to be a [DAG](https://en.wikipedia.org/wiki/Directed_acyclic_graph), but Python dependencies can be cyclic.
 Dependency propagation is inherently incompatible with cyclic dependencies.
-In nixpkgs this is commonly worked around by patching packages in various ways.
+In nixpkgs propagation isssues are commonly worked around by patching packages in various ways.
 
 ### Binary wrapping
 
 Nixpkgs Python builders uses wrappers for Python executables in `bin/`, these set environment variables `NIX_PYTHONPATH` & friends
-This is picked up by the interpreter using a [sitecustomize.py](https://docs.python.org/3/library/site.html#module-sitecustomize) in the system `site-packages` directory.
+These environment variables are picked up by the interpreter using a [sitecustomize.py](https://docs.python.org/3/library/site.html#module-sitecustomize) in the system `site-packages` directory.
 
-This means that any Python programs executing another child Python interpreter using `sys.executable` will have it's modules lost on import, as `sys.executable` isn't pointing to the environment created by `withPackages`.
+Any Python programs executing another child Python interpreter using `sys.executable` will have it's modules lost on import, as `sys.executable` isn't pointing to the environment created by `withPackages`.
+
+### Extraneous rebuilds
+
+Because `buildPythonPackage` uses propagation runtime dependencies of a package are required to be present at build time.
+
+In Python builds runtime dependencies are not actually required to be present.
+Making runtime dependencies available at build-time results in derivation hashes changing much more frequently than they have to.
 
 ## Solution presented by pyproject.nix's builders
 
@@ -107,12 +114,19 @@ Cyclic dependencies are supported thanks to the resolver returning a flat list o
 For performance reasons two solvers are implemented:
 
 - One that does not support cyclic dependencies
-  This is a much more performant resolver used by resolveBuildSystem and has all known build-systems memoized.
+  A much more performant resolver used by resolveBuildSystem and has all known build-systems memoized.
 
 - One that does support cyclic dependencies
   Used to resolve virtual environments
 
 It's possible to override the resolver used entirely, so even though cyclic build-system's are not supported by default, it can be done with overrides.
+
+### Less rebuilds
+
+As the runtime dependency graph is decoupled from the build time one derivation hashes change far less frequently.
+
+An additional benefit is improved build scheduling:
+Because the dependency graph is much flatter than a `buildPythonPackage` based one derivations can be more efficiently scheduled in parallel.
 
 ### Use virtualenvs
 
