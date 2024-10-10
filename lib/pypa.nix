@@ -218,7 +218,6 @@ lib.fix (self: {
     )
     &&
       # Check version
-      # (checkTagVersion sourceVersion abiTag.version);
       (
         abiTag.version == null
         || abiTag.version == sourceVersion.major
