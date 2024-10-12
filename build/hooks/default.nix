@@ -175,6 +175,7 @@ in
           pyprojectConfigureHook,
           pyprojectBuildHook,
           pyprojectInstallHook,
+          pyprojectBytecodeHook,
           pyprojectOutputSetupHook,
           python,
         }:
@@ -185,6 +186,7 @@ in
             pyprojectConfigureHook
             pyprojectBuildHook
             pyprojectInstallHook
+            pyprojectBytecodeHook
             pyprojectOutputSetupHook
           ];
         } ./meta-hook.sh
