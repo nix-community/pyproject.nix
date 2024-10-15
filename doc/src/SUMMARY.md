@@ -11,6 +11,9 @@
 - [Python2nix]()
   - [Builders](./build.md)
     - [Usage](./builders/usage.md)
+  - [packages](./builders/packages.md)
+  - [overriding packages](./builders/overriding.md)
+    - [hacks](./builders/hacks.md)
 
 # Meta
 - [FAQ](./FAQ.md)
@@ -38,9 +41,6 @@
   - [pip](./lib/pip.nix)
 
 - [Build](./build.md)
-  - [packages](./builders/packages.md)
-    - [overriding](./builders/overriding.md)
-      - [hacks](./builders/hacks.md)
   - [lib](./build/lib/default.nix)
     - [renderers](./build/lib/renderers.nix)
     - [resolvers](./build/lib/resolvers.nix)
