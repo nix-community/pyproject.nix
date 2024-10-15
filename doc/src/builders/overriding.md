@@ -140,3 +140,7 @@ in
 ```
 
 When not cross compiling `pythonPkgsBuildHost` is aliased to the main Python set, so overrides will apply to both automatically.
+
+#### Dealing with common problems
+
+For utility functions to deal with some common packaging issues see [hacks](/builders/hacks.html).
