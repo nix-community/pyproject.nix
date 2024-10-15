@@ -6,4 +6,5 @@ lib.fix (self: {
     inherit pyproject-nix lib;
   };
   lib = import ./lib { inherit lib pyproject-nix; };
+  hacks = import ./hacks;
 })

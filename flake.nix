@@ -120,6 +120,11 @@
         // (lib.mapAttrs' (name: drv: lib.nameValuePair "build-${name}" drv) (
           pkgs.callPackages ./build/checks { pyproject-nix = self; }
         ))
+        // (lib.mapAttrs' (name: drv: lib.nameValuePair "build-hacks-${name}" drv) (
+          pkgs.callPackages ./build/hacks/checks.nix {
+            pyproject-nix = self;
+          }
+        ))
         // {
           formatter = pkgs.writeShellScript "fmt-check" ''
             set -euo pipefail

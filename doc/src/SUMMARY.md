@@ -40,9 +40,11 @@
 - [Build](./build.md)
   - [packages](./builders/packages.md)
     - [overriding](./builders/overriding.md)
+      - [hacks](./builders/hacks.md)
   - [lib](./build/lib/default.nix)
     - [renderers](./build/lib/renderers.nix)
     - [resolvers](./build/lib/resolvers.nix)
+    - [hacks](./build/hacks/default.nix)
   - [hooks](./build/hooks/default.nix)
 
 # Contributing
