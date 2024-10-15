@@ -74,6 +74,8 @@ let
             pkgsFinal.pyprojectMakeVenvHook
           ];
 
+          env.NIX_PYPROJECT_DEPS = lib.concatStringsSep ":" (pkgsFinal.resolveVirtualEnv spec);
+
           buildInputs = pkgsFinal.resolveVirtualEnv spec;
         };
 
