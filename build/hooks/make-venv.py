@@ -146,6 +146,24 @@ def link_dependency(dep_root: Path, out_root: Path) -> None:
     bin_dir = dep_root.joinpath("bin")
     nix_support_dir = dep_root.joinpath("nix-support")
 
+    # Support packages with symlinks in their roots.
+    # These are not created by pyproject.nix's builders, but from foreign sources such as nixpkgs, and our integration with those packages.
+    def _upgrade_existing_dir(path: Path, out_path: Path):
+        out_st_mode = out_path.lstat().st_mode
+
+        if stat.S_ISDIR(out_st_mode):
+            if not path.resolve().is_dir():
+                raise ValueError(
+                    f"Output '{out_path}' already exists, but resolved origin '{path.resolve()}' is not a directory. Unable to merge."
+                )
+        elif stat.S_ISLNK(out_st_mode):
+            out_target = out_path.resolve()
+            out_path.unlink()
+            out_path.mkdir()
+            _link(out_target, out_path)
+        else:
+            raise ValueError(f"Output '{out_path}' path already exists!")
+
     def _link(root: Path, out: Path) -> None:
         # Let other hooks manage the nix-support
         if root == nix_support_dir:
@@ -168,13 +186,22 @@ def link_dependency(dep_root: Path, out_root: Path) -> None:
                 continue
 
             st_mode = path.lstat().st_mode
+            out_path = out.joinpath(path.name)
 
             if stat.S_ISLNK(st_mode):
-                shutil.copy(path, out.joinpath(path.name), follow_symlinks=False)
+                if out_path.exists():
+                    _upgrade_existing_dir(path, out_path)
+                    _link(path, out_path)
+                    continue
+                shutil.copy(path, out_path, follow_symlinks=False)
             elif stat.S_ISREG(st_mode):
-                os.symlink(path, out.joinpath(path.name))
+                if out_path.exists():
+                    raise ValueError(f"Output '{out_path}' path already exists")
+                os.symlink(path, out_path)
             elif stat.S_ISDIR(st_mode):
-                _link(path, out.joinpath(path.name))
+                if out_path.exists():
+                    _upgrade_existing_dir(path, out_path)
+                _link(path, out_path)
             else:
                 raise ValueError(f"Unhandled st_mode: {st_mode}")
 
