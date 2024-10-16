@@ -14,6 +14,7 @@
   - [packages](./builders/packages.md)
   - [overriding packages](./builders/overriding.md)
     - [hacks](./builders/hacks.md)
+  - [ecosystem](./builders/ecosystem.md)
 
 # Meta
 - [FAQ](./FAQ.md)
