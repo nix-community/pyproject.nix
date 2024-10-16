@@ -68,4 +68,107 @@ in
         python3 ${./write-nixpkgs-prebuilt.py} --store ${builtins.storeDir} ${from} "$out"
       '';
     };
+
+  /**
+    Build a Cargo (Rust) package using rustPlatform.importCargoLock to fetch Rust dependencies.
+
+    Uses IFD (import-from-derivation) on non-local packages.
+
+    # Example
+
+    ```nix
+    importCargoLock {
+      prev = prev.cryptography;
+      # Lock file relative to source root
+      lockFile = "src/rust/Cargo.lock";
+    }
+    =>
+    «derivation /nix/store/g3z1zlmc0sqpd6d5ccfrx3c4w4nv5dzr-cryptography-43.0.0.drv»
+    ```
+
+    # Type
+
+    ```
+    importCargoLock :: AttrSet -> derivation
+    ```
+
+    # Arguments
+
+    prev
+    : Previous pyproject.nix package
+
+    importCargoLockArgs
+    : Arguments passed directly to `rustPlatform.importCargoLock` function
+
+    cargoRoot
+    : Path to Cargo source root
+
+    lockFile
+    : Path to Cargo.lock (defaults to `${cargoRoot}/Cargo.lock`)
+
+    doUnpack
+    : Whether to unpack sources using an intermediate derivation
+
+    unpackDerivationArgs
+    : Arguments passed directly to intermediate unpacker derivation (unused for path sources)
+
+    cargo
+    : cargo derivation
+
+    rustc
+    : rustc derivation
+
+    pkg-config
+    : pkg-config derivation
+  */
+  importCargoLock =
+    {
+      prev,
+      importCargoLockArgs ? { },
+      unpackDerivationArgs ? { },
+      cargoRoot ? ".",
+      lockFile ? "${cargoRoot}/Cargo.lock",
+      cargo ? pkgs.cargo,
+      rustc ? pkgs.rustc,
+      pkg-config ? pkgs.pkg-config,
+      doUnpack ? !lib.isPath prev.src,
+    }:
+    let
+      # Ensure package is unpacked, not an archive.
+      src =
+        if !doUnpack then
+          prev.src
+        else
+          stdenv.mkDerivation (
+            unpackDerivationArgs
+            // {
+              name = prev.src.name + "-unpacked";
+              inherit (prev) src;
+              dontConfigure = true;
+              dontBuild = true;
+              dontFixup = true;
+              preferLocalBuild = true;
+              installPhase = ''
+                cp -a . $out
+              '';
+            }
+          );
+
+    in
+    assert isDerivation prev;
+    prev.overrideAttrs (old: {
+      inherit cargoRoot src;
+      cargoDeps = pkgs.rustPlatform.importCargoLock (
+        {
+          lockFile = "${src}/${lockFile}";
+        }
+        // importCargoLockArgs
+      );
+      nativeBuildInputs = old.nativeBuildInputs or [ ] ++ [
+        pkgs.rustPlatform.cargoSetupHook
+        pkg-config
+        cargo
+        rustc
+      ];
+    });
 }

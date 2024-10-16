@@ -44,3 +44,41 @@ hacks.nixpkgsPrebuilt {
   });
 };
 ```
+
+## Building Cargo (Rust) packages from source
+
+
+https://github.com/PyO3/maturin
+
+``` nix
+final: prev: {
+  cryptography =
+    (hacks.importCargoLock {
+      prev = prev.cryptography;
+      lockFile = "src/rust/Cargo.lock";
+    });
+}
+```
+
+The package still lacks some important metadata, such as native non-Rust dependencies that needs to be suppplemented
+``` nix
+final: prev: {
+  cryptography =
+    (hacks.importCargoLock {
+      prev = prev.cryptography;
+      # Cryptography uses a non-standard location for it's Rust packaging
+      cargoRoot = "src/rust";
+    }).overrideAttrs
+      (old: {
+        nativeBuildInputs =
+          old.nativeBuildInputs
+          ++ final.resolveBuildSystem {
+            maturin = [ ];
+            setuptools = [ ];
+            cffi = [ ];
+            pycparser = [ ];
+          };
+        buildInputs = old.buildInputs or [ ] ++ [ pkgs.openssl ];
+      });
+}
+```
