@@ -66,7 +66,7 @@ final: prev: {
 }
 ```
 
-In reality, the package still lacks some important metadata, such as native non-Rust dependencies that needs to be suppplemented.
+In reality, the package still lacks some important metadata, such as native non-Rust dependencies that needs to be supplemented.
 Depending on which lock file produced this package it may also need build-systems added.
 ``` nix
 final: prev: {
