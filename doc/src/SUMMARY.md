@@ -47,6 +47,9 @@
     - [hacks](./build/hacks/default.nix)
   - [hooks](./build/hooks/default.nix)
 
+- [Packages](./packages.md)
+  - [build-editable](./packages/build-editable/README.md)
+
 # Contributing
 
 - [Hacking](./HACKING.md)
