@@ -47,9 +47,10 @@ hacks.nixpkgsPrebuilt {
 
 ## Building Cargo (Rust) packages from source
 
+Rust has it's own package manager, Cargo, that expects to be able to download dependencies at build-time.
+One way to deal with that is to use [rustPlatform.importCargoLock](https://nixos.org/manual/nixpkgs/stable/#vendoring-of-dependencies).
 
-https://github.com/PyO3/maturin
-
+To adapt the `cryptography` Python package into creating a Rust vendor directory, and use it for building:
 ``` nix
 final: prev: {
   cryptography =
@@ -60,7 +61,8 @@ final: prev: {
 }
 ```
 
-The package still lacks some important metadata, such as native non-Rust dependencies that needs to be suppplemented
+In reality, the package still lacks some important metadata, such as native non-Rust dependencies that needs to be suppplemented.
+Depending on which lock file produced this package it may also need build-systems added.
 ``` nix
 final: prev: {
   cryptography =
