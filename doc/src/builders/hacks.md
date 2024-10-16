@@ -56,7 +56,8 @@ final: prev: {
   cryptography =
     (hacks.importCargoLock {
       prev = prev.cryptography;
-      lockFile = "src/rust/Cargo.lock";
+      # Cryptography uses a non-standard location for it's Rust packaging
+      cargoRoot = "src/rust";
     });
 }
 ```
