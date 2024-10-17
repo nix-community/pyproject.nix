@@ -143,4 +143,4 @@ When not cross compiling `pythonPkgsBuildHost` is aliased to the main Python set
 
 #### Dealing with common problems
 
-For utility functions to deal with some common packaging issues see [hacks](/builders/hacks.html).
+For utility functions to deal with some common packaging issues see [hacks](./hacks.html).
