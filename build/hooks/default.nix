@@ -181,6 +181,7 @@ in
         }:
         makeSetupHook {
           name = "pyproject-hook";
+          passthru.python = python;
           propagatedBuildInputs = [
             python
             pyprojectConfigureHook
