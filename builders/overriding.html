@@ -1,0 +1,355 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>overriding packages - Pyproject.nix</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">Use cases</li><li class="chapter-item expanded "><div><strong aria-hidden="true">2.</strong> Developing with nixpkgs</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../use-cases/pyproject.html"><strong aria-hidden="true">2.1.</strong> pyproject.toml</a></li><li class="chapter-item expanded "><a href="../use-cases/requirements.html"><strong aria-hidden="true">2.2.</strong> requirements.txt</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">3.</strong> Python2nix</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../build.html"><strong aria-hidden="true">3.1.</strong> Builders</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../builders/usage.html"><strong aria-hidden="true">3.1.1.</strong> Usage</a></li></ol></li><li class="chapter-item expanded "><a href="../builders/packages.html"><strong aria-hidden="true">3.2.</strong> packages</a></li><li class="chapter-item expanded "><a href="../builders/overriding.html" class="active"><strong aria-hidden="true">3.3.</strong> overriding packages</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../builders/hacks.html"><strong aria-hidden="true">3.3.1.</strong> hacks</a></li></ol></li><li class="chapter-item expanded "><a href="../builders/ecosystem.html"><strong aria-hidden="true">3.4.</strong> ecosystem</a></li></ol></li><li class="chapter-item expanded "><li class="part-title">Meta</li><li class="chapter-item expanded "><a href="../FAQ.html"><strong aria-hidden="true">4.</strong> FAQ</a></li><li class="chapter-item expanded affix "><li class="part-title">Library reference</li><li class="chapter-item expanded "><a href="../reference.html"><strong aria-hidden="true">5.</strong> User facing APIs</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../lib/project.html"><strong aria-hidden="true">5.1.</strong> project</a></li><li class="chapter-item expanded "><a href="../lib/scripts.html"><strong aria-hidden="true">5.2.</strong> scripts</a></li><li class="chapter-item expanded "><a href="../nixpkgs-build.html"><strong aria-hidden="true">5.3.</strong> nixpkgs</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../lib/renderers.html"><strong aria-hidden="true">5.3.1.</strong> renderers</a></li><li class="chapter-item expanded "><a href="../lib/validators.html"><strong aria-hidden="true">5.3.2.</strong> validators</a></li></ol></li></ol></li><li class="chapter-item expanded "><a href="../reference.html"><strong aria-hidden="true">6.</strong> Standards APIs</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../lib/pep440.html"><strong aria-hidden="true">6.1.</strong> pep440</a></li><li class="chapter-item expanded "><a href="../lib/pep508.html"><strong aria-hidden="true">6.2.</strong> pep508</a></li><li class="chapter-item expanded "><a href="../lib/pep518.html"><strong aria-hidden="true">6.3.</strong> pep518</a></li><li class="chapter-item expanded "><a href="../lib/pep599.html"><strong aria-hidden="true">6.4.</strong> pep599</a></li><li class="chapter-item expanded "><a href="../lib/pep600.html"><strong aria-hidden="true">6.5.</strong> pep600</a></li><li class="chapter-item expanded "><a href="../lib/pep621.html"><strong aria-hidden="true">6.6.</strong> pep621</a></li><li class="chapter-item expanded "><a href="../lib/pep656.html"><strong aria-hidden="true">6.7.</strong> pep656</a></li><li class="chapter-item expanded "><a href="../lib/pep723.html"><strong aria-hidden="true">6.8.</strong> pep723</a></li><li class="chapter-item expanded "><a href="../lib/poetry.html"><strong aria-hidden="true">6.9.</strong> poetry</a></li><li class="chapter-item expanded "><a href="../lib/pypa.html"><strong aria-hidden="true">6.10.</strong> pypa</a></li><li class="chapter-item expanded "><a href="../lib/eggs.html"><strong aria-hidden="true">6.11.</strong> eggs</a></li><li class="chapter-item expanded "><a href="../lib/pip.html"><strong aria-hidden="true">6.12.</strong> pip</a></li></ol></li><li class="chapter-item expanded "><a href="../build.html"><strong aria-hidden="true">7.</strong> Build</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../build/lib/default.html"><strong aria-hidden="true">7.1.</strong> lib</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../build/lib/renderers.html"><strong aria-hidden="true">7.1.1.</strong> renderers</a></li><li class="chapter-item expanded "><a href="../build/lib/resolvers.html"><strong aria-hidden="true">7.1.2.</strong> resolvers</a></li><li class="chapter-item expanded "><a href="../build/hacks/default.html"><strong aria-hidden="true">7.1.3.</strong> hacks</a></li></ol></li><li class="chapter-item expanded "><a href="../build/hooks/default.html"><strong aria-hidden="true">7.2.</strong> hooks</a></li></ol></li><li class="chapter-item expanded "><li class="part-title">Contributing</li><li class="chapter-item expanded "><a href="../HACKING.html"><strong aria-hidden="true">8.</strong> Hacking</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Pyproject.nix</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/nix-community/pyproject.nix" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="overriding-packages"><a class="header" href="#overriding-packages">overriding packages</a></h1>
+<h2 id="problem-description"><a class="header" href="#problem-description">Problem description</a></h2>
+<p>Lock file consumers can only work with what it has, and important metadata is notably absent from all current package managers.</p>
+<p>Take a <a href="https://docs.astral.sh/uv/">uv</a> lock file entry for <code>pyzmq</code> as an example:</p>
+<pre><code class="language-toml">[[package]]
+name = "pyzmq"
+version = "26.2.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "cffi", marker = "implementation_name == 'pypy'" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/fd/05/bed626b9f7bb2322cdbbf7b4bd8f54b1b617b0d2ab2d3547d6e39428a48e/pyzmq-26.2.0.tar.gz", hash = "sha256:070672c258581c8e4f640b5159297580a9974b026043bd4ab0470be9ed324f1f", size = 271975 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/28/2f/78a766c8913ad62b28581777ac4ede50c6d9f249d39c2963e279524a1bbe/pyzmq-26.2.0-cp312-cp312-macosx_10_15_universal2.whl", hash = "sha256:ded0fc7d90fe93ae0b18059930086c51e640cdd3baebdc783a695c77f123dcd9", size = 1343105 },
+    # More binary wheels removed for brevity
+]
+</code></pre>
+<p>And contrast it with a minimal manually package example to build the same package:</p>
+<pre><code class="language-nix">{ stdenv, pyprojectHook, fetchurl }:
+stdenv.mkDerivation {
+  pname = "pyzmq";
+  version = "26.2.0";
+
+  src = fetchurl {
+    url = "https://files.pythonhosted.org/packages/fd/05/bed626b9f7bb2322cdbbf7b4bd8f54b1b617b0d2ab2d3547d6e39428a48e/pyzmq-26.2.0.tar.gz";
+    hash = "sha256:070672c258581c8e4f640b5159297580a9974b026043bd4ab0470be9ed324f1f";
+  };
+
+  dontUseCmakeConfigure = true;
+
+  buildInputs = [ zeromq ];
+
+  nativeBuildInputs = [ pyprojectHook ] ++ resolveBuildSystem ({
+    cmake = [];
+    ninja = [];
+    packaging = [];
+    pathspec = [];
+    scikit-build-core = [];
+  } // if python.isPyPy then { cffi = []; } else { cython = []; });
+
+  passthru.dependencies = lib.optionalAttrs python.isPyPy { cffi = []; };
+}
+</code></pre>
+<p>Notably absent from <code>uv.lock</code> are:</p>
+<ul>
+<li>Native libraries</li>
+</ul>
+<p>When building binary wheels <code>pyproject.nix</code> uses <a href="autoPatchelfHook">https://nixos.org/manual/nixpkgs/stable/#setup-hook-autopatchelfhook</a>.
+This patches RPATH's of wheels with native libraries, but those must be present at build time.</p>
+<ul>
+<li><a href="https://peps.python.org/pep-0517/">PEP-517</a> build systems</li>
+</ul>
+<p>Uv, like most Python package managers, installs binary wheels by default, and it's solver doesn't take into account bootstrapping dependencies.
+When building from an sdist instead of a wheel build systems will need to be added.</p>
+<h2 id="fixups"><a class="header" href="#fixups">Fixups</a></h2>
+<h3 id="basic-usage"><a class="header" href="#basic-usage">Basic usage</a></h3>
+<h3 id="wheels"><a class="header" href="#wheels">Wheels</a></h3>
+<p>When overriding a binary wheel, only runtime dependencies needs to be added. The <code>build-system.requires</code> section isn't relevant.</p>
+<pre><code class="language-nix">{ pkgs, pyproject-nix }:
+let
+  pythonSet = pkgs.callPackage pyproject-nix.build.packages {
+    inherit python;
+  };
+
+  pyprojectOverrides = final: prev: {
+    pyzmq = prev.pyzmq.overrideAttrs(old: {
+      buildInputs = (old.buildInputs or [ ]) ++ [ pkgs.zeromq ];
+  });
+
+in
+  pythonSet.overrideScope pyprojectOverrides
+</code></pre>
+<h3 id="sdist"><a class="header" href="#sdist">Sdist</a></h3>
+<p>When building from sources, both runtime dependencies and <code>build-system.requires</code> are important.</p>
+<pre><code class="language-nix">{ pkgs, pyproject-nix }:
+let
+  pythonSet = pkgs.callPackage pyproject-nix.build.packages {
+    inherit python;
+  };
+
+  pyprojectOverrides = final: prev: {
+    pyzmq = prev.pyzmq.overrideAttrs(old: {
+      buildInputs = (old.buildInputs or [ ]) ++ [ pkgs.zeromq ];
+      dontUseCmakeConfigure = true;
+      nativeBuildInputs = (old.nativeBuildInputs or []) ++ final.resolveBuildSystem ({
+        cmake = [];
+        ninja = [];
+        packaging = [];
+        pathspec = [];
+        scikit-build-core = [];
+      } // if python.isPyPy then { cffi = []; } else { cython = []; });
+    });
+  };
+
+in
+  pythonSet.overrideScope pyprojectOverrides
+</code></pre>
+<h3 id="cross-compilation"><a class="header" href="#cross-compilation">Cross compilation</a></h3>
+<p>If cross compiling, build fixups might need to be applied to the build platform as well as the target platform.</p>
+<p>When native compiling <code>pythonPkgsBuildHost</code> is aliased to the main set, meaning that overrides automatically apply to both.
+When cross compiling <code>pythonPkgsBuildHost</code> is a Python set created for the <em>build host</em>.</p>
+<pre><code class="language-nix">{ pkgs, pyproject-nix }:
+let
+  pythonSet = pkgs.callPackage pyproject-nix.build.packages {
+    inherit python;
+  };
+
+  pyprojectOverrides = final: prev: {
+    pyzmq = prev.pyzmq.overrideAttrs(old: {
+      buildInputs = (old.buildInputs or [ ]) ++ [ pkgs.zeromq ];
+  });
+
+  pyprojectCrossOverrides = lib.composeExtensions (_final: prev: {
+    pythonPkgsBuildHost = prev.pythonPkgsBuildHost.overrideScope overlay;
+  }) overlay;
+
+
+in
+  pythonSet.overrideScope pyprojectCrossOverrides
+</code></pre>
+<p>When not cross compiling <code>pythonPkgsBuildHost</code> is aliased to the main Python set, so overrides will apply to both automatically.</p>
+<h4 id="dealing-with-common-problems"><a class="header" href="#dealing-with-common-problems">Dealing with common problems</a></h4>
+<p>For utility functions to deal with some common packaging issues see <a href="./hacks.html">hacks</a>.</p>
+<footer id="open-on-gh"><hr style="margin-top: 5em;" />
+Found an issue? <a href="https://github.com/nix-community/pyproject.nix/edit/master/doc/src/builders/overriding.md">Edit this page on GitHub.</a>
+</footer>
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../builders/packages.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../builders/hacks.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../builders/packages.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../builders/hacks.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

@@ -1,0 +1,81 @@
+{
+  "implementation_name": {
+    "type": "string",
+    "value": "cpython"
+  },
+  "implementation_version": {
+    "type": "version",
+    "value": {
+      "dev": null,
+      "epoch": 0,
+      "local": null,
+      "post": null,
+      "pre": null,
+      "release": [
+        3,
+        8,
+        2
+      ],
+      "str": "3.8.2"
+    }
+  },
+  "os_name": {
+    "type": "string",
+    "value": "posix"
+  },
+  "platform_machine": {
+    "type": "string",
+    "value": "x86_64"
+  },
+  "platform_python_implementation": {
+    "type": "string",
+    "value": "CPython"
+  },
+  "platform_release": {
+    "type": "platform_release",
+    "value": ""
+  },
+  "platform_system": {
+    "type": "string",
+    "value": "Linux"
+  },
+  "platform_version": {
+    "type": "string",
+    "value": ""
+  },
+  "python_full_version": {
+    "type": "version",
+    "value": {
+      "dev": null,
+      "epoch": 0,
+      "local": null,
+      "post": null,
+      "pre": null,
+      "release": [
+        3,
+        8,
+        2
+      ],
+      "str": "3.8.2"
+    }
+  },
+  "python_version": {
+    "type": "version",
+    "value": {
+      "dev": null,
+      "epoch": 0,
+      "local": null,
+      "post": null,
+      "pre": null,
+      "release": [
+        3,
+        8
+      ],
+      "str": "3.8"
+    }
+  },
+  "sys_platform": {
+    "type": "string",
+    "value": "linux"
+  }
+}
