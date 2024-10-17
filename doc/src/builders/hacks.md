@@ -51,8 +51,8 @@ Rust has it's own package manager, Cargo, that expects to be able to download de
 One way to deal with that is to use [rustPlatform.importCargoLock](https://nixos.org/manual/nixpkgs/stable/#vendoring-of-dependencies).
 
 This mechanism uses IFD (import-from-derivation) on non-local packages.
-For background as to why IFD should be avoided see:
-- https://fzakaria.com/2020/10/20/nix-parallelism-import-from-derivation.html
+For background as to why IFD should be avoided see
+- [fzakaria - Nix parallelism & Import From Derivation](https://fzakaria.com/2020/10/20/nix-parallelism-import-from-derivation.html).
 
 To adapt the `cryptography` Python package into creating a Rust vendor directory, and use it for building:
 ``` nix
