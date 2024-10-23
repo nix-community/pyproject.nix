@@ -75,6 +75,7 @@ let
           ];
 
           env.NIX_PYPROJECT_DEPS = lib.concatStringsSep ":" (pkgsFinal.resolveVirtualEnv spec);
+          env.dontMoveLib64 = true;
 
           buildInputs = pkgsFinal.resolveVirtualEnv spec;
         };
