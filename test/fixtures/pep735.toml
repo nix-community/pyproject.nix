@@ -1,0 +1,14 @@
+[project]
+name = "pep735"
+version = "0.1.0"
+description = "Testing dependency groups"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = []
+
+[dependency-groups]
+group-a = ["urllib3"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

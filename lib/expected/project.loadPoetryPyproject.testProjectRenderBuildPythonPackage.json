@@ -214,6 +214,9 @@
       }
     ]
   },
+  "passthru": {
+    "dependency-groups": {}
+  },
   "pname": "poetry",
   "pyproject": true,
   "version": "1.4.2"

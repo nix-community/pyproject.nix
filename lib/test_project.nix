@@ -57,6 +57,7 @@ lib.fix (self: {
           meta = {
             description = "Powerful data structures for data analysis, time series, and statistics";
           };
+          passthru.dependency-groups = { };
           optional-dependencies = lib.mapAttrs (_: getPkgs') {
             all = [
               "beautifulsoup4"
@@ -178,7 +179,7 @@ lib.fix (self: {
   };
 
   loadUVPyproject = {
-    testUvExtras = {
+    testUvGroups = {
       expr =
         let
           project = loadUVPyproject {
@@ -205,13 +206,14 @@ lib.fix (self: {
             version = "1.25.0";
           }
         ];
+        optional-dependencies = { };
         dependencies = [ ];
         disabled = true;
         meta = {
           description = "Add your description here";
         };
-        optional-dependencies = {
-          dev-dependencies = [
+        passthru.dependency-groups = {
+          dev = [
             {
               pname = "coverage";
               version = "7.5.3";
@@ -255,6 +257,7 @@ lib.fix (self: {
           disabled = false;
           src = true;
           pyproject = true;
+          passthru.dependency-groups = { };
           optional-dependencies = lib.mapAttrs (_: getPkgs') {
             all = [ "pdm" ];
             cookiecutter = [ "cookiecutter" ];

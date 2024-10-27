@@ -64,6 +64,8 @@ in
       pythonPackages ? python.pkgs,
       # Python extras (optionals) to enable
       extras ? [ ],
+      # PEP-735 dependency groups to enable.
+      groups ? [ ],
       # Extra withPackages function
       extraPackages ? _ps: [ ],
       # PEP-508 environment
@@ -76,6 +78,7 @@ in
     ps:
     getDependencies filteredDeps.dependencies
     ++ concatMap (extra: getDependencies filteredDeps.extras.${extra}) extras
+    ++ concatMap (group: getDependencies filteredDeps.groups.${group}) groups
     ++ getDependencies filteredDeps.build-systems
     ++ extraPackages ps
     ++ (
@@ -112,6 +115,8 @@ in
       pythonPackages ? python.pkgs,
       # Python extras (optional-dependencies) to enable.
       extras ? [ ],
+      # PEP-735 dependency groups to enable.
+      groups ? [ ],
       # Map a Python extras group name to a Nix attribute set like:
       # { dev = "checkInputs"; }
       # This is intended to be used with optionals such as test dependencies that you might
@@ -135,6 +140,8 @@ in
 
       optional-dependencies = lib.mapAttrs (_group: getDependencies) project.dependencies.extras;
 
+      dependency-groups = lib.mapAttrs (_group: getDependencies) project.dependencies.groups;
+
     in
     foldl'
       (
@@ -152,8 +159,12 @@ in
           pyproject = format == "pyproject";
           dependencies =
             getDependencies filteredDeps.dependencies
-            ++ concatMap (group: optional-dependencies.${group} or [ ]) extras;
+            ++ concatMap (group: optional-dependencies.${group} or [ ]) extras
+            ++ concatMap (group: dependency-groups.${group} or [ ]) groups;
           inherit optional-dependencies;
+          passthru = {
+            inherit dependency-groups;
+          };
           meta = renderers.meta { inherit project; };
         }
         // optionalAttrs (format != "pyproject") { inherit format; }

@@ -235,6 +235,9 @@ lib.fix (
         _: group: map parseDependency (normalizeDependendenciesToList group.dependencies)
       ) pyproject.tool.poetry.group or { };
       build-systems = pep518.parseBuildSystems pyproject;
+
+      # PEP-735 dependency groups
+      groups = { };
     };
 
     /*

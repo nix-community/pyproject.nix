@@ -32,6 +32,17 @@ let
       ];
     };
 
+    pep735 = {
+      project = pyproject.lib.project.loadPyproject { pyproject = fixtures."pep735.toml"; };
+      src = pkgs.runCommand "source" { } ''
+        mkdir -p $out/src/pep735
+        touch $out/src/pep735/__init__.py $out/README.md
+        cp ${./fixtures/pep735.toml} $out/pyproject.toml
+      '';
+      groups = [ "group-a" ];
+      withPackages.imports = [ "urllib3" ];
+    };
+
     poetry-1_5_1 = {
       project = pyproject.lib.project.loadPoetryPyproject { pyproject = fixtures."poetry-1_5_1.toml"; };
 
@@ -75,6 +86,7 @@ lib.mapAttrs' (n: project: {
       withFunc = pyproject.lib.renderers.withPackages {
         inherit python;
         inherit (project) project;
+        groups = project.groups or [ ];
       };
       pythonEnv = python.withPackages withFunc;
     in
@@ -93,6 +105,7 @@ lib.mapAttrs' (n: project: {
       attrs = pyproject.lib.renderers.buildPythonPackage {
         inherit python;
         inherit (project) project;
+        groups = project.groups or [ ];
       };
     in
     python.pkgs.buildPythonPackage (
