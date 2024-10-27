@@ -1,0 +1,136 @@
+{
+  "build-systems": [
+    {
+      "conditions": [],
+      "extras": [],
+      "markers": null,
+      "name": "hatchling",
+      "url": null
+    }
+  ],
+  "dependencies": [],
+  "extras": {},
+  "groups": {
+    "all": [
+      {
+        "conditions": [],
+        "extras": [],
+        "markers": null,
+        "name": "foo",
+        "url": null
+      },
+      {
+        "conditions": [],
+        "extras": [],
+        "markers": null,
+        "name": "foo",
+        "url": null
+      },
+      {
+        "conditions": [
+          {
+            "op": ">",
+            "version": {
+              "dev": null,
+              "epoch": 0,
+              "local": null,
+              "post": null,
+              "pre": null,
+              "release": [
+                1,
+                0
+              ],
+              "str": "1.0"
+            }
+          }
+        ],
+        "extras": [],
+        "markers": null,
+        "name": "foo",
+        "url": null
+      },
+      {
+        "conditions": [
+          {
+            "op": "<",
+            "version": {
+              "dev": null,
+              "epoch": 0,
+              "local": null,
+              "post": null,
+              "pre": null,
+              "release": [
+                1,
+                0
+              ],
+              "str": "1.0"
+            }
+          }
+        ],
+        "extras": [],
+        "markers": null,
+        "name": "foo",
+        "url": null
+      }
+    ],
+    "group-a": [
+      {
+        "conditions": [],
+        "extras": [],
+        "markers": null,
+        "name": "foo",
+        "url": null
+      }
+    ],
+    "group-b": [
+      {
+        "conditions": [
+          {
+            "op": ">",
+            "version": {
+              "dev": null,
+              "epoch": 0,
+              "local": null,
+              "post": null,
+              "pre": null,
+              "release": [
+                1,
+                0
+              ],
+              "str": "1.0"
+            }
+          }
+        ],
+        "extras": [],
+        "markers": null,
+        "name": "foo",
+        "url": null
+      }
+    ],
+    "group-c": [
+      {
+        "conditions": [
+          {
+            "op": "<",
+            "version": {
+              "dev": null,
+              "epoch": 0,
+              "local": null,
+              "post": null,
+              "pre": null,
+              "release": [
+                1,
+                0
+              ],
+              "str": "1.0"
+            }
+          }
+        ],
+        "extras": [],
+        "markers": null,
+        "name": "foo",
+        "url": null
+      }
+    ]
+  }
+}

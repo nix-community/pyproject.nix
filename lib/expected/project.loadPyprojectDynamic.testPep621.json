@@ -391,6 +391,9 @@
       }
     ]
   },
+  "passthru": {
+    "dependency-groups": {}
+  },
   "pname": "pandas",
   "pyproject": true
 }

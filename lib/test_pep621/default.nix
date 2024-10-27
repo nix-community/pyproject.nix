@@ -36,6 +36,11 @@ fix (_self: {
       expr = parseDependencies { pyproject = fixtures."pdm.toml"; };
       expected = expected."parsedependencies-pdm.nix";
     };
+
+    testPep735 = {
+      expr = parseDependencies { pyproject = fixtures."pep735.toml"; };
+      expected = lib.importJSON ./expected/pep735.json;
+    };
   };
 
   parseRequiresPython = {

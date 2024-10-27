@@ -1,0 +1,17 @@
+[project]
+name = "uv-fixture"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = []
+
+[dependency-groups]
+group-a = ["foo"]
+group-b = ["foo>1.0"]
+group-c = ["foo<1.0"]
+all = ["foo", {include-group = "group-a"}, {include-group = "group-b"}, {include-group = "group-c"}]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

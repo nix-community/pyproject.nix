@@ -92,6 +92,7 @@ rec {
           license = lib.licenses.mit;
           mainProgram = "pdm";
         };
+        passthru.dependency-groups = { };
         build-system = [ "pdm-backend" ];
         pname = "pdm";
         optional-dependencies = {
@@ -195,6 +196,7 @@ rec {
         };
         build-system = [ "pdm-backend" ];
         pname = "pdm";
+        passthru.dependency-groups = { };
         optional-dependencies = {
           all = [ "pdm" ];
           cookiecutter = [ "cookiecutter" ];

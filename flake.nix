@@ -115,7 +115,7 @@
           pkgs = nixpkgs.legacyPackages.${system};
         in
         (lib.mapAttrs' (name: drv: lib.nameValuePair "nixpkgs-${name}" drv) (
-          pkgs.callPackages ./test { pyproject = import ./default.nix { inherit lib; }; }
+          pkgs.callPackages ./test { pyproject = self; }
         ))
         // (lib.mapAttrs' (name: drv: lib.nameValuePair "build-${name}" drv) (
           pkgs.callPackages ./build/checks { pyproject-nix = self; }

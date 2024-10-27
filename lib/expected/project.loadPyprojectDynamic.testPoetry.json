@@ -48,7 +48,7 @@
     },
     {
       "pname": "keyring",
-      "version": "25.3.0"
+      "version": "25.2.1"
     },
     {
       "pname": "lockfile",
@@ -206,13 +206,16 @@
       },
       {
         "pname": "types-requests",
-        "version": "2.32.0.20240712"
+        "version": "2.32.0.20240914"
       },
       {
         "pname": "typing-extensions",
         "version": "4.12.2"
       }
     ]
+  },
+  "passthru": {
+    "dependency-groups": {}
   },
   "pname": "poetry",
   "pyproject": true,
