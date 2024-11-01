@@ -11,6 +11,9 @@ dependencies = [
 [project.optional-dependencies]
 toml = ["tomli-w"]
 
+[dependency-groups]
+round = ["wheel"]
+
 [project.scripts]
 hello = "myapp:hello"
 

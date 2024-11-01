@@ -150,12 +150,18 @@ in
       );
 
       venv = testSet.mkVirtualEnv "render-mkderivation-env" {
-        myapp = [ "toml" ];
+        myapp = [
+          "toml" # Extra
+          "round" # PEP-735 dependency group
+        ];
       };
     in
     pkgs.runCommand "render-mkderivation-test" { nativeBuildInputs = [ venv ]; } ''
       # Assert that extra was enabled
       python -c "import tomli_w"
+
+      # Assert that dependency group was enabled
+      python -c "import wheel"
 
       # Script from myapp
       hello
