@@ -20,20 +20,14 @@ let
     set:
     let
       resolveNonCyclic' = resolveNonCyclic memoNames set;
+
+      # Implement fallback behaviour in case of empty build-system
+      fallbackSystems = map (name: set.${name}) (resolveNonCyclic' {
+        setuptools = [ ];
+        wheel = [ ];
+      });
     in
-    spec:
-    map (name: set.${name}) (
-      resolveNonCyclic' (
-        if spec != { } then
-          spec
-        else
-          {
-            # Implement fallback behaviour in case of empty build-system
-            setuptools = [ ];
-            wheel = [ ];
-          }
-      )
-    );
+    spec: if spec != { } then map (name: set.${name}) (resolveNonCyclic' spec) else fallbackSystems;
 
   mkResolveVirtualEnv = set: spec: map (name: set.${name}) (resolveCyclic set spec);
 
