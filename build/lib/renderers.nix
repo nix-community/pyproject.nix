@@ -56,6 +56,7 @@ in
       passthru = {
         dependencies = mkSpec filteredDeps.dependencies;
         optional-dependencies = mapAttrs (_: mkSpec) filteredDeps.extras;
+        dependency-groups = mapAttrs (_: mkSpec) filteredDeps.groups;
       };
 
       nativeBuildInputs = [
@@ -125,41 +126,46 @@ in
       # Synthetic pyproject.toml
       #
       # We don't use the provided build-system to build an editable package, we use hatchling.
-      pyproject = {
-        # PEP-621 project table
-        project =
-          {
-            # Both name and version are required.
-            inherit (project') name version;
-          }
-          // optionalAttrs (project' ? dependencies) {
-            inherit (project') dependencies;
-          }
-          // optionalAttrs (project' ? optional-dependencies) {
-            inherit (project') optional-dependencies;
-          }
-          // optionalAttrs (project' ? scripts) {
-            inherit (project') scripts;
-          }
-          // optionalAttrs (project' ? gui-scripts) {
-            inherit (project') gui-scripts;
-          }
-          // optionalAttrs (project' ? entry-points) {
-            inherit (project') entry-points;
+      pyproject =
+        {
+          # PEP-621 project table
+          project =
+            {
+              # Both name and version are required.
+              inherit (project') name version;
+            }
+            // optionalAttrs (project' ? dependencies) {
+              inherit (project') dependencies;
+            }
+            // optionalAttrs (project' ? optional-dependencies) {
+              inherit (project') optional-dependencies;
+            }
+            // optionalAttrs (project' ? scripts) {
+              inherit (project') scripts;
+            }
+            // optionalAttrs (project' ? gui-scripts) {
+              inherit (project') gui-scripts;
+            }
+            // optionalAttrs (project' ? entry-points) {
+              inherit (project') entry-points;
+            };
+
+          # Allow empty package
+          tool.hatch.build.targets.wheel.bypass-selection = true;
+
+          # Include our editable pointer file in build
+          tool.hatch.build.targets.wheel.force-include."_${pname}.pth" = "_${pname}.pth";
+
+          # Build editable package using hatchling
+          build-system = {
+            requires = [ "hatchling" ];
+            build-backend = "hatchling.build";
           };
-
-        # Allow empty package
-        tool.hatch.build.targets.wheel.bypass-selection = true;
-
-        # Include our editable pointer file in build
-        tool.hatch.build.targets.wheel.force-include."_${pname}.pth" = "_${pname}.pth";
-
-        # Build editable package using hatchling
-        build-system = {
-          requires = [ "hatchling" ];
-          build-backend = "hatchling.build";
+        }
+        // optionalAttrs (project.pyproject ? dependency-groups) {
+          # PEP-735 dependency groups
+          inherit (project.pyproject) dependency-groups;
         };
-      };
     in
     {
       inherit pname;
@@ -172,6 +178,7 @@ in
           )
         );
         optional-dependencies = mapAttrs (_: mkSpec) filteredDeps.extras;
+        dependency-groups = mapAttrs (_: mkSpec) filteredDeps.groups;
       };
 
       # Convert created JSON format pyproject.toml into TOML and include a generated pth file

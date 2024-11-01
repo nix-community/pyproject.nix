@@ -8,6 +8,7 @@ let
     genericClosure
     match
     genAttrs
+    throwIf
     ;
 
 in
@@ -30,16 +31,21 @@ in
         let
           pkg = set.${name};
           dependencies = pkg.passthru.dependencies or { };
-          optional-dependencies = pkg.passthru.optional-dependencies or { };
         in
         [ name ]
         ++ concatMap (name: recurse name dependencies.${name}) (attrNames dependencies)
         ++ concatMap (
-          extra:
+          name':
           let
-            extra' = optional-dependencies.${extra};
+            extra' = pkg.passthru.optional-dependencies.${name'} or { };
+            group' = pkg.passthru.dependency-groups.${name'} or { };
           in
-          concatMap (name: recurse name extra'.${name}) (attrNames extra')
+          throwIf (extra' == { } && group' == { })
+            "Extra/group name '${name'}' does not match either extra or dependency group"
+            concatMap
+            (name: recurse name extra'.${name})
+            (attrNames extra')
+          ++ concatMap (name: recurse name group'.${name}) (attrNames group')
         ) extras;
 
       # Memoise known build systems with no extras enabled for better performance
@@ -74,16 +80,25 @@ in
           let
             m = match "(.+)@(.*)" key;
           in
-          # We're looking for a package with extra
+          # We're looking for a package with extra or dependency group
           if m != null then
             (
               let
                 pkg = set.${elemAt m 0};
-                dependencies = pkg.passthru.optional-dependencies.${elemAt m 1};
+                name' = elemAt m 1;
+                extras' = pkg.passthru.optional-dependencies.${name'} or { };
+                groups' = pkg.passthru.dependency-groups.${name'} or { };
               in
-              concatMap (name: [ (mkKey name) ] ++ map (extra: mkKey "${name}@${extra}") dependencies.${name}) (
-                attrNames dependencies
-              )
+              throwIf (extras' == { } && groups' == { })
+                "Extra/group name '${name'}' does not match either extra or dependency group"
+                (
+                  concatMap (name: [ (mkKey name) ] ++ map (extra: mkKey "${name}@${extra}") extras'.${name}) (
+                    attrNames extras'
+                  )
+                  ++ concatMap (name: [ (mkKey name) ] ++ map (group: mkKey "${name}@${group}") groups'.${name}) (
+                    attrNames groups'
+                  )
+                )
             )
           # Root package with no extra
           else

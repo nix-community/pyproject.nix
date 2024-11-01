@@ -69,6 +69,7 @@ in
             "wheel"
           ];
           passthru = {
+            dependency-groups = { };
             dependencies = {
               numpy = [ ];
               python-dateutil = [ ];
@@ -221,6 +222,7 @@ in
             "pdm-backend"
           ];
           passthru = {
+            dependency-groups = { };
             dependencies = {
               blinker = [ ];
               cachecontrol = [ "filecache" ];
@@ -293,6 +295,7 @@ in
           passthru = {
             dependencies = { };
             optional-dependencies = { };
+            dependency-groups = { };
           };
           pname = "uv-fixture";
           version = "0.1.0";
