@@ -60,10 +60,11 @@ def write_bin_dir(bin_dir: Path, bin_out: Path) -> None:
                     # Check if the destination file already exists
                     # If it does compare the contents of the files, modulo shebang
                     if bin_file_out.exists():
-                        with open(bin_file_out, "wb") as f_exist:
-                            f_exist.read(len(dep_shebang))
+                        os.chmod(bin_file_out, 0o755)
+                        with open(bin_file_out, "rb") as f_exist:
+                            f_exist.read(len(out_shebang)) # it had been written previously
                             if not compare_fds(f_exist, f_in):
-                                raise FileExistsError(f"File '{bin_file_out}' ")
+                                raise FileExistsError(f"File '{bin_file_out}'. Trying to replace with different contents from {bin_file} ")
 
                     with open(bin_file_out, "wb") as f_out:
                         f_out.write(out_shebang)
