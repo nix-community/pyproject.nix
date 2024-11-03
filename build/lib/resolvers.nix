@@ -86,20 +86,31 @@ in
               let
                 pkg = set.${elemAt m 0};
                 name' = elemAt m 1;
-                extras' = pkg.passthru.optional-dependencies.${name'} or { };
-                groups' = pkg.passthru.dependency-groups.${name'} or { };
+                extras' = pkg.passthru.optional-dependencies.${name'} or null;
+                groups' = pkg.passthru.dependency-groups.${name'} or null;
               in
-              throwIf (extras' == { } && groups' == { })
+              throwIf (extras' == null && groups' == null)
                 "Extra/group name '${name'}' does not match either extra or dependency group"
                 (
-                  concatMap (name: [ (mkKey name) ] ++ map (extra: mkKey "${name}@${extra}") extras'.${name}) (
-                    attrNames extras'
+                  (
+                    if extras' != null then
+                      concatMap (name: [ (mkKey name) ] ++ map (extra: mkKey "${name}@${extra}") extras'.${name}) (
+                        attrNames extras'
+                      )
+                    else
+                      [ ]
                   )
-                  ++ concatMap (name: [ (mkKey name) ] ++ map (group: mkKey "${name}@${group}") groups'.${name}) (
-                    attrNames groups'
+                  ++ (
+                    if groups' != null then
+                      concatMap (name: [ (mkKey name) ] ++ map (group: mkKey "${name}@${group}") groups'.${name}) (
+                        attrNames groups'
+                      )
+                    else
+                      [ ]
                   )
                 )
             )
+
           # Root package with no extra
           else
             (
