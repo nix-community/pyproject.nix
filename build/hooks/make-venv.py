@@ -196,8 +196,13 @@ def link_dependency(dep_root: Path, out_root: Path) -> None:
                 shutil.copy(path, out_path, follow_symlinks=False)
             elif stat.S_ISREG(st_mode):
                 if out_path.exists():
-                    raise ValueError(f"Output '{out_path}' path already exists")
+                    msg = f"Linking '{path}' -> '{out_path}' failed, path already exists"
+                    if out_path.is_symlink():
+                        msg += f" resolving to '{out_path.resolve()}'"
+                    raise FileExistsError(msg)
+
                 os.symlink(path, out_path)
+
             elif stat.S_ISDIR(st_mode):
                 if out_path.exists():
                     _upgrade_existing_dir(path, out_path)
