@@ -2,13 +2,13 @@
   "build-system": [
     {
       "pname": "poetry-core",
-      "version": "1.9.0"
+      "version": "1.9.1"
     }
   ],
   "dependencies": [
     {
       "pname": "build",
-      "version": "1.2.1"
+      "version": "1.2.2"
     },
     {
       "pname": "cachecontrol",
@@ -28,7 +28,7 @@
     },
     {
       "pname": "filelock",
-      "version": "3.15.1"
+      "version": "3.16.1"
     },
     {
       "pname": "html5lib",
@@ -36,7 +36,7 @@
     },
     {
       "pname": "importlib-metadata",
-      "version": "7.1.0"
+      "version": "8.5.0"
     },
     {
       "pname": "installer",
@@ -44,7 +44,7 @@
     },
     {
       "pname": "jsonschema",
-      "version": "4.22.0"
+      "version": "4.23.0"
     },
     {
       "pname": "keyring",
@@ -68,11 +68,11 @@
     },
     {
       "pname": "platformdirs",
-      "version": "4.2.2"
+      "version": "4.3.6"
     },
     {
       "pname": "poetry-core",
-      "version": "1.9.0"
+      "version": "1.9.1"
     },
     {
       "pname": "poetry-plugin-export",
@@ -80,11 +80,11 @@
     },
     {
       "pname": "pyproject-hooks",
-      "version": "1.0.0"
+      "version": "1.2.0"
     },
     {
       "pname": "python3",
-      "version": "3.12.5"
+      "version": "3.12.7"
     },
     {
       "pname": "requests",
@@ -104,19 +104,19 @@
     },
     {
       "pname": "tomlkit",
-      "version": "0.12.5"
+      "version": "0.13.2"
     },
     {
       "pname": "trove-classifiers",
-      "version": "2024.7.2"
+      "version": "2024.9.12"
     },
     {
       "pname": "urllib3",
-      "version": "2.2.2"
+      "version": "2.2.3"
     },
     {
       "pname": "virtualenv",
-      "version": "20.26.2"
+      "version": "20.26.6"
     },
     {
       "pname": "pre-commit",
@@ -156,11 +156,11 @@
       },
       {
         "pname": "deepdiff",
-        "version": "7.0.1"
+        "version": "8.0.1"
       },
       {
         "pname": "deepdiff",
-        "version": "7.0.1"
+        "version": "8.0.1"
       },
       {
         "pname": "httpretty",
@@ -168,7 +168,7 @@
       },
       {
         "pname": "pytest",
-        "version": "8.3.2"
+        "version": "8.3.3"
       },
       {
         "pname": "pytest-cov",
@@ -188,17 +188,17 @@
       },
       {
         "pname": "zipp",
-        "version": "3.19.2"
+        "version": "3.20.2"
       }
     ],
     "typing": [
       {
         "pname": "mypy",
-        "version": "1.10.1"
+        "version": "1.11.2"
       },
       {
         "pname": "types-html5lib",
-        "version": "1.1.11.20240806"
+        "version": "1.1.11.20241018"
       },
       {
         "pname": "types-jsonschema",
@@ -206,7 +206,7 @@
       },
       {
         "pname": "types-requests",
-        "version": "2.32.0.20240914"
+        "version": "2.32.0.20241016"
       },
       {
         "pname": "typing-extensions",

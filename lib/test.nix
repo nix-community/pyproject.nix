@@ -72,6 +72,11 @@ let
               version = "3.0.10";
             };
 
+            coverage = {
+              pname = "coverage";
+              version = "7.5.3";
+            };
+
             oldest-supported-numpy = {
               pname = "oldest-supported-numpy";
               version = "1.0.0";
