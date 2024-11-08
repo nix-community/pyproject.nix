@@ -26,6 +26,7 @@ let
     isAttrs
     tryEval
     deepSeq
+    splitVersion
     ;
   inherit (lib)
     stringToCharacters
@@ -670,13 +671,19 @@ in
           "linux"
         else if stdenv.isDarwin then
           "darwin"
+        else if stdenv.isFreeBSD then
+          "freebsd${head (splitVersion stdenv.cc.libc.version)}"
         else
           throw "Unsupported platform";
       platform_machine =
         if targetPlatform.isDarwin then
           targetPlatform.darwinArch
+        else if targetPlatform.isLinux then
+          pep599.manyLinuxTargetMachines.${targetPlatform.parsed.cpu.name} or targetPlatform.parsed.cpu.name
+        else if targetPlatform.isFreeBSD then
+          (if targetPlatform.isx86_64 then "amd64" else throw "Unhandled FreeBSD architecture")
         else
-          pep599.manyLinuxTargetMachines.${targetPlatform.parsed.cpu.name} or targetPlatform.parsed.cpu.name;
+          throw "Unsupported platform";
       platform_python_implementation =
         if impl == "cpython" then
           "CPython"
@@ -693,6 +700,8 @@ in
           "Linux"
         else if stdenv.isDarwin then
           "Darwin"
+        else if stdenv.isFreeBSD then
+          "FreeBSD"
         else
           throw "Unsupported platform";
       platform_version = ""; # Field not reproducible
