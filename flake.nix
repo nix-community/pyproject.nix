@@ -35,12 +35,23 @@
       inherit (nixpkgs) lib;
 
     in
-    # treefmtEval = forAllSystems (pkgs: treefmt-nix.lib.evalModule pkgs ./dev/treefmt.nix);
     {
       githubActions = nix-github-actions.lib.mkGithubMatrix {
-        checks = {
-          inherit (self.checks) x86_64-linux;
-        };
+        checks =
+          let
+            strip = lib.flip removeAttrs [
+              # No need to run formatter check on multiple platforms
+              "formatter"
+
+              # Takes very long to build on Darwin and should have been adequately tested on Linux only.
+              "build-make-venv-cross"
+            ];
+
+          in
+          {
+            inherit (self.checks) x86_64-linux;
+            aarch64-darwin = strip self.checks.aarch64-darwin;
+          };
       };
 
       # Note: This build infrastructure is experimental.

@@ -116,6 +116,7 @@ in
           "pyproject-hook"
           "python3"
           "stdenv-linux"
+          "stdenv-darwin"
         ]
       ) pythonSetDrvs;
 
