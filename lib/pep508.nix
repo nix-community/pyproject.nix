@@ -681,7 +681,14 @@ in
         else if targetPlatform.isLinux then
           pep599.manyLinuxTargetMachines.${targetPlatform.parsed.cpu.name} or targetPlatform.parsed.cpu.name
         else if targetPlatform.isFreeBSD then
-          (if targetPlatform.isx86_64 then "amd64" else throw "Unhandled FreeBSD architecture")
+          (
+            if targetPlatform.isx86_64 then
+              "amd64"
+            else if targetPlatform.isAarch64 then
+              "arm64"
+            else
+              throw "Unhandled FreeBSD architecture"
+          )
         else
           throw "Unsupported platform";
       platform_python_implementation =
