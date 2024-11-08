@@ -98,6 +98,7 @@
                 (pkgs.python3.withPackages (_ps: [ ]))
                 pkgs.hivemind
                 pkgs.reflex
+                self.formatter.${system}
               ] ++ self.packages.${system}.doc.nativeBuildInputs;
             };
 
@@ -126,14 +127,18 @@
           }
         ))
         // {
-          formatter = pkgs.writeShellScript "fmt-check" ''
-            set -euo pipefail
-            find "$1" -name '*.nix' | while read f; do
-              ${lib.getExe pkgs.deadnix} --fail "$f"
-              ${lib.getExe pkgs.statix} check "$f"
-              ${lib.getExe pkgs.nixpkgs-fmt} --check "$f"
-            done
-          '';
+          formatter =
+            pkgs.runCommand "fmt-check"
+              {
+                nativeBuildInputs = [ self.formatter.${system} ];
+              }
+              ''
+                cp -r ${self} $(stripHash "${self}")
+                chmod -R +w .
+                cd source
+                treefmt --fail-on-change
+                touch $out
+              '';
         }
       );
 
