@@ -19,7 +19,6 @@
     "lix-unit": {
       "inputs": {
         "lix": "lix",
-        "mdbook-nixdoc": "mdbook-nixdoc",
         "nix-github-actions": [
           "nix-github-actions"
         ],
@@ -31,41 +30,16 @@
         ]
       },
       "locked": {
-        "lastModified": 1730863251,
-        "narHash": "sha256-NoImlilaWPAGWz/Ja0uXcagQ8UK61KEev2jFDM+vgzQ=",
+        "lastModified": 1731132652,
+        "narHash": "sha256-wf45evw+BvDccVrBuFfFOZjVxh6ZI/nS7S6Lq8mv/No=",
         "owner": "adisbladis",
         "repo": "lix-unit",
-        "rev": "2893fe1a7e870a3da8a04be89ca494c1ff9c3e82",
+        "rev": "6202da22614dc0fb849e34d761621d6b1a3c110e",
         "type": "github"
       },
       "original": {
         "owner": "adisbladis",
         "repo": "lix-unit",
-        "type": "github"
-      }
-    },
-    "mdbook-nixdoc": {
-      "inputs": {
-        "nix-github-actions": [
-          "lix-unit",
-          "nix-github-actions"
-        ],
-        "nixpkgs": [
-          "lix-unit",
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1708395692,
-        "narHash": "sha256-smf0VmxGbjJDZqKvxxG3ZVqubgbVwAWG26wPo+BT/A0=",
-        "owner": "adisbladis",
-        "repo": "mdbook-nixdoc",
-        "rev": "d6a71b114b9221c0b4f20d31b81766d072cc26be",
-        "type": "github"
-      },
-      "original": {
-        "owner": "adisbladis",
-        "repo": "mdbook-nixdoc",
         "type": "github"
       }
     },
