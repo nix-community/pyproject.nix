@@ -28,12 +28,14 @@ let
     deepSeq
     splitVersion
     concatStringsSep
+    tail
     ;
   inherit (lib)
     stringToCharacters
     sublist
     hasInfix
     take
+    toInt
     ;
   inherit (import ./util.nix { inherit lib; }) splitComma stripStr;
 
@@ -711,10 +713,19 @@ in
       # In theory this could be set to linuxHeaders.version on Linux, but that's
       # not correct
       platform_release =
-        if isFreeBSD then
+        if isLinux then
+          stdenv.cc.libc.linuxHeaders.version
+        else if isDarwin then
+          (
+            let
+              tokens = splitVersion targetPlatform.darwinSdkVersion;
+            in
+            concatStringsSep "." ([ (toString ((toInt (head tokens)) + 9)) ] ++ tail tokens)
+          )
+        else if isFreeBSD then
           "${concatStringsSep "." (take 2 (splitVersion stdenv.cc.libc.version))}-RELEASE"
         else
-          "";
+          throw "Unsupported platform";
       platform_system =
         if isLinux then
           "Linux"

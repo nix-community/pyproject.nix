@@ -27,6 +27,7 @@ let
           implementation ? "cpython",
           isLinux ? false,
           isDarwin ? false,
+          linuxVersion ? "6.10",
           system,
         }:
         {
@@ -154,6 +155,7 @@ let
                 {
                   libc.pname = "glibc";
                   libc.version = "2.37";
+                  libc.linuxHeaders.version = linuxVersion;
                 }
               else if isDarwin then
                 {

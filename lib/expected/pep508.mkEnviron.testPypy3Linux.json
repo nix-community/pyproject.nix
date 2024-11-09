@@ -33,7 +33,18 @@
   },
   "platform_release": {
     "type": "platform_release",
-    "value": ""
+    "value": {
+      "dev": null,
+      "epoch": 0,
+      "local": null,
+      "post": null,
+      "pre": null,
+      "release": [
+        6,
+        10
+      ],
+      "str": "6.10"
+    }
   },
   "platform_system": {
     "type": "string",
