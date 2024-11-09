@@ -5,13 +5,6 @@
     nix-github-actions.url = "github:nix-community/nix-github-actions";
     nix-github-actions.inputs.nixpkgs.follows = "nixpkgs";
 
-    lix-unit = {
-      url = "github:adisbladis/lix-unit";
-      inputs.nix-github-actions.follows = "nix-github-actions";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.treefmt-nix.follows = "treefmt-nix";
-    };
-
     treefmt-nix.url = "github:numtide/treefmt-nix";
     treefmt-nix.inputs.nixpkgs.follows = "nixpkgs";
   };
@@ -22,7 +15,6 @@
       nixpkgs,
       nix-github-actions,
       treefmt-nix,
-      lix-unit,
       ...
     }:
     let
@@ -110,7 +102,30 @@
         in
         {
           nix = mkShell' { inherit (pkgs) nix-unit; };
-          lix = mkShell' { nix-unit = lix-unit.packages.${system}.default; };
+
+          lix = mkShell' {
+            nix-unit =
+              let
+                lix = pkgs.lixVersions.latest;
+              in
+              (pkgs.nix-unit.override {
+                # Hacky overriding :)
+                nixVersions = lib.mapAttrs (_n: _v: lix) pkgs.nixVersions;
+                # nix = pkgs.lixVersions.latest;
+              }).overrideAttrs
+                (_old: {
+                  pname = "lix-unit";
+                  name = "lix-unit-${lix.version}";
+                  inherit (lix) version;
+                  src = pkgs.fetchFromGitHub {
+                    owner = "adisbladis";
+                    repo = "lix-unit";
+                    rev = "6202da22614dc0fb849e34d761621d6b1a3c110e";
+                    hash = "sha256-wf45evw+BvDccVrBuFfFOZjVxh6ZI/nS7S6Lq8mv/No=";
+                  };
+                });
+          };
+
           default = self.devShells.${system}.nix;
         }
       );
