@@ -4,9 +4,6 @@
 
     nix-github-actions.url = "github:nix-community/nix-github-actions";
     nix-github-actions.inputs.nixpkgs.follows = "nixpkgs";
-
-    treefmt-nix.url = "github:numtide/treefmt-nix";
-    treefmt-nix.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs =
@@ -14,7 +11,6 @@
       self,
       nixpkgs,
       nix-github-actions,
-      treefmt-nix,
       ...
     }:
     let
@@ -167,7 +163,7 @@
         let
           pkgs = nixpkgs.legacyPackages.${system};
         in
-        (treefmt-nix.lib.evalModule pkgs ./dev/treefmt.nix).config.build.wrapper
+        pkgs.callPackage ./treefmt.nix { }
       );
 
       packages = forAllSystems (
