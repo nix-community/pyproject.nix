@@ -27,11 +27,13 @@ let
     tryEval
     deepSeq
     splitVersion
+    concatStringsSep
     ;
   inherit (lib)
     stringToCharacters
     sublist
     hasInfix
+    take
     ;
   inherit (import ./util.nix { inherit lib; }) splitComma stripStr;
 
@@ -662,29 +664,36 @@ in
     let
       inherit (python) stdenv;
       inherit (stdenv) targetPlatform;
+      inherit (targetPlatform)
+        isLinux
+        isDarwin
+        isFreeBSD
+        isAarch64
+        isx86_64
+        ;
       impl = python.passthru.implementation;
     in
     mapAttrs (name: markerFields.${name}) {
       os_name = if python.pname == "jython" then "java" else "posix";
       sys_platform =
-        if stdenv.isLinux then
+        if isLinux then
           "linux"
-        else if stdenv.isDarwin then
+        else if isDarwin then
           "darwin"
-        else if stdenv.isFreeBSD then
+        else if isFreeBSD then
           "freebsd${head (splitVersion stdenv.cc.libc.version)}"
         else
           throw "Unsupported platform";
       platform_machine =
-        if targetPlatform.isDarwin then
+        if isDarwin then
           targetPlatform.darwinArch
-        else if targetPlatform.isLinux then
+        else if isLinux then
           pep599.manyLinuxTargetMachines.${targetPlatform.parsed.cpu.name} or targetPlatform.parsed.cpu.name
-        else if targetPlatform.isFreeBSD then
+        else if isFreeBSD then
           (
-            if targetPlatform.isx86_64 then
+            if isx86_64 then
               "amd64"
-            else if targetPlatform.isAarch64 then
+            else if isAarch64 then
               "arm64"
             else
               throw "Unhandled FreeBSD architecture"
@@ -701,13 +710,17 @@ in
       # We have no reliable value to set platform_release to.
       # In theory this could be set to linuxHeaders.version on Linux, but that's
       # not correct
-      platform_release = ""; # Non-reproducible field.
+      platform_release =
+        if isFreeBSD then
+          "${concatStringsSep "." (take 2 (splitVersion stdenv.cc.libc.version))}-RELEASE"
+        else
+          "";
       platform_system =
-        if stdenv.isLinux then
+        if isLinux then
           "Linux"
-        else if stdenv.isDarwin then
+        else if isDarwin then
           "Darwin"
-        else if stdenv.isFreeBSD then
+        else if isFreeBSD then
           "FreeBSD"
         else
           throw "Unsupported platform";
