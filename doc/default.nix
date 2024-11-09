@@ -3,8 +3,8 @@
   nixdoc,
   self,
   mdbook,
-  mdbook-nixdoc,
   mdbook-open-on-gh,
+  mdbook-cmdrun,
   git,
 }:
 
@@ -17,7 +17,7 @@ stdenv.mkDerivation {
     nixdoc
     mdbook
     mdbook-open-on-gh
-    mdbook-nixdoc
+    mdbook-cmdrun
     git
   ];
 

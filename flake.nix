@@ -5,13 +5,8 @@
     nix-github-actions.url = "github:nix-community/nix-github-actions";
     nix-github-actions.inputs.nixpkgs.follows = "nixpkgs";
 
-    mdbook-nixdoc.url = "github:adisbladis/mdbook-nixdoc";
-    mdbook-nixdoc.inputs.nixpkgs.follows = "nixpkgs";
-    mdbook-nixdoc.inputs.nix-github-actions.follows = "nix-github-actions";
-
     lix-unit = {
       url = "github:adisbladis/lix-unit";
-      inputs.mdbook-nixdoc.follows = "mdbook-nixdoc";
       inputs.nix-github-actions.follows = "nix-github-actions";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.treefmt-nix.follows = "treefmt-nix";
@@ -29,7 +24,7 @@
       treefmt-nix,
       lix-unit,
       ...
-    }@inputs:
+    }:
     let
       forAllSystems = lib.genAttrs lib.systems.flakeExposed;
       inherit (nixpkgs) lib;
@@ -105,7 +100,6 @@
             pkgs.mkShell {
               packages = [
                 nix-unit
-                inputs.mdbook-nixdoc.packages.${system}.default
                 (pkgs.python3.withPackages (_ps: [ ]))
                 pkgs.hivemind
                 pkgs.reflex
@@ -169,7 +163,6 @@
         {
           doc = pkgs.callPackage ./doc {
             inherit self;
-            mdbook-nixdoc = inputs.mdbook-nixdoc.packages.${system}.default;
           };
         }
       );

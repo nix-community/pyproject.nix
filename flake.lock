@@ -19,9 +19,7 @@
     "lix-unit": {
       "inputs": {
         "lix": "lix",
-        "mdbook-nixdoc": [
-          "mdbook-nixdoc"
-        ],
+        "mdbook-nixdoc": "mdbook-nixdoc",
         "nix-github-actions": [
           "nix-github-actions"
         ],
@@ -49,9 +47,11 @@
     "mdbook-nixdoc": {
       "inputs": {
         "nix-github-actions": [
+          "lix-unit",
           "nix-github-actions"
         ],
         "nixpkgs": [
+          "lix-unit",
           "nixpkgs"
         ]
       },
@@ -108,7 +108,6 @@
     "root": {
       "inputs": {
         "lix-unit": "lix-unit",
-        "mdbook-nixdoc": "mdbook-nixdoc",
         "nix-github-actions": "nix-github-actions",
         "nixpkgs": "nixpkgs",
         "treefmt-nix": "treefmt-nix"
