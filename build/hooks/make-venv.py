@@ -7,6 +7,7 @@ import stat
 import sys
 import typing
 from pathlib import Path
+from textwrap import dedent
 from venv import EnvBuilder
 
 EXECUTABLE = os.path.basename(sys.executable)
@@ -148,6 +149,7 @@ def link_dependency(dep_root: Path, out_root: Path) -> None:
     site_packages = dep_root.joinpath(SITE_PACKAGES)
     bin_dir = dep_root.joinpath("bin")
     nix_support_dir = dep_root.joinpath("nix-support")
+    lib64_dir = dep_root.joinpath("lib64")
 
     # Support packages with symlinks in their roots.
     # These are not created by pyproject.nix's builders, but from foreign sources such as nixpkgs, and our integration with those packages.
@@ -171,6 +173,20 @@ def link_dependency(dep_root: Path, out_root: Path) -> None:
         # Let other hooks manage the nix-support
         if root == nix_support_dir:
             return
+
+        if root == lib64_dir:
+            if lib64_dir.is_symlink() and lib64_dir.readlink() == Path("lib"):
+                return
+
+            raise ValueError(
+                dedent(f"""
+            Package at '{dep_root}' is shipping a lib64 directory resolving to '{lib64_dir.resolve()}'.
+            This is a packaging bug.
+
+            The virtualenv module creates lib64 as a symlink to lib.
+            Unable to merge.
+            """)
+            )
 
         try:
             os.mkdir(out)
