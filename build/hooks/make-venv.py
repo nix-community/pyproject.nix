@@ -36,7 +36,7 @@ def compare_fds(fa: typing.IO, fb: typing.IO) -> bool:
 def write_bin_dir(bin_dir: Path, bin_out: Path) -> None:
     out_shebang: bytes = f"#!{bin_out}".encode()
 
-    for bin in os.listdir(bin_dir):
+    for bin in sorted(os.listdir(bin_dir)):
         bin_file = bin_dir.joinpath(bin)
         bin_file_out = bin_out.joinpath(bin_file.name)
         st_mode = bin_file.lstat().st_mode
@@ -193,7 +193,7 @@ def link_dependency(dep_root: Path, out_root: Path) -> None:
         except FileExistsError:
             pass
 
-        for filename in os.listdir(root):
+        for filename in sorted(os.listdir(root)):
             path = root.joinpath(filename)
 
             # Special case handle bin/site-packages
