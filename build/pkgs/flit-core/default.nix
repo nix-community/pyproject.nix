@@ -11,6 +11,8 @@ stdenv.mkDerivation {
     meta
     patches
     ;
+  postPatch = python3Packages.flit-core.postPatch or null;
+  sourceRoot = python3Packages.flit-core.sourceRoot or null;
   nativeBuildInputs = [
     pyprojectHook
   ];
