@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import argparse
 import filecmp
 import os
 import os.path
@@ -18,8 +19,31 @@ SITE_PACKAGES = os.path.join("lib", f"python{PYTHON_VERSION}", "site-packages")
 dep_shebang = ("#!" + os.path.dirname(sys.executable)).encode()
 
 
+class ArgsNS(argparse.Namespace):
+    out: str
+    python: str
+    deps: list[str]
+    env: list[str]
+
+    def __init__(self):
+        self.out = ""
+        self.python = ""
+        self.deps = []
+        self.env = []
+        super().__init__()
+
+
+arg_parser = argparse.ArgumentParser()
+arg_parser.add_argument("out", help="Virtualenv output directory")
+arg_parser.add_argument(
+    "--python", help="Python to link virtualenv to", default=os.path.dirname(os.path.dirname(sys.executable))
+)
+arg_parser.add_argument("--env", action="append", help="Source dependencies from environment variable")
+arg_parser.add_argument("--deps", action="append", help="Source dependencies from colon separated list")
+
+
 # Compare the contents of two files by their file descriptors
-def compare_fds(fa: typing.IO, fb: typing.IO) -> bool:
+def compare_fds(fa: typing.BinaryIO, fb: typing.BinaryIO) -> bool:
     while True:
         ba = fa.read(8192)
         if ba != fb.read(8192):
@@ -248,17 +272,7 @@ def fixup_pyvenv(python_root: Path, out_root: Path) -> None:
 
 
 def main():
-    import argparse
-
-    arg_parser = argparse.ArgumentParser()
-    arg_parser.add_argument("out", help="Virtualenv output directory")
-    arg_parser.add_argument(
-        "--python", help="Python to link virtualenv to", default=os.path.dirname(os.path.dirname(sys.executable))
-    )
-    arg_parser.add_argument("--env", action="append", help="Source dependencies from environment variable")
-    arg_parser.add_argument("--deps", action="append", help="Source dependencies from colon separated list")
-
-    args = arg_parser.parse_args()
+    args = arg_parser.parse_args(namespace=ArgsNS)
 
     out_root = Path(args.out)
     python_root = Path(args.python)
