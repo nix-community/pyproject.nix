@@ -8,8 +8,9 @@ stdenv.mkDerivation {
     pname
     version
     src
-    sourceRoot
     meta
+    patches
+    postPatch
     ;
   nativeBuildInputs = [
     pyprojectHook
