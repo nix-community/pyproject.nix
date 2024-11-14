@@ -149,7 +149,6 @@ def link_dependency(dep_root: Path, out_root: Path) -> None:
     site_packages = dep_root.joinpath(SITE_PACKAGES)
     bin_dir = dep_root.joinpath("bin")
     nix_support_dir = dep_root.joinpath("nix-support")
-    lib64_dir = dep_root.joinpath("lib64")
 
     # Support packages with symlinks in their roots.
     # These are not created by pyproject.nix's builders, but from foreign sources such as nixpkgs, and our integration with those packages.
@@ -169,65 +168,59 @@ def link_dependency(dep_root: Path, out_root: Path) -> None:
         else:
             raise ValueError(f"Output '{out_path}' path already exists!")
 
-    def _link(root: Path, out: Path) -> None:
+    def _link(input: Path, out: Path) -> None:
         # Let other hooks manage the nix-support
-        if root == nix_support_dir:
+        if input == nix_support_dir:
+            return
+        elif input == bin_dir:
+            write_bin_dir(input, out)
+            return
+        elif input == site_packages:
+            write_site_packages(input, out)
             return
 
-        if root == lib64_dir:
-            if lib64_dir.is_symlink() and lib64_dir.readlink() == Path("lib"):
-                return
+        st_mode = input.lstat().st_mode
 
-            raise ValueError(
-                dedent(f"""
-            Package at '{dep_root}' is shipping a lib64 directory resolving to '{lib64_dir.resolve()}'.
-            This is a packaging bug.
-
-            The virtualenv module creates lib64 as a symlink to lib.
-            Unable to merge.
-            """)
-            )
-
-        try:
-            os.mkdir(out)
-        except FileExistsError:
-            pass
-
-        for filename in os.listdir(root):
-            path = root.joinpath(filename)
-
-            # Special case handle bin/site-packages
-            if path == bin_dir:
-                write_bin_dir(path, out.joinpath("bin"))
-                continue
-            elif path == site_packages:
-                write_site_packages(path, out_root.joinpath(SITE_PACKAGES))
-                continue
-
-            st_mode = path.lstat().st_mode
-            out_path = out.joinpath(path.name)
-
-            if stat.S_ISLNK(st_mode):
-                if out_path.exists():
-                    _upgrade_existing_dir(path, out_path)
-                    _link(path, out_path)
-                    continue
-                shutil.copy(path, out_path, follow_symlinks=False)
-            elif stat.S_ISREG(st_mode):
-                if out_path.exists():
-                    msg = f"Linking '{path}' -> '{out_path}' failed, path already exists"
-                    if out_path.is_symlink():
-                        msg += f" resolving to '{out_path.resolve()}'"
-                    raise FileExistsError(msg)
-
-                os.symlink(path, out_path)
-
-            elif stat.S_ISDIR(st_mode):
-                if out_path.exists():
-                    _upgrade_existing_dir(path, out_path)
-                _link(path, out_path)
+        if stat.S_ISDIR(st_mode):
+            if out.exists(follow_symlinks=False):
+                if out.is_symlink():
+                    _upgrade_existing_dir(input, out)
             else:
-                raise ValueError(f"Unhandled st_mode: {st_mode}")
+                out.mkdir()
+            for filename in os.listdir(input):
+                _link(input.joinpath(filename), out.joinpath(filename))
+
+        elif stat.S_ISLNK(st_mode):
+            if out.exists():
+                out_st_mode = out.lstat().st_mode
+                # If the output exists and is a directory
+                # it's probably because of derivation overrides
+                # with manual symlinks
+                #
+                # Resolve to the input and trigger linking against the resolved dir.
+                if stat.S_ISDIR(out_st_mode):
+                    _link(input.resolve(), out)
+                    return
+                elif stat.S_ISLNK(out_st_mode) and input.readlink() == out.readlink():
+                    return  # Identical symlinks
+                elif stat.S_ISLNK(out_st_mode) and out.resolve().is_dir():
+                    _upgrade_existing_dir(input, out)
+                    return
+                raise ValueError(
+                    f"Output '{out}' already exists but is neither symlink nor directory, unable to merge with '{input}'"
+                )
+            shutil.copy(input, out, follow_symlinks=False)
+
+        elif stat.S_ISREG(st_mode):
+            if out.exists():
+                msg = f"Linking '{input}' -> '{out}' failed, path already exists"
+                if out.is_symlink():
+                    msg += f" resolving to '{out.resolve()}'"
+                raise FileExistsError(msg)
+            os.symlink(input, out)
+
+        else:
+            raise ValueError(f"Unhandled st_mode: {st_mode}")
 
     _link(dep_root, out_root)
 
