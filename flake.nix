@@ -152,7 +152,7 @@
               '';
 
           typing =
-            pkgs.runCommand "fmt-check"
+            pkgs.runCommand "typing-check"
               {
                 nativeBuildInputs = [
                   pkgs.basedpyright
