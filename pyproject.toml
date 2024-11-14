@@ -20,3 +20,5 @@ max-complexity = 10
 [tool.pyright]
 reportUnusedCallResult = "none"
 reportUnknownMemberType = "warning"
+pythonVersion = "3.9"
+include = [ "build" ]

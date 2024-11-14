@@ -149,6 +149,20 @@
                 treefmt --fail-on-change
                 touch $out
               '';
+
+          typing =
+            pkgs.runCommand "fmt-check"
+              {
+                nativeBuildInputs = [
+                  pkgs.basedpyright
+                  pkgs.python3
+                ];
+              }
+              ''
+                cd ${self}
+                basedpyright
+                mkdir $out
+              '';
         }
       );
 

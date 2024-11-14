@@ -14,6 +14,18 @@ _ = arg_parser.add_argument("output")
 _ = arg_parser.add_argument("--store", default="/nix/store")
 
 
+class ArgsNS(argparse.Namespace):
+    input: str
+    output: str
+    store: str
+
+    def __init__(self):
+        self.input = ""
+        self.output = ""
+        self.store = ""
+        super().__init__()
+
+
 def write_nix_support(input: Path, output: Path):
     """Write nix-support, skipping propagated inputs"""
 
@@ -78,7 +90,7 @@ def write_bin(store_dir: str, input: Path, output: Path):
 
 
 def main():
-    args = arg_parser.parse_args()
+    args = arg_parser.parse_args(namespace=ArgsNS)
 
     input = Path(args.input)
     output = Path(args.output)
