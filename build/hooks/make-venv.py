@@ -7,7 +7,6 @@ import stat
 import sys
 import typing
 from pathlib import Path
-from textwrap import dedent
 from venv import EnvBuilder
 
 EXECUTABLE = os.path.basename(sys.executable)
@@ -182,11 +181,14 @@ def link_dependency(dep_root: Path, out_root: Path) -> None:
         st_mode = input.lstat().st_mode
 
         if stat.S_ISDIR(st_mode):
-            if out.exists(follow_symlinks=False):
+            try:
+                out.lstat()
+            except FileNotFoundError:
+                out.mkdir()
+            else:
                 if out.is_symlink():
                     _upgrade_existing_dir(input, out)
-            else:
-                out.mkdir()
+
             for filename in os.listdir(input):
                 _link(input.joinpath(filename), out.joinpath(filename))
 
