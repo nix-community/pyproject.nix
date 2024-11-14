@@ -119,7 +119,7 @@
       },
       {
         "pname": "pyarrow",
-        "version": "17.0.0"
+        "version": "18.0.0"
       },
       {
         "pname": "pymysql",
@@ -179,7 +179,7 @@
       },
       {
         "pname": "xarray",
-        "version": "2024.09.0"
+        "version": "2024.10.0"
       },
       {
         "pname": "xlrd",
@@ -231,7 +231,7 @@
       },
       {
         "pname": "xarray",
-        "version": "2024.09.0"
+        "version": "2024.10.0"
       }
     ],
     "excel": [
@@ -259,7 +259,7 @@
     "feather": [
       {
         "pname": "pyarrow",
-        "version": "17.0.0"
+        "version": "18.0.0"
       }
     ],
     "fss": [
@@ -321,7 +321,7 @@
     "parquet": [
       {
         "pname": "pyarrow",
-        "version": "17.0.0"
+        "version": "18.0.0"
       }
     ],
     "performance": [
