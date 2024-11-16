@@ -1,0 +1,2356 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Pyproject.nix</title>
+        <meta name="robots" content="noindex">
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="install.html"><strong aria-hidden="true">2.</strong> Installation</a></li><li class="chapter-item expanded affix "><li class="part-title">Use cases</li><li class="chapter-item expanded "><div><strong aria-hidden="true">3.</strong> Developing with nixpkgs</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="use-cases/pyproject.html"><strong aria-hidden="true">3.1.</strong> pyproject.toml</a></li><li class="chapter-item expanded "><a href="use-cases/requirements.html"><strong aria-hidden="true">3.2.</strong> requirements.txt</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">4.</strong> Python2nix</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="build.html"><strong aria-hidden="true">4.1.</strong> Builders</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="builders/usage.html"><strong aria-hidden="true">4.1.1.</strong> Usage</a></li></ol></li><li class="chapter-item expanded "><a href="builders/packages.html"><strong aria-hidden="true">4.2.</strong> packages</a></li><li class="chapter-item expanded "><a href="builders/overriding.html"><strong aria-hidden="true">4.3.</strong> overriding packages</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="builders/hacks.html"><strong aria-hidden="true">4.3.1.</strong> hacks</a></li></ol></li><li class="chapter-item expanded "><a href="builders/ecosystem.html"><strong aria-hidden="true">4.4.</strong> ecosystem</a></li></ol></li><li class="chapter-item expanded "><li class="part-title">Meta</li><li class="chapter-item expanded "><a href="FAQ.html"><strong aria-hidden="true">5.</strong> FAQ</a></li><li class="chapter-item expanded affix "><li class="part-title">Library reference</li><li class="chapter-item expanded "><a href="reference.html"><strong aria-hidden="true">6.</strong> User facing APIs</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="lib/project.html"><strong aria-hidden="true">6.1.</strong> project</a></li><li class="chapter-item expanded "><a href="lib/scripts.html"><strong aria-hidden="true">6.2.</strong> scripts</a></li><li class="chapter-item expanded "><a href="nixpkgs-build.html"><strong aria-hidden="true">6.3.</strong> nixpkgs</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="lib/renderers.html"><strong aria-hidden="true">6.3.1.</strong> renderers</a></li><li class="chapter-item expanded "><a href="lib/validators.html"><strong aria-hidden="true">6.3.2.</strong> validators</a></li></ol></li></ol></li><li class="chapter-item expanded "><a href="reference.html"><strong aria-hidden="true">7.</strong> Standards APIs</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="lib/pep440.html"><strong aria-hidden="true">7.1.</strong> pep440</a></li><li class="chapter-item expanded "><a href="lib/pep508.html"><strong aria-hidden="true">7.2.</strong> pep508</a></li><li class="chapter-item expanded "><a href="lib/pep518.html"><strong aria-hidden="true">7.3.</strong> pep518</a></li><li class="chapter-item expanded "><a href="lib/pep599.html"><strong aria-hidden="true">7.4.</strong> pep599</a></li><li class="chapter-item expanded "><a href="lib/pep600.html"><strong aria-hidden="true">7.5.</strong> pep600</a></li><li class="chapter-item expanded "><a href="lib/pep621.html"><strong aria-hidden="true">7.6.</strong> pep621</a></li><li class="chapter-item expanded "><a href="lib/pep656.html"><strong aria-hidden="true">7.7.</strong> pep656</a></li><li class="chapter-item expanded "><a href="lib/pep723.html"><strong aria-hidden="true">7.8.</strong> pep723</a></li><li class="chapter-item expanded "><a href="lib/poetry.html"><strong aria-hidden="true">7.9.</strong> poetry</a></li><li class="chapter-item expanded "><a href="lib/pypa.html"><strong aria-hidden="true">7.10.</strong> pypa</a></li><li class="chapter-item expanded "><a href="lib/eggs.html"><strong aria-hidden="true">7.11.</strong> eggs</a></li><li class="chapter-item expanded "><a href="lib/pip.html"><strong aria-hidden="true">7.12.</strong> pip</a></li></ol></li><li class="chapter-item expanded "><a href="build.html"><strong aria-hidden="true">8.</strong> Build</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="build/lib/index.html"><strong aria-hidden="true">8.1.</strong> lib</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="build/lib/renderers.html"><strong aria-hidden="true">8.1.1.</strong> renderers</a></li><li class="chapter-item expanded "><a href="build/lib/resolvers.html"><strong aria-hidden="true">8.1.2.</strong> resolvers</a></li></ol></li><li class="chapter-item expanded "><a href="build/hooks.html"><strong aria-hidden="true">8.2.</strong> packages.hooks</a></li><li class="chapter-item expanded "><a href="build/hacks.html"><strong aria-hidden="true">8.3.</strong> hacks</a></li></ol></li><li class="chapter-item expanded "><li class="part-title">Contributing</li><li class="chapter-item expanded "><a href="HACKING.html"><strong aria-hidden="true">9.</strong> Hacking</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Pyproject.nix</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/nix-community/pyproject.nix" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="introduction"><a class="header" href="#introduction">Introduction</a></h1>
+<h2 id="what-is-pyprojectnix"><a class="header" href="#what-is-pyprojectnix">What is pyproject.nix</a></h2>
+<p>Pyproject.nix is a collection of Nix utilities to work with Python project metadata in <a href="https://nixos.org/">Nix</a>.
+It mainly targets <a href="https://peps.python.org/pep-0621/">PEP-621</a> compliant <code>pyproject.toml</code> files and data formats, but also implement support for other &amp; legacy formats such as <a href="https://python-poetry.org/">Poetry</a> &amp; <code>requirements.txt</code>.</p>
+<p>Pyproject.nix aims to be a swiss army knife of simple customizable utilities that works either together with the <a href="https://nixos.org/manual/nixpkgs/stable/#python">nixpkgs Python infrastructure</a>, or <a href="./build.html">our own build infrastructure</a>.</p>
+<h2 id="foreword"><a class="header" href="#foreword">Foreword</a></h2>
+<p>This documentation only helps you to get started with <code>pyproject.nix</code>.
+As it's a toolkit with many use cases not every use case can be documented fully.</p>
+<p>First and foremost <code>pyproject.nix</code> is a <em>Python metadata toolkit</em>, and not a 2nix tool.</p>
+<p>This documentation is centered around packaging Python applications &amp; managing development environments.
+For other use cases see the reference documentation.</p>
+<h2 id="concepts"><a class="header" href="#concepts">Concepts</a></h2>
+<p><code>pyproject.nix</code> introduces a few high level abstract concepts.
+The best way to get started is to understand these concepts and how they fit together.</p>
+<h3 id="project"><a class="header" href="#project"><a href="./lib/project.html">Project</a></a></h3>
+<p>A <code>project</code> attribute set is a high-level representation of a project that includes:</p>
+<ul>
+<li>The parsed <code>pyproject.toml</code> file</li>
+<li>Parsed dependencies</li>
+<li>Project root directory</li>
+</ul>
+<p>It can can be loaded from many different sources:</p>
+<ul>
+<li>PEP-621 <code>pyproject.toml</code></li>
+<li>PEP-621 <code>pyproject.toml</code> with PDM extensions</li>
+<li>Poetry <code>pyproject.toml</code></li>
+<li><code>requirements.txt</code></li>
+</ul>
+<h3 id="validators"><a class="header" href="#validators"><a href="./lib/validators.html">Validators</a></a></h3>
+<p>Validators work on dependency constraints as defined in a <code>project</code> and offers validation for them.
+This can be useful to check that a package set is compilant with the specification.</p>
+<h3 id="renderers"><a class="header" href="#renderers"><a href="./lib/renderers.html">Renderers</a></a></h3>
+<p>A <code>renderer</code> takes a <code>project</code> together with a Python interpreter derivation and renders it into a form understood by various pieces of Python infrastructure.</p>
+<p>For example: The <code>buildPythonPackage</code> renderer returns an attribute set that can be passed to either nixpkgs function <code>buildPythonPackage</code> or <code>buildPythonApplication</code>.</p>
+<p>There might be information missing from what a renderer returned depending on what can be computed from the <code>project</code>.
+If any attributes are missing you can manually merge your own attribute set with what the renderer returned.</p>
+<h2 id="tying-it-together"><a class="header" href="#tying-it-together">Tying it together</a></h2>
+<p>For a concrete example use see <a href="./use-cases/pyproject.html">Use cases -&gt; pyproject.toml</a>.</p>
+<footer id="open-on-gh"><hr style="margin-top: 5em;" />
+Found an issue? <a href="https://github.com/nix-community/pyproject.nix/edit/master/doc/src/introduction.md">Edit this page on GitHub.</a>
+</footer><div style="break-before: page; page-break-before: always;"></div><h1 id="installation"><a class="header" href="#installation">Installation</a></h1>
+<h2 id="classic-nix"><a class="header" href="#classic-nix">Classic Nix</a></h2>
+<p>Documentation examples in <code>pyproject.nix</code> are using Flakes for the convenience of grouping multiple concepts into a single file.</p>
+<p>You can just as easily import <code>pyproject.nix</code> without using Flakes:</p>
+<pre><code class="language-nix">let
+  pkgs = import &lt;nixpkgs&gt; { };
+  inherit (pkgs) lib;
+
+  pyproject-nix = import (builtins.fetchGit {
+    url = "https://github.com/nix-community/pyproject.nix.git";
+  }) {
+    inherit lib;
+  };
+
+in ...
+</code></pre>
+<h2 id="flakes"><a class="header" href="#flakes">Flakes</a></h2>
+<p>See <a href="use-cases/pyproject.html">use-cases/pyproject.toml</a>.</p>
+<footer id="open-on-gh"><hr style="margin-top: 5em;" />
+Found an issue? <a href="https://github.com/nix-community/pyproject.nix/edit/master/doc/src/install.md">Edit this page on GitHub.</a>
+</footer><div style="break-before: page; page-break-before: always;"></div><h1 id="pyprojecttoml"><a class="header" href="#pyprojecttoml">pyproject.toml</a></h1>
+<p>It's possible to develop <a href="https://peps.python.org/pep-0621/">PEP-621</a> compliant Python projects without using <em>any</em> Python package manager except Nix.</p>
+<p>This example loads <code>pyproject.toml</code> to create an environment using <a href="https://nixos.org/manual/nixpkgs/stable/#user-guide"><code>python.withPackages</code></a> and a consumable package using <code>python.pkgs.buildPythonPackage</code>.</p>
+<h2 id="flakenix"><a class="header" href="#flakenix">flake.nix</a></h2>
+<pre><code class="language-nix">{
+  description = "A basic flake using pyproject.toml project metadata";
+
+  inputs.pyproject-nix.url = "github:nix-community/pyproject.nix";
+  inputs.pyproject-nix.inputs.nixpkgs.follows = "nixpkgs";
+
+  outputs =
+    { nixpkgs, pyproject-nix, ... }:
+    let
+      inherit (nixpkgs) lib;
+
+      # Loads pyproject.toml into a high-level project representation
+      # Do you notice how this is not tied to any `system` attribute or package sets?
+      # That is because `project` refers to a pure data representation.
+      project = pyproject-nix.lib.project.loadPyproject {
+        # Read &amp; unmarshal pyproject.toml relative to this project root.
+        # projectRoot is also used to set `src` for renderers such as buildPythonPackage.
+        projectRoot = ./.;
+      };
+
+      # This example is only using x86_64-linux
+      pkgs = nixpkgs.legacyPackages.x86_64-linux;
+
+      # We are using the default nixpkgs Python3 interpreter &amp; package set.
+      #
+      # This means that you are purposefully ignoring:
+      # - Version bounds
+      # - Dependency sources (meaning local path dependencies won't resolve to the local path)
+      #
+      # To use packages from local sources see "Overriding Python packages" in the nixpkgs manual:
+      # https://nixos.org/manual/nixpkgs/stable/#reference
+      #
+      # Or use an overlay generator such as uv2nix:
+      # https://github.com/adisbladis/uv2nix
+      python = pkgs.python3;
+
+    in
+    {
+      # Create a development shell containing dependencies from `pyproject.toml`
+      devShells.x86_64-linux.default =
+        let
+          # Returns a function that can be passed to `python.withPackages`
+          arg = project.renderers.withPackages { inherit python; };
+
+          # Returns a wrapped environment (virtualenv like) with all our packages
+          pythonEnv = python.withPackages arg;
+
+        in
+        # Create a devShell like normal.
+        pkgs.mkShell { packages = [ pythonEnv ]; };
+
+      # Build our package using `buildPythonPackage
+      packages.x86_64-linux.default =
+        let
+          # Returns an attribute set that can be passed to `buildPythonPackage`.
+          attrs = project.renderers.buildPythonPackage { inherit python; };
+        in
+        # Pass attributes to buildPythonPackage.
+        # Here is a good spot to add on any missing or custom attributes.
+        python.pkgs.buildPythonPackage (attrs // { env.CUSTOM_ENVVAR = "hello"; });
+    };
+}
+</code></pre>
+<h2 id="pyprojecttoml-1"><a class="header" href="#pyprojecttoml-1">pyproject.toml</a></h2>
+<pre><code class="language-toml">[project]
+name = "spam"
+version = "2020.0.0"
+description = "Lovely Spam! Wonderful Spam!"
+readme = "README.rst"
+requires-python = "&gt;=3.8"
+license = {file = "LICENSE.txt"}
+keywords = ["egg", "bacon", "sausage", "tomatoes", "Lobster Thermidor"]
+authors = [
+  {email = "hi@pradyunsg.me"},
+  {name = "Tzu-ping Chung"}
+]
+maintainers = [
+  {name = "Brett Cannon", email = "brett@python.org"}
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python"
+]
+
+dependencies = [
+  "httpx",
+  "gidgethub[httpx]&gt;4.0.0",
+  "django&gt;2.1; os_name != 'nt'",
+  "django&gt;2.0; os_name == 'nt'"
+]
+
+[project.optional-dependencies]
+test = [
+  "pytest &lt; 5.0.0",
+  "pytest-cov[all]"
+]
+
+[project.urls]
+homepage = "https://example.com"
+documentation = "https://readthedocs.org"
+repository = "https://github.com"
+changelog = "https://github.com/me/spam/blob/master/CHANGELOG.md"
+
+[project.scripts]
+spam-cli = "spam:main_cli"
+
+[project.gui-scripts]
+spam-gui = "spam:main_gui"
+
+[project.entry-points."spam.magical"]
+tomatoes = "spam:main_tomatoes"
+</code></pre>
+<footer id="open-on-gh"><hr style="margin-top: 5em;" />
+Found an issue? <a href="https://github.com/nix-community/pyproject.nix/edit/master/doc/src/use-cases/pyproject.md">Edit this page on GitHub.</a>
+</footer><div style="break-before: page; page-break-before: always;"></div><h1 id="requirementstxt"><a class="header" href="#requirementstxt">requirements.txt</a></h1>
+<p>Many projects comes without proper packaging and use <a href="https://pip.pypa.io/en/stable/reference/requirements-file-format/"><code>requirements.txt</code></a> files to declare their dependencies.</p>
+<p>This example loads <code>requirements.txt</code> to create an environment using <a href="https://nixos.org/manual/nixpkgs/stable/#user-guide"><code>python.withPackages</code></a> with packages from nixpkgs.</p>
+<h2 id="flakenix-1"><a class="header" href="#flakenix-1">flake.nix</a></h2>
+<pre><code class="language-nix">{
+  description = "Construct development shell from requirements.txt";
+
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+
+  inputs.pyproject-nix.url = "github:nix-community/pyproject.nix";
+
+  outputs =
+    { nixpkgs, pyproject-nix, ... }:
+    let
+      # Load/parse requirements.txt
+      project = pyproject-nix.lib.project.loadRequirementsTxt { projectRoot = ./.; };
+
+      pkgs = nixpkgs.legacyPackages.x86_64-linux;
+      python = pkgs.python3;
+
+      pythonEnv =
+        # Assert that versions from nixpkgs matches what's described in requirements.txt
+        # In projects that are overly strict about pinning it might be best to remove this assertion entirely.
+        assert project.validators.validateVersionConstraints { inherit python; } == { };
+        (
+          # Render requirements.txt into a Python withPackages environment
+          pkgs.python3.withPackages (project.renderers.withPackages { inherit python; })
+        );
+
+    in
+    {
+      devShells.x86_64-linux.default = pkgs.mkShell { packages = [ pythonEnv ]; };
+    };
+}
+</code></pre>
+<footer id="open-on-gh"><hr style="margin-top: 5em;" />
+Found an issue? <a href="https://github.com/nix-community/pyproject.nix/edit/master/doc/src/use-cases/requirements.md">Edit this page on GitHub.</a>
+</footer><div style="break-before: page; page-break-before: always;"></div><h1 id="build"><a class="header" href="#build">Build</a></h1>
+<div class="warning">
+The pyproject.nix build infrastructure is brand new and experimental.
+At this time it's mainly targeted at python2nix authors, and is being tested in uv2nix.
+</div>
+<p>Pyproject.nix can be used with nixpkgs <code>buildPythonPackage</code>/<code>packageOverrides</code>/<code>withPackages</code>, but also implements it's own build infrastructure that fixes many structural problems with the nixpkgs implementation.</p>
+<h2 id="problems-with-nixpkgs-python-builders"><a class="header" href="#problems-with-nixpkgs-python-builders">Problems with nixpkgs Python builders</a></h2>
+<p>Nixpkgs Python infrastucture relies on <a href="https://nixos.org/manual/nixpkgs/unstable/#ssec-stdenv-dependencies-propagated">dependency propagation</a>.
+The propagation mechanism works through making dependencies available to the builder at build-time, and recording their Nix store paths in <code>$out/nix-support/propagated-build-inputs</code>.
+<a href="https://nixos.org/manual/nixpkgs/unstable/#ssec-setup-hooks">Setup hooks</a> are then used to add these packages to <code>$PYTHONPATH</code> for discovery by the Python interpreter which adds everything from <code>$PYTHONPATH</code> to <code>sys.path</code> at startup.</p>
+<p>Propagation causes several issues downstream.</p>
+<h3 id="pythonpath-leaking-into-unrelated-builds"><a class="header" href="#pythonpath-leaking-into-unrelated-builds"><code>$PYTHONPATH</code> leaking into unrelated builds</a></h3>
+<p>Consider the following development shell using nixpkgs Python builders:</p>
+<pre><code class="language-nix">let
+  pkgs = import &lt;nixpkgs&gt; { };
+  pythonEnv = pkgs.python3.withPackages(ps: [ ps.requests ]);
+in pkgs.mkShell {
+  packages = [
+    pkgs.remarshal
+    pythonEnv
+  ];
+}
+</code></pre>
+<p>Any Python package, such as <code>remarshal</code>, will have their dependencies leaking into <code>$PYTHONPATH</code>, making undeclared dependencies available to the Python interpreter.
+Making matters even worse: Any dependency on <code>$PYTHONPATH</code> takes precedence over virtualenv installed dependencies!</p>
+<h3 id="infinite-recursions"><a class="header" href="#infinite-recursions">Infinite recursions</a></h3>
+<p>Nix dependency graphs are required to be a <a href="https://en.wikipedia.org/wiki/Directed_acyclic_graph">DAG</a>, but Python dependencies can be cyclic.
+Dependency propagation is inherently incompatible with cyclic dependencies.
+In nixpkgs propagation isssues are commonly worked around by patching packages in various ways.</p>
+<h3 id="binary-wrapping"><a class="header" href="#binary-wrapping">Binary wrapping</a></h3>
+<p>Nixpkgs Python builders uses wrappers for Python executables in <code>bin/</code>, these set environment variables <code>NIX_PYTHONPATH</code> &amp; friends
+These environment variables are picked up by the interpreter using a <a href="https://docs.python.org/3/library/site.html#module-sitecustomize">sitecustomize.py</a> in the system <code>site-packages</code> directory.</p>
+<p>Any Python programs executing another child Python interpreter using <code>sys.executable</code> will have it's modules lost on import, as <code>sys.executable</code> isn't pointing to the environment created by <code>withPackages</code>.</p>
+<h3 id="extraneous-rebuilds"><a class="header" href="#extraneous-rebuilds">Extraneous rebuilds</a></h3>
+<p>Because <code>buildPythonPackage</code> uses propagation runtime dependencies of a package are required to be present at build time.</p>
+<p>In Python builds runtime dependencies are not actually required to be present.
+Making runtime dependencies available at build-time results in derivation hashes changing much more frequently than they have to.</p>
+<h2 id="solution-presented-by-pyprojectnixs-builders"><a class="header" href="#solution-presented-by-pyprojectnixs-builders">Solution presented by pyproject.nix's builders</a></h2>
+<p>The solution is to decouple the runtime dependency graph from the build time one, by putting runtime dependencies in <a href="https://nixos.org/manual/nixpkgs/unstable/#chap-passthru">passthru</a>:</p>
+<pre><code class="language-nix">stdenv.mkDerivation {
+  pname = "setuptools-scm";
+  version = "8.1.0";
+  src = fetchurl {
+    url = "https://files.pythonhosted.org/packages/4f/a4/00a9ac1b555294710d4a68d2ce8dfdf39d72aa4d769a7395d05218d88a42/setuptools_scm-8.1.0.tar.gz";
+    hash = "";
+  };
+
+  passthru = {
+    dependencies = {
+      packaging = [ ];
+      setuptools = [ ];
+    };
+
+    optional-dependencies = {
+      toml = { toml = [ ]; };
+      rich = { rich = [ ]; };
+    };
+  };
+
+  nativeBuildInputs = [
+    pyprojectHook
+  ] ++ resolveBuildSystem (
+    {
+      setuptools = [ ];
+    }
+  );
+}
+</code></pre>
+<h3 id="resolving"><a class="header" href="#resolving">Resolving</a></h3>
+<p>Because runtime dependencies are not propagated every package needs to resolve the runtime dependencies of their build-system's.</p>
+<p>Additionally packages can't simply be consumed, but must be aggregated into a virtual environment to be useful:</p>
+<pre><code class="language-nix">{ pyproject-nix, pkgs }:
+
+let
+  python = pkgs.python312;
+
+  # Inject your own packages on top with overrideScope
+  pythonSet = pkgs.callPackage pyproject-nix.build.packages {
+    inherit python;
+  };
+
+in pythonSet.pythonPkgsHostHost.mkVirtualEnv "test-venv" {
+  build = [ ];
+}
+</code></pre>
+<h3 id="cyclic-dependencies"><a class="header" href="#cyclic-dependencies">Cyclic dependencies</a></h3>
+<p>Cyclic dependencies are supported thanks to the resolver returning a flat list of required Python packages.
+For performance reasons two solvers are implemented:</p>
+<ul>
+<li>
+<p>One that does not support cyclic dependencies
+A much more performant resolver used by resolveBuildSystem and has all known build-systems memoized.</p>
+</li>
+<li>
+<p>One that does support cyclic dependencies
+Used to resolve virtual environments</p>
+</li>
+</ul>
+<p>It's possible to override the resolver used entirely, so even though cyclic build-system's are not supported by default, it can be done with overrides.</p>
+<h3 id="less-rebuilds"><a class="header" href="#less-rebuilds">Less rebuilds</a></h3>
+<p>As the runtime dependency graph is decoupled from the build time one derivation hashes change far less frequently.</p>
+<p>An additional benefit is improved build scheduling:
+Because the dependency graph is much flatter than a <code>buildPythonPackage</code> based one derivations can be more efficiently scheduled in parallel.</p>
+<h3 id="use-virtualenvs"><a class="header" href="#use-virtualenvs">Use virtualenvs</a></h3>
+<p>Instead of binary wrappers &amp; environment variables <code>pyproject.nix</code>'s builders use standard Python virtual environments.</p>
+<footer id="open-on-gh"><hr style="margin-top: 5em;" />
+Found an issue? <a href="https://github.com/nix-community/pyproject.nix/edit/master/doc/src/build.md">Edit this page on GitHub.</a>
+</footer><div style="break-before: page; page-break-before: always;"></div><h1 id="usage"><a class="header" href="#usage">Usage</a></h1>
+<p>While the nixpkgs Python infrastructure is built mainly for manual packaging, <code>pyproject.nix</code>'s builders are mainly targeted at lock file consumers like <a href="https://github.com/adisbladis/uv2nix">uv2nix</a>.</p>
+<p>This example shows the essence of implementing a lock file converter in pure Nix using <code>pyproject.nix</code>.
+A real world implementation is more complex. To see a lock file converter built according to <code>pyproject.nix</code> best practices see <a href="https://github.com/adisbladis/uv2nix">uv2nix</a>.</p>
+<h2 id="examplenix"><a class="header" href="#examplenix">example.nix</a></h2>
+<pre><code class="language-nix">{
+  python,
+  callPackage,
+  pyproject-nix,
+  lib,
+}:
+let
+  # Pyproject.nix packages quite a few, but not all build-system dependencies.
+  #
+  # We only package PyPI packages because lock file generators often miss this metadata, so it's required to help kickstart a Python set.
+  # This set is incomplete, and much smaller in both package count and scope than nixpkgs is.
+  baseSet = callPackage pyproject-nix.build.packages {
+    inherit python;
+  };
+
+  # A hypothetical over-simplified "lock file" format to demonstrate what typical usage would look like.
+  # This format is absent of important data such as PEP-508 markers and more.
+  #
+  # Also note that all sources are the same. In a real-world file these would of course all be different.
+  lock =
+    let
+      src = {
+        type = "pypi";
+        url = "https://files.pythonhosted.org/packages/63/70/2bf7780ad2d390a8d301ad0b550f1581eadbd9a20f896afe06353c2a2913/requests-2.32.3.tar.gz";
+        hash = "sha256:55365417734eb18255590a9ff9eb97e9e1da868d4ccd6402399eaf68af20a760";
+      };
+    in
+    {
+      package-a = {
+        name = "a";
+        version = "1.0.0";
+        dependencies = { };
+        optional-dependencies = { };
+        inherit src;
+        build-system = {
+          flit-core = [ ];
+        };
+      };
+
+      package-b = {
+        name = "b";
+        version = "1.0.0";
+        # Depend on a with no optionals
+        dependencies = {
+          a = [ ];
+        };
+        inherit src;
+        build-system = {
+          flit-core = [ ];
+        };
+      };
+
+      package-c = {
+        name = "c";
+        version = "1.0.0";
+        dependencies = {
+          a = [ ];
+        };
+        # Has an optional dependency on b when cool_feature is activated
+        optional-dependencies = {
+          cool_feature = {
+            b = [ ];
+          };
+        };
+        inherit src;
+        build-system = {
+          flit-core = [ ];
+        };
+      };
+
+      package-d = {
+        name = "d";
+        version = "1.0.0";
+        dependencies = {
+          c = [ "cool_feature" ];
+        };
+        # A local package dependend on by it's path
+        src = {
+          type = "path";
+          path = ./packages/d;
+        };
+        build-system = {
+          flit-core = [ ];
+        };
+      };
+    };
+
+  # Create a PEP-508 marker environment for marker evaluation
+  environ = pyproject-nix.lib.pep508.mkEnviron python;
+
+  # Transform lock into a Pyproject.nix build overlay.
+  # This will create packages from the lock.
+  overlay =
+    pyfinal: _pyprev:
+    lib.mapAttrs (
+      name: lockpkg:
+      # If package is a local package use a project loader from pyproject-nix.lib.project
+      if lockpkg.src.type == "path" then
+        (
+          let
+            project = pyproject-nix.project.loadPyprojectDynamic {
+              projectRoot = lockpkg.src.path;
+            };
+          in
+          pyfinal.callPackage (
+            # Function called with callPackage
+            {
+              stdenv,
+              pyprojectHook,
+              resolveBuildSystem,
+            }:
+            # Call stdenv.mkDerivation with project
+            stdenv.mkDerivation (
+              # Render stdenv.mkDerivation arguments from project
+              pyproject-nix.build.lib.renderers.mkDerivation
+                {
+                  inherit project environ;
+                }
+                {
+                  inherit pyprojectHook resolveBuildSystem;
+                }
+            )
+          ) { }
+        )
+      # If a package is a remote (pypi) package there is no ready made renderers to use.
+      # You need to apply your own transformations.
+      else if lockpkg.src.type == "pypi" then
+        pyfinal.callPackage (
+          {
+            stdenv,
+            fetchurl,
+            pyprojectHook,
+            pyprojectBootstrapHook,
+            resolveBuildSystem,
+          }:
+          stdenv.mkDerivation {
+            pname = lockpkg.name;
+            inherit (lockpkg) version;
+            src = fetchurl lockpkg.src;
+
+            nativeBuildInputs =
+              [
+                # Check if package is a bootstrap package. If it is we should use pyprojectBootstrapHook.
+                (if pyproject-nix.build.lib.isBootstrapPackage name then pyprojectBootstrapHook else pyprojectHook)
+              ]
+              # Build systems needs to be resolved since we don't propagate dependencies.
+              # Otherwise dependencies of our build-system will be missing.
+              ++ resolveBuildSystem lockpkg.build-system;
+
+            # Dependencies go in passthru to avoid polluting runtime package.
+            passthru = {
+              inherit (lockpkg) dependencies optional-dependencies;
+            };
+          }
+        ) { }
+      else
+        throw "Unhandled src type: ${lockpkg.src.type}" null
+    ) lock;
+
+  # Override set
+  pythonSet = baseSet.overrideScope (
+    _final: _prev: {
+      # Override build platform dependencies
+      #
+      # Use this when overriding build-systems that need to run on the build platform.
+      pythonPkgsBuildHost = overlay;
+
+      # Override target platform packages.
+      #
+      # Use this to override packages for the target platform.
+      pythonPkgsHostHost = overlay;
+    }
+  );
+
+in
+# Create a virtual environment containing our dependency specification
+pythonSet.pythonPkgsHostHost.mkVirtualEnv "example-venv" {
+  # Depend on package
+  build = [ ];
+}
+</code></pre>
+<footer id="open-on-gh"><hr style="margin-top: 5em;" />
+Found an issue? <a href="https://github.com/nix-community/pyproject.nix/edit/master/doc/src/builders/usage.md">Edit this page on GitHub.</a>
+</footer><div style="break-before: page; page-break-before: always;"></div><h1 id="packages"><a class="header" href="#packages">packages</a></h1>
+<p><code>pyproject.nix</code>'s package set is much smaller and more narrow in scope than nixpkgs.
+It's purpose is only to package <a href="https://peps.python.org/pep-0518/">build-system</a> dependencies, which are missing from Python package manager lock files, so needs to be supplemented from elsewhere.</p>
+<p>It is not meant to be a general purpose Python set, only something for lock file consumers to build on top of.</p>
+<h2 id="creating-a-base-package-set"><a class="header" href="#creating-a-base-package-set">Creating a base package set</a></h2>
+<pre><code class="language-nix"># Returns a scope with base packages.
+pkgs.callPackage pyproject-nix.build.packages {
+  python = interpreter;
+}
+</code></pre>
+<h2 id="overriding-scope"><a class="header" href="#overriding-scope">Overriding scope</a></h2>
+<p>See the <a href="https://nixos.org/manual/nixpkgs/stable/#function-library-lib.customisation.makeScope">nixpkgs documentation</a>.</p>
+<footer id="open-on-gh"><hr style="margin-top: 5em;" />
+Found an issue? <a href="https://github.com/nix-community/pyproject.nix/edit/master/doc/src/builders/packages.md">Edit this page on GitHub.</a>
+</footer><div style="break-before: page; page-break-before: always;"></div><h1 id="overriding-packages"><a class="header" href="#overriding-packages">overriding packages</a></h1>
+<h2 id="problem-description"><a class="header" href="#problem-description">Problem description</a></h2>
+<p>Lock file consumers can only work with what it has, and important metadata is notably absent from all current package managers.</p>
+<p>Take a <a href="https://docs.astral.sh/uv/">uv</a> lock file entry for <code>pyzmq</code> as an example:</p>
+<pre><code class="language-toml">[[package]]
+name = "pyzmq"
+version = "26.2.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "cffi", marker = "implementation_name == 'pypy'" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/fd/05/bed626b9f7bb2322cdbbf7b4bd8f54b1b617b0d2ab2d3547d6e39428a48e/pyzmq-26.2.0.tar.gz", hash = "sha256:070672c258581c8e4f640b5159297580a9974b026043bd4ab0470be9ed324f1f", size = 271975 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/28/2f/78a766c8913ad62b28581777ac4ede50c6d9f249d39c2963e279524a1bbe/pyzmq-26.2.0-cp312-cp312-macosx_10_15_universal2.whl", hash = "sha256:ded0fc7d90fe93ae0b18059930086c51e640cdd3baebdc783a695c77f123dcd9", size = 1343105 },
+    # More binary wheels removed for brevity
+]
+</code></pre>
+<p>And contrast it with a minimal manually package example to build the same package:</p>
+<pre><code class="language-nix">{ stdenv, pyprojectHook, fetchurl }:
+stdenv.mkDerivation {
+  pname = "pyzmq";
+  version = "26.2.0";
+
+  src = fetchurl {
+    url = "https://files.pythonhosted.org/packages/fd/05/bed626b9f7bb2322cdbbf7b4bd8f54b1b617b0d2ab2d3547d6e39428a48e/pyzmq-26.2.0.tar.gz";
+    hash = "sha256:070672c258581c8e4f640b5159297580a9974b026043bd4ab0470be9ed324f1f";
+  };
+
+  dontUseCmakeConfigure = true;
+
+  buildInputs = [ zeromq ];
+
+  nativeBuildInputs = [ pyprojectHook ] ++ resolveBuildSystem ({
+    cmake = [];
+    ninja = [];
+    packaging = [];
+    pathspec = [];
+    scikit-build-core = [];
+  } // if python.isPyPy then { cffi = []; } else { cython = []; });
+
+  passthru.dependencies = lib.optionalAttrs python.isPyPy { cffi = []; };
+}
+</code></pre>
+<p>Notably absent from <code>uv.lock</code> are:</p>
+<ul>
+<li>Native libraries</li>
+</ul>
+<p>When building binary wheels <code>pyproject.nix</code> uses <a href="builders/autoPatchelfHook">https://nixos.org/manual/nixpkgs/stable/#setup-hook-autopatchelfhook</a>.
+This patches RPATH's of wheels with native libraries, but those must be present at build time.</p>
+<ul>
+<li><a href="https://peps.python.org/pep-0517/">PEP-517</a> build systems</li>
+</ul>
+<p>Uv, like most Python package managers, installs binary wheels by default, and it's solver doesn't take into account bootstrapping dependencies.
+When building from an sdist instead of a wheel build systems will need to be added.</p>
+<h2 id="fixups"><a class="header" href="#fixups">Fixups</a></h2>
+<h3 id="basic-usage"><a class="header" href="#basic-usage">Basic usage</a></h3>
+<h3 id="wheels"><a class="header" href="#wheels">Wheels</a></h3>
+<p>When overriding a binary wheel, only runtime dependencies needs to be added. The <code>build-system.requires</code> section isn't relevant.</p>
+<pre><code class="language-nix">{ pkgs, pyproject-nix }:
+let
+  pythonSet = pkgs.callPackage pyproject-nix.build.packages {
+    inherit python;
+  };
+
+  pyprojectOverrides = final: prev: {
+    pyzmq = prev.pyzmq.overrideAttrs(old: {
+      buildInputs = (old.buildInputs or [ ]) ++ [ pkgs.zeromq ];
+  });
+
+in
+  pythonSet.overrideScope pyprojectOverrides
+</code></pre>
+<h3 id="sdist"><a class="header" href="#sdist">Sdist</a></h3>
+<p>When building from sources, both runtime dependencies and <code>build-system.requires</code> are important.</p>
+<pre><code class="language-nix">{ pkgs, pyproject-nix }:
+let
+  pythonSet = pkgs.callPackage pyproject-nix.build.packages {
+    inherit python;
+  };
+
+  pyprojectOverrides = final: prev: {
+    pyzmq = prev.pyzmq.overrideAttrs(old: {
+      buildInputs = (old.buildInputs or [ ]) ++ [ pkgs.zeromq ];
+      dontUseCmakeConfigure = true;
+      nativeBuildInputs = (old.nativeBuildInputs or []) ++ final.resolveBuildSystem ({
+        cmake = [];
+        ninja = [];
+        packaging = [];
+        pathspec = [];
+        scikit-build-core = [];
+      } // if python.isPyPy then { cffi = []; } else { cython = []; });
+    });
+  };
+
+in
+  pythonSet.overrideScope pyprojectOverrides
+</code></pre>
+<h3 id="cross-compilation"><a class="header" href="#cross-compilation">Cross compilation</a></h3>
+<p>If cross compiling, build fixups might need to be applied to the build platform as well as the target platform.</p>
+<p>When native compiling <code>pythonPkgsBuildHost</code> is aliased to the main set, meaning that overrides automatically apply to both.
+When cross compiling <code>pythonPkgsBuildHost</code> is a Python set created for the <em>build host</em>.</p>
+<pre><code class="language-nix">{ pkgs, pyproject-nix }:
+let
+  pythonSet = pkgs.callPackage pyproject-nix.build.packages {
+    inherit python;
+  };
+
+  pyprojectOverrides = final: prev: {
+    pyzmq = prev.pyzmq.overrideAttrs(old: {
+      buildInputs = (old.buildInputs or [ ]) ++ [ pkgs.zeromq ];
+  });
+
+  pyprojectCrossOverrides = lib.composeExtensions (_final: prev: {
+    pythonPkgsBuildHost = prev.pythonPkgsBuildHost.overrideScope overlay;
+  }) overlay;
+
+
+in
+  pythonSet.overrideScope pyprojectCrossOverrides
+</code></pre>
+<p>When not cross compiling <code>pythonPkgsBuildHost</code> is aliased to the main Python set, so overrides will apply to both automatically.</p>
+<h4 id="dealing-with-common-problems"><a class="header" href="#dealing-with-common-problems">Dealing with common problems</a></h4>
+<p>For utility functions to deal with some common packaging issues see <a href="builders/./hacks.html">hacks</a>.</p>
+<footer id="open-on-gh"><hr style="margin-top: 5em;" />
+Found an issue? <a href="https://github.com/nix-community/pyproject.nix/edit/master/doc/src/builders/overriding.md">Edit this page on GitHub.</a>
+</footer><div style="break-before: page; page-break-before: always;"></div><h1 id="hacks"><a class="header" href="#hacks">hacks</a></h1>
+<p>This documentation is a guide, for more details see <a href="builders//build/hacks/default.html">hacks library reference</a>.</p>
+<h2 id="using-prebuilt-packages-from-nixpkgs"><a class="header" href="#using-prebuilt-packages-from-nixpkgs">Using prebuilt packages from Nixpkgs</a></h2>
+<p>Sometimes making a package building from source can be difficult, wheels are not available, and Nixpkgs may already contain source-built packages.
+In such cases it can be tempting to reuse build outputs from Nixpkgs, just as you would use a binary wheel from PyPI.</p>
+<p>For such cases <code>pyproject.nix</code> provides an adapter:</p>
+<pre><code class="language-nix">{ callPackage, pyproject-nix, python3, python3Packages }:
+let
+  python = python3;
+
+  hacks = callPackage pyproject-nix.build.hacks {};
+
+  overlay = final: prev: {
+    # Adapt torch from nixpkgs
+    torch = hacks.nixpkgsPrebuilt {
+      from = python3Packages.torchWithoutCuda;
+      prev = prev.torch;
+    };
+  };
+
+  pythonSet = (callPackage pyproject-nix.build.packages {
+    inherit python;
+  }).overrideScope overlay;
+in
+  pythonSet.mkVirtualenv "torch-venv" {
+    torch = [ ];
+  }
+</code></pre>
+<p>You may also want to filter out certain dependencies, <code>torch</code> in particular depends on a number of PyPI packages containing binary shared objects that are already linked by <code>torch</code> from nixpkgs.</p>
+<pre><code class="language-nix">hacks.nixpkgsPrebuilt {
+  from = python3Packages.torchWithoutCuda;
+  prev = prev.torch.overrideAttrs(old: {
+    passthru = old.passthru // {
+      dependencies = lib.filterAttrs (name: _: ! lib.hasPrefix "nvidia" name) old.passthru.dependencies;
+    };
+  });
+};
+</code></pre>
+<h2 id="building-cargo-rust-packages-from-source"><a class="header" href="#building-cargo-rust-packages-from-source">Building Cargo (Rust) packages from source</a></h2>
+<p>Rust has it's own package manager, Cargo, that expects to be able to download dependencies at build-time.
+One way to deal with that is to use <a href="https://nixos.org/manual/nixpkgs/stable/#vendoring-of-dependencies">rustPlatform.importCargoLock</a>.</p>
+<p>This mechanism uses IFD (import-from-derivation) on non-local packages.
+For background as to why IFD should be avoided see</p>
+<ul>
+<li><a href="https://fzakaria.com/2020/10/20/nix-parallelism-import-from-derivation.html">fzakaria - Nix parallelism &amp; Import From Derivation</a>.</li>
+</ul>
+<p>To adapt the <code>cryptography</code> Python package into creating a Rust vendor directory, and use it for building:</p>
+<pre><code class="language-nix">final: prev: {
+  cryptography =
+    (hacks.importCargoLock {
+      prev = prev.cryptography;
+      # Cryptography uses a non-standard location for it's Rust packaging
+      cargoRoot = "src/rust";
+    });
+}
+</code></pre>
+<p>In reality, the package still lacks some important metadata, such as native non-Rust dependencies that needs to be supplemented.
+Depending on which lock file produced this package it may also need build-systems added.</p>
+<pre><code class="language-nix">final: prev: {
+  cryptography =
+    (hacks.importCargoLock {
+      prev = prev.cryptography;
+      # Cryptography uses a non-standard location for it's Rust packaging
+      cargoRoot = "src/rust";
+    }).overrideAttrs
+      (old: {
+        nativeBuildInputs =
+          old.nativeBuildInputs
+          ++ final.resolveBuildSystem {
+            maturin = [ ];
+            setuptools = [ ];
+            cffi = [ ];
+            pycparser = [ ];
+          };
+        buildInputs = old.buildInputs or [ ] ++ [ pkgs.openssl ];
+      });
+}
+</code></pre>
+<footer id="open-on-gh"><hr style="margin-top: 5em;" />
+Found an issue? <a href="https://github.com/nix-community/pyproject.nix/edit/master/doc/src/builders/hacks.md">Edit this page on GitHub.</a>
+</footer><div style="break-before: page; page-break-before: always;"></div><h1 id="ecosystem"><a class="header" href="#ecosystem">ecosystem</a></h1>
+<p>Projects currently using the <code>pyproject.nix</code> builders</p>
+<h2 id="python2nix"><a class="header" href="#python2nix">Python2nix</a></h2>
+<p>Lock file consumers producing package sets</p>
+<ul>
+<li><a href="https://github.com/adisbladis/uv2nix">uv2nix</a></li>
+</ul>
+<h2 id="override-collections"><a class="header" href="#override-collections">Override collections</a></h2>
+<p>Override collections to deal with packaging issues</p>
+<ul>
+<li><a href="https://github.com/TyberiusPrime/uv2nix_hammer_overrides/">uv2nix_hammer_overrides</a></li>
+</ul>
+<footer id="open-on-gh"><hr style="margin-top: 5em;" />
+Found an issue? <a href="https://github.com/nix-community/pyproject.nix/edit/master/doc/src/builders/ecosystem.md">Edit this page on GitHub.</a>
+</footer><div style="break-before: page; page-break-before: always;"></div><h1 id="faq"><a class="header" href="#faq">FAQ</a></h1>
+<h2 id="how-does-package-name-mapping-from-python-to-nixpkgs-work"><a class="header" href="#how-does-package-name-mapping-from-python-to-nixpkgs-work">How does package name mapping from Python to Nixpkgs work?</a></h2>
+<p>Package names are normalized according to the <a href="https://packaging.python.org/en/latest/specifications/name-normalization/#normalization">PyPA normalization specification</a>.
+Nixpkgs also uses the same normalization <a href="https://github.com/NixOS/nixpkgs/issues/245383">but has some legacy package names</a> that do not follow normalization guidelines.</p>
+<p>The other case where the automatic mapping goes wrong is when the Nixpkgs <code>python.pkgs</code> set does not contain a dependency.
+One such example is <code>ruff</code>, a Python linter written in Rust.</p>
+<p>Nixpkgs has <code>ruff</code> on the top-level (<code>pkgs</code>), but not in <code>python3.pkgs</code>.
+In such cases you can use an overlay to add the package to the Python set:</p>
+<pre><code class="language-nix">let
+  python = pkgs.python3.override {
+    packageOverrides = self: super: {
+      ruff = pkgs.ruff;
+    };
+  };
+in ...
+</code></pre>
+<h2 id="how-do-you-treat-dynamic-attributes"><a class="header" href="#how-do-you-treat-dynamic-attributes">How do you treat <code>dynamic</code> attributes?</a></h2>
+<p>Pyproject.nix makes no attempt at parsing dynamic fields as it does not have the required knowledge to infer these.</p>
+<p>When using the <code>withPackages</code> renderer most fields that may be dynamic are not even relevant and won't cause issues.
+At other times, like when using the <code>buildPythonPackage</code> renderer problems occur as there is no way for the renderer to create the version attribute.</p>
+<pre><code class="language-nix">let
+  project = pyproject.project.loadPyproject { pyproject = lib.importTOML ./pyproject.toml; };
+  python = pkgs.python3;
+  attrs = pyproject.renderers.buildPythonPackage { inherit python project; };
+in python.pkgs.buildPythonPackage attrs
+</code></pre>
+<p>Will result in an error from <code>buildPythonpackage</code> because <code>version</code> is missing:</p>
+<pre><code>error: attribute 'version' missing
+
+at /nix/store/gna8i238i3nnz6cizcayyfyfdzn28la5-nixpkgs/pkgs/development/interpreters/python/mk-python-derivation.nix:31:28:
+
+    30|
+    31| { name ? "${attrs.pname}-${attrs.version}"
+      |                            ^
+    32|
+</code></pre>
+<p>In these cases you can manually add attributes to the attribute set returned by the renderer:</p>
+<pre><code class="language-nix">let
+  project = pyproject.project.loadPyproject { pyproject = lib.importTOML ./pyproject.toml; };
+  python = pkgs.python3;
+  attrs = pyproject.renderers.buildPythonPackage { inherit python project; };
+in python.pkgs.buildPythonPackage (attrs // {
+  version = "1.0";  # Not dynamically inferred
+})
+</code></pre>
+<footer id="open-on-gh"><hr style="margin-top: 5em;" />
+Found an issue? <a href="https://github.com/nix-community/pyproject.nix/edit/master/doc/src/FAQ.md">Edit this page on GitHub.</a>
+</footer><div style="break-before: page; page-break-before: always;"></div><h1 id="reference-documentation"><a class="header" href="#reference-documentation">Reference documentation</a></h1>
+<p>The reference documentation is split up into two main categories:</p>
+<ul>
+<li>User facing APIs</li>
+</ul>
+<p>Contains high-level representations and has notions of things like a <code>project</code> (a fully parsed <code>pyproject.toml</code>) and further operations done on the project level.</p>
+<ul>
+<li>Standards APIs</li>
+</ul>
+<p>Contains parsers, evaluators &amp; utility functions for dealing with Python packaging standards defined by the through the PEP process &amp; from PyPA.</p>
+<footer id="open-on-gh"><hr style="margin-top: 5em;" />
+Found an issue? <a href="https://github.com/nix-community/pyproject.nix/edit/master/doc/src/reference.md">Edit this page on GitHub.</a>
+</footer><div style="break-before: page; page-break-before: always;"></div><h1 id="sec-functions-library-project"><a class="header" href="#sec-functions-library-project">project</a></h1>
+<h2 id="function-library-lib.project.loadPyproject"><a class="header" href="#function-library-lib.project.loadPyproject"><code>lib.project.loadPyproject</code></a></h2>
+<p><strong>Type</strong>: <code>loadPyproject :: AttrSet -&gt; AttrSet</code></p>
+<p>Load dependencies from a PEP-621 pyproject.toml.</p>
+<p>structured function argument</p>
+<p>: <code>pyproject</code></p>
+<p>: The unmarshaled contents of pyproject.toml</p>
+<p><code>extrasAttrPaths</code></p>
+<p>: Example: extrasAttrPaths = [ "tool.pdm.dev-dependencies" ];</p>
+<p><code>extrasListPaths</code></p>
+<p>: Example: extrasListPaths = { "tool.uv.dependencies.dev-dependencies" = "dev-dependencies"; }</p>
+<p><code>groupsAttrPaths</code></p>
+<p>: Example: extrasAttrPaths = [ "tool.pdm.dev-dependencies" ];</p>
+<p><code>groupsListPaths</code></p>
+<p>: Example: extrasListPaths = { "tool.uv.dependencies.dev-dependencies" = "dev-dependencies"; }</p>
+<p><code>projectRoot</code></p>
+<p>: Path to project root</p>
+<p>::: {.example #function-library-example-lib.project.loadPyproject}</p>
+<h1 id="libprojectloadpyproject-usage-example"><a class="header" href="#libprojectloadpyproject-usage-example"><code>lib.project.loadPyproject</code> usage example</a></h1>
+<pre><code class="language-nix"># loadPyproject { pyproject = lib.importTOML }
+{
+  dependencies = { }; # Parsed dependency structure in the schema of `lib.pep621.parseDependencies`
+  build-systems = [ ];  # Returned by `lib.pep518.parseBuildSystems`
+  pyproject = { }; # The unmarshaled contents of pyproject.toml
+  projectRoot = null; # Path to project root
+  requires-python = null; # requires-python as parsed by pep621.parseRequiresPython
+}
+</code></pre>
+<p>:::</p>
+<h2 id="function-library-lib.project.loadUVPyproject"><a class="header" href="#function-library-lib.project.loadUVPyproject"><code>lib.project.loadUVPyproject</code></a></h2>
+<p><strong>Type</strong>: <code>loadUVPyproject :: AttrSet -&gt; AttrSet</code></p>
+<p>Load dependencies from a uv pyproject.toml.</p>
+<p>structured function argument</p>
+<p>: <code>pyproject</code></p>
+<p>: The unmarshaled contents of pyproject.toml</p>
+<p><code>projectRoot</code></p>
+<p>: Path to project root</p>
+<p>::: {.example #function-library-example-lib.project.loadUVPyproject}</p>
+<h1 id="libprojectloaduvpyproject-usage-example"><a class="header" href="#libprojectloaduvpyproject-usage-example"><code>lib.project.loadUVPyproject</code> usage example</a></h1>
+<pre><code class="language-nix"># loadUVPyproject { projectRoot = ./.; }
+{
+  dependencies = { }; # Parsed dependency structure in the schema of `lib.pep621.parseDependencies`
+  build-systems = [ ];  # Returned by `lib.pep518.parseBuildSystems`
+  pyproject = { }; # The unmarshaled contents of pyproject.toml
+  projectRoot = null; # Path to project root
+  requires-python = null; # requires-python as parsed by pep621.parseRequiresPython
+}
+</code></pre>
+<p>:::</p>
+<h2 id="function-library-lib.project.loadPDMPyproject"><a class="header" href="#function-library-lib.project.loadPDMPyproject"><code>lib.project.loadPDMPyproject</code></a></h2>
+<p><strong>Type</strong>: <code>loadPDMPyproject :: AttrSet -&gt; AttrSet</code></p>
+<p>Load dependencies from a PDM pyproject.toml.</p>
+<p>structured function argument</p>
+<p>: <code>pyproject</code></p>
+<p>: The unmarshaled contents of pyproject.toml</p>
+<p><code>projectRoot</code></p>
+<p>: Path to project root</p>
+<p>::: {.example #function-library-example-lib.project.loadPDMPyproject}</p>
+<h1 id="libprojectloadpdmpyproject-usage-example"><a class="header" href="#libprojectloadpdmpyproject-usage-example"><code>lib.project.loadPDMPyproject</code> usage example</a></h1>
+<pre><code class="language-nix"># loadPyproject { projectRoot = ./.; }
+{
+  dependencies = { }; # Parsed dependency structure in the schema of `lib.pep621.parseDependencies`
+  build-systems = [ ];  # Returned by `lib.pep518.parseBuildSystems`
+  pyproject = { }; # The unmarshaled contents of pyproject.toml
+  projectRoot = null; # Path to project root
+  requires-python = null; # requires-python as parsed by pep621.parseRequiresPython
+}
+</code></pre>
+<p>:::</p>
+<h2 id="function-library-lib.project.loadPoetryPyproject"><a class="header" href="#function-library-lib.project.loadPoetryPyproject"><code>lib.project.loadPoetryPyproject</code></a></h2>
+<p><strong>Type</strong>: <code>loadPoetryPyproject :: AttrSet -&gt; AttrSet</code></p>
+<p>Load dependencies from a Poetry pyproject.toml.</p>
+<p>structured function argument</p>
+<p>: <code>pyproject</code></p>
+<p>: The unmarshaled contents of pyproject.toml</p>
+<p><code>projectRoot</code></p>
+<p>: Path to project root</p>
+<p>::: {.example #function-library-example-lib.project.loadPoetryPyproject}</p>
+<h1 id="libprojectloadpoetrypyproject-usage-example"><a class="header" href="#libprojectloadpoetrypyproject-usage-example"><code>lib.project.loadPoetryPyproject</code> usage example</a></h1>
+<pre><code class="language-nix"># loadPoetryPyproject { projectRoot = ./.; }
+{
+  dependencies = { }; # Parsed dependency structure in the schema of `lib.pep621.parseDependencies`
+  build-systems = [ ];  # Returned by `lib.pep518.parseBuildSystems`
+  pyproject = { }; # The unmarshaled contents of pyproject.toml
+  projectRoot = null; # Path to project root
+  requires-python = null; # requires-python as parsed by pep621.parseRequiresPython
+}
+</code></pre>
+<p>:::</p>
+<h2 id="function-library-lib.project.loadRequirementsTxt"><a class="header" href="#function-library-lib.project.loadRequirementsTxt"><code>lib.project.loadRequirementsTxt</code></a></h2>
+<p><strong>Type</strong>: <code>loadRequirementsTxt :: AttrSet -&gt; AttrSet</code></p>
+<p>Load dependencies from a requirements.txt.</p>
+<p>Note that as requirements.txt is lacking important project metadata this is incompatible with some renderers.</p>
+<p>structured function argument</p>
+<p>: <code>requirements</code></p>
+<p>: The contents of requirements.txt</p>
+<p><code>projectRoot</code></p>
+<p>: Path to project root</p>
+<p>::: {.example #function-library-example-lib.project.loadRequirementsTxt}</p>
+<h1 id="libprojectloadrequirementstxt-usage-example"><a class="header" href="#libprojectloadrequirementstxt-usage-example"><code>lib.project.loadRequirementsTxt</code> usage example</a></h1>
+<pre><code class="language-nix"># loadRequirementstxt { requirements = builtins.readFile ./requirements.txt; projectRoot = ./.; }
+{
+  dependencies = { }; # Parsed dependency structure in the schema of `lib.pep621.parseDependencies`
+  build-systems = [ ];  # Returned by `lib.pep518.parseBuildSystems`
+  pyproject = null; # The unmarshaled contents of pyproject.toml
+  projectRoot = null; # Path to project root
+  requires-python = null; # requires-python as parsed by pep621.parseRequiresPython
+}
+</code></pre>
+<p>:::</p>
+<h2 id="function-library-lib.project.loadPyprojectDynamic"><a class="header" href="#function-library-lib.project.loadPyprojectDynamic"><code>lib.project.loadPyprojectDynamic</code></a></h2>
+<p><strong>Type</strong>: <code>loadPyprojectDynamic :: AttrSet -&gt; AttrSet</code></p>
+<p>Load dependencies from a either a PEP-621 or Poetry pyproject.toml file.
+This function is intended for 2nix authors that wants to include local pyproject.toml files
+but don't know up front whether they're from Poetry or PEP-621.</p>
+<p>structured function argument</p>
+<p>: <code>pyproject</code></p>
+<p>: The unmarshaled contents of pyproject.toml</p>
+<p><code>projectRoot</code></p>
+<p>: Path to project root</p>
+<p>::: {.example #function-library-example-lib.project.loadPyprojectDynamic}</p>
+<h1 id="libprojectloadpyprojectdynamic-usage-example"><a class="header" href="#libprojectloadpyprojectdynamic-usage-example"><code>lib.project.loadPyprojectDynamic</code> usage example</a></h1>
+<pre><code class="language-nix"># loadPyprojectDynamic { projectRoot = ./.; }
+{
+  dependencies = { }; # Parsed dependency structure in the schema of `lib.pep621.parseDependencies`
+  build-systems = [ ];  # Returned by `lib.pep518.parseBuildSystems`
+  pyproject = { }; # The unmarshaled contents of pyproject.toml
+  projectRoot = null; # Path to project root
+  requires-python = null; # requires-python as parsed by pep621.parseRequiresPython
+}
+</code></pre>
+<p>:::</p>
+<footer id="open-on-gh"><hr style="margin-top: 5em;" />
+Found an issue? <a href="https://github.com/nix-community/pyproject.nix/edit/master/doc/src/lib/project.md">Edit this page on GitHub.</a>
+</footer><div style="break-before: page; page-break-before: always;"></div><h1 id="sec-functions-library-scripts"><a class="header" href="#sec-functions-library-scripts">scripts</a></h1>
+<h2 id="function-library-lib.scripts.loadScript"><a class="header" href="#function-library-lib.scripts.loadScript"><code>lib.scripts.loadScript</code></a></h2>
+<p>Load a PEP-723 metadata script from file path or string.</p>
+<p>structured function argument</p>
+<p>: <code>name</code></p>
+<p>: Function argument</p>
+<p><code>script</code></p>
+<p>: Function argument</p>
+<p>::: {.example #function-library-example-lib.scripts.loadScript}</p>
+<h1 id="libscriptsloadscript-usage-example"><a class="header" href="#libscriptsloadscript-usage-example"><code>lib.scripts.loadScript</code> usage example</a></h1>
+<pre><code class="language-nix"># loadScript { script = ./with-inline-metadata.py; }
+{
+  name = "with-inline-metadata";
+  metadata = { ... }; # Contains dependencies and requires-python
+  renderWithPackages = { python }: ...; # renderWithPackages with loaded script pre-applied
+}
+</code></pre>
+<p>:::</p>
+<h2 id="function-library-lib.scripts.renderWithPackages"><a class="header" href="#function-library-lib.scripts.renderWithPackages"><code>lib.scripts.renderWithPackages</code></a></h2>
+<p>Render a loaded PEP-723 script as a string with a shebang line pointing to a wrapped Nix store interpreter.</p>
+<p>structured function argument</p>
+<p>: <code>script</code></p>
+<p>: Script loaded using loadScript</p>
+<p><code>python</code></p>
+<p>: Nixpkgs Python interpreter</p>
+<p><code>environ</code></p>
+<p>: Nixpkgs Python package set Python extras (optional-dependencies) to enable. PEP-508 environment</p>
+<p>::: {.example #function-library-example-lib.scripts.renderWithPackages}</p>
+<h1 id="libscriptsrenderwithpackages-usage-example"><a class="header" href="#libscriptsrenderwithpackages-usage-example"><code>lib.scripts.renderWithPackages</code> usage example</a></h1>
+<pre><code class="language-nix"># Using renderWithPackages directly
+let
+  script = loadScript { script = ./with-inline-metadata.py; };
+in pkgs.writeScript script.name (renderWithPackages { inherit script; python = pkgs.python3; })
+
+# Using script render function
+let
+  script = loadScript { script = ./with-inline-metadata.py; };
+in pkgs.writeScript script.name (script.render { python = pkgs.python3; })
+</code></pre>
+<p>:::</p>
+<footer id="open-on-gh"><hr style="margin-top: 5em;" />
+Found an issue? <a href="https://github.com/nix-community/pyproject.nix/edit/master/doc/src/lib/scripts.md">Edit this page on GitHub.</a>
+</footer><div style="break-before: page; page-break-before: always;"></div><h1 id="build-infrastructures"><a class="header" href="#build-infrastructures">Build infrastructures</a></h1>
+<p>Pyproject.nix can be used with nixpkgs <code>buildPythonPackage</code>/<code>packageOverrides</code>/<code>withPackages</code>, but also implements it's <a href="./build.html">own build infrastructure</a> that fixes many structural problems with the nixpkgs implementation.</p>
+<footer id="open-on-gh"><hr style="margin-top: 5em;" />
+Found an issue? <a href="https://github.com/nix-community/pyproject.nix/edit/master/doc/src/nixpkgs-build.md">Edit this page on GitHub.</a>
+</footer><div style="break-before: page; page-break-before: always;"></div><h1 id="sec-functions-library-renderers"><a class="header" href="#sec-functions-library-renderers">renderers</a></h1>
+<h2 id="function-library-lib.renderers.withPackages"><a class="header" href="#function-library-lib.renderers.withPackages"><code>lib.renderers.withPackages</code></a></h2>
+<p><strong>Type</strong>: <code>withPackages :: AttrSet -&gt; lambda</code></p>
+<p>Renders a project as an argument that can be passed to withPackages</p>
+<p>Evaluates PEP-508 environment markers to select correct dependencies for the platform but does not validate version constraints.
+For validation see <code>lib.validators</code>.</p>
+<p>structured function argument</p>
+<p>: <code>project</code></p>
+<p>: Project metadata as returned by <code>lib.project.loadPyproject</code></p>
+<p><code>python</code></p>
+<p>: Python derivation</p>
+<p><code>pythonPackages</code></p>
+<p>: Nixpkgs Python package set</p>
+<p><code>extras</code></p>
+<p>: Python extras (optionals) to enable</p>
+<p><code>groups</code></p>
+<p>: PEP-735 dependency groups to enable.</p>
+<p><code>extraPackages</code></p>
+<p>: Extra withPackages function</p>
+<p><code>environ</code></p>
+<p>: PEP-508 environment</p>
+<p>::: {.example #function-library-example-lib.renderers.withPackages}</p>
+<h1 id="librendererswithpackages-usage-example"><a class="header" href="#librendererswithpackages-usage-example"><code>lib.renderers.withPackages</code> usage example</a></h1>
+<pre><code class="language-nix"># withPackages (lib.project.loadPyproject { ... })
+  «lambda @ «string»:1:1»
+</code></pre>
+<p>:::</p>
+<h2 id="function-library-lib.renderers.buildPythonPackage"><a class="header" href="#function-library-lib.renderers.buildPythonPackage"><code>lib.renderers.buildPythonPackage</code></a></h2>
+<p><strong>Type</strong>: <code>buildPythonPackage :: AttrSet -&gt; AttrSet</code></p>
+<p>Renders a project as an argument that can be passed to buildPythonPackage/buildPythonApplication.</p>
+<p>Evaluates PEP-508 environment markers to select correct dependencies for the platform but does not validate version constraints.
+For validation see <code>lib.validators</code>.</p>
+<p>structured function argument</p>
+<p>: <code>project</code></p>
+<p>: Project metadata as returned by <code>lib.project.loadPyproject</code></p>
+<p><code>python</code></p>
+<p>: Python derivation</p>
+<p><code>pythonPackages</code></p>
+<p>: Nixpkgs Python package set</p>
+<p><code>extras</code></p>
+<p>: Python extras (optional-dependencies) to enable.</p>
+<p><code>groups</code></p>
+<p>: PEP-735 dependency groups to enable.</p>
+<p><code>extrasAttrMappings</code></p>
+<p>: Map a Python extras group name to a Nix attribute set like: { dev = "checkInputs"; } This is intended to be used with optionals such as test dependencies that you might want to remap to checkInputs.</p>
+<p><code>format</code></p>
+<p>: Which package format to pass to buildPythonPackage If the format is "wheel" PEP-518 build-systems are excluded from the build.</p>
+<p><code>environ</code></p>
+<p>: PEP-508 environment</p>
+<p>::: {.example #function-library-example-lib.renderers.buildPythonPackage}</p>
+<h1 id="librenderersbuildpythonpackage-usage-example"><a class="header" href="#librenderersbuildpythonpackage-usage-example"><code>lib.renderers.buildPythonPackage</code> usage example</a></h1>
+<pre><code class="language-nix"># buildPythonPackage { project = lib.project.loadPyproject ...; python = pkgs.python3;  }
+  { pname = "blinker"; version = "1.3.3.7"; dependencies = [ ]; }
+</code></pre>
+<p>:::</p>
+<h2 id="function-library-lib.renderers.mkPythonEditablePackage"><a class="header" href="#function-library-lib.renderers.mkPythonEditablePackage"><code>lib.renderers.mkPythonEditablePackage</code></a></h2>
+<p><strong>Type</strong>: <code>mkPythonEditablePackage :: AttrSet -&gt; AttrSet</code></p>
+<p>Renders a project as an argument that can be passed to mkPythonEditablePackage.</p>
+<p>Evaluates PEP-508 environment markers to select correct dependencies for the platform but does not validate version constraints.
+For validation see <code>lib.validators</code>.</p>
+<p>Note for Nix Flake users:
+Flakes are copied to the store when using pure evaluation, meaning that the project root will point to a store directory.
+Either set root manually to a string using the returned attribute set, or evaluate using <code>--impure</code>.</p>
+<p>::: {.example #function-library-example-lib.renderers.mkPythonEditablePackage}</p>
+<h1 id="librenderersmkpythoneditablepackage-usage-example"><a class="header" href="#librenderersmkpythoneditablepackage-usage-example"><code>lib.renderers.mkPythonEditablePackage</code> usage example</a></h1>
+<pre><code class="language-nix"># mkPythonEditablePackage { project = lib.project.loadPyproject ...; python = pkgs.python3;  }
+  { pname = "blinker"; version = "1.3.3.7"; dependencies = [ ]; }
+</code></pre>
+<p>:::</p>
+<h2 id="function-library-lib.renderers.meta"><a class="header" href="#function-library-lib.renderers.meta"><code>lib.renderers.meta</code></a></h2>
+<p><strong>Type</strong>: <code>meta :: AttrSet -&gt; AttrSet</code></p>
+<p>Renders a project as a meta attribute</p>
+<p>This is used internally in renderers.mkPythonPackages</p>
+<p>structured function argument</p>
+<p>: <code>project</code></p>
+<p>: Function argument</p>
+<footer id="open-on-gh"><hr style="margin-top: 5em;" />
+Found an issue? <a href="https://github.com/nix-community/pyproject.nix/edit/master/doc/src/lib/renderers.md">Edit this page on GitHub.</a>
+</footer><div style="break-before: page; page-break-before: always;"></div><h1 id="sec-functions-library-validators"><a class="header" href="#sec-functions-library-validators">validators</a></h1>
+<h2 id="function-library-lib.validators.validateVersionConstraints"><a class="header" href="#function-library-lib.validators.validateVersionConstraints"><code>lib.validators.validateVersionConstraints</code></a></h2>
+<p><strong>Type</strong>: <code>validateVersionConstraints :: AttrSet -&gt; AttrSet</code></p>
+<p>Validates the Python package set held by Python (<code>python.pkgs</code>) against the parsed project.</p>
+<p>Returns an attribute set where the name is the Python package derivation <code>pname</code> and the value is a list of the mismatching conditions.</p>
+<p>structured function argument</p>
+<p>: <code>project</code></p>
+<p>: Project metadata as returned by <code>lib.project.loadPyproject</code></p>
+<p><code>python</code></p>
+<p>: Python derivation</p>
+<p><code>extras</code></p>
+<p>: Python extras (optionals) to enable</p>
+<p>::: {.example #function-library-example-lib.validators.validateVersionConstraints}</p>
+<h1 id="libvalidatorsvalidateversionconstraints-usage-example"><a class="header" href="#libvalidatorsvalidateversionconstraints-usage-example"><code>lib.validators.validateVersionConstraints</code> usage example</a></h1>
+<pre><code class="language-nix"># validateVersionConstraints (lib.project.loadPyproject { ... })
+{
+  resolvelib = {
+    # conditions as returned by `lib.pep440.parseVersionCond`
+    conditions = [ { op = "&gt;="; version = { dev = null; epoch = 0; local = null; post = null; pre = null; release = [ 1 0 1 ]; }; } ];
+    # Version from Python package set
+    version = "0.5.5";
+  };
+  unearth = {
+    conditions = [ { op = "&gt;="; version = { dev = null; epoch = 0; local = null; post = null; pre = null; release = [ 0 10 0 ]; }; } ];
+    version = "0.9.1";
+  };
+}
+</code></pre>
+<p>:::</p>
+<footer id="open-on-gh"><hr style="margin-top: 5em;" />
+Found an issue? <a href="https://github.com/nix-community/pyproject.nix/edit/master/doc/src/lib/validators.md">Edit this page on GitHub.</a>
+</footer><div style="break-before: page; page-break-before: always;"></div><h1 id="reference-documentation-1"><a class="header" href="#reference-documentation-1">Reference documentation</a></h1>
+<p>The reference documentation is split up into two main categories:</p>
+<ul>
+<li>User facing APIs</li>
+</ul>
+<p>Contains high-level representations and has notions of things like a <code>project</code> (a fully parsed <code>pyproject.toml</code>) and further operations done on the project level.</p>
+<ul>
+<li>Standards APIs</li>
+</ul>
+<p>Contains parsers, evaluators &amp; utility functions for dealing with Python packaging standards defined by the through the PEP process &amp; from PyPA.</p>
+<footer id="open-on-gh"><hr style="margin-top: 5em;" />
+Found an issue? <a href="https://github.com/nix-community/pyproject.nix/edit/master/doc/src/reference.md">Edit this page on GitHub.</a>
+</footer><div style="break-before: page; page-break-before: always;"></div><h1 id="sec-functions-library-pep440"><a class="header" href="#sec-functions-library-pep440">pep440</a></h1>
+<h2 id="function-library-lib.pep440.parseVersion"><a class="header" href="#function-library-lib.pep440.parseVersion"><code>lib.pep440.parseVersion</code></a></h2>
+<p><strong>Type</strong>: <code>parseVersion :: string -&gt; AttrSet</code></p>
+<p>Parse a version according to PEP-440.</p>
+<p><code>version</code></p>
+<p>: Function argument</p>
+<p>::: {.example #function-library-example-lib.pep440.parseVersion}</p>
+<h1 id="libpep440parseversion-usage-example"><a class="header" href="#libpep440parseversion-usage-example"><code>lib.pep440.parseVersion</code> usage example</a></h1>
+<pre><code class="language-nix"># parseVersion "3.0.0rc1"
+{
+  dev = null;
+  epoch = 0;
+  local = null;
+  post = null;
+  pre = {
+    type = "rc";
+    value = 1;
+  };
+  release = [ 3 0 0 ];
+}
+</code></pre>
+<p>:::</p>
+<h2 id="function-library-lib.pep440.parseVersionCond"><a class="header" href="#function-library-lib.pep440.parseVersionCond"><code>lib.pep440.parseVersionCond</code></a></h2>
+<p><strong>Type</strong>: <code>parseVersionCond :: string -&gt; AttrSet</code></p>
+<p>Parse a version conditional.</p>
+<p><code>cond</code></p>
+<p>: Function argument</p>
+<p>::: {.example #function-library-example-lib.pep440.parseVersionCond}</p>
+<h1 id="libpep440parseversioncond-usage-example"><a class="header" href="#libpep440parseversioncond-usage-example"><code>lib.pep440.parseVersionCond</code> usage example</a></h1>
+<pre><code class="language-nix"># parseVersionCond "&gt;=3.0.0rc1"
+{
+  op = "&gt;=";
+  version = {
+    dev = null;
+    epoch = 0;
+    local = null;
+    post = null;
+    pre = {
+      type = "rc";
+      value = 1;
+    };
+    release = [ 3 0 0 ];
+  };
+}
+</code></pre>
+<p>:::</p>
+<h2 id="function-library-lib.pep440.parseVersionConds"><a class="header" href="#function-library-lib.pep440.parseVersionConds"><code>lib.pep440.parseVersionConds</code></a></h2>
+<p><strong>Type</strong>: <code>parseVersionConds :: string -&gt; [AttrSet]</code></p>
+<p>Parse a list of version conditionals separated by commas.</p>
+<p><code>conds</code></p>
+<p>: Function argument</p>
+<p>::: {.example #function-library-example-lib.pep440.parseVersionConds}</p>
+<h1 id="libpep440parseversionconds-usage-example"><a class="header" href="#libpep440parseversionconds-usage-example"><code>lib.pep440.parseVersionConds</code> usage example</a></h1>
+<pre><code class="language-nix"># parseVersionConds "&gt;=3.0.0rc1,&lt;=4.0"
+[
+  {
+    op = "&gt;=";
+    version = {
+      dev = null;
+      epoch = 0;
+      local = null;
+      post = null;
+      pre = {
+        type = "rc";
+        value = 1;
+      };
+      release = [ 3 0 0 ];
+    };
+  }
+  {
+    op = "&lt;=";
+    version = {
+      dev = null;
+      epoch = 0;
+      local = null;
+      post = null;
+      pre = null;
+      release = [ 4 0 ];
+    };
+  }
+]
+</code></pre>
+<p>:::</p>
+<h2 id="function-library-lib.pep440.compareVersions"><a class="header" href="#function-library-lib.pep440.compareVersions"><code>lib.pep440.compareVersions</code></a></h2>
+<p><strong>Type</strong>: <code>compareVersions :: AttrSet -&gt; AttrSet -&gt; int</code></p>
+<p>Compare two versions as parsed by <code>parseVersion</code> according to PEP-440.</p>
+<p>Returns:</p>
+<ul>
+<li>-1 for less than</li>
+<li>0 for equality</li>
+<li>1 for greater than</li>
+</ul>
+<p><code>a</code></p>
+<p>: Function argument</p>
+<p><code>b</code></p>
+<p>: Function argument</p>
+<p>::: {.example #function-library-example-lib.pep440.compareVersions}</p>
+<h1 id="libpep440compareversions-usage-example"><a class="header" href="#libpep440compareversions-usage-example"><code>lib.pep440.compareVersions</code> usage example</a></h1>
+<pre><code class="language-nix"># compareVersions (parseVersion "3.0.0") (parseVersion "3.0.0")
+0
+</code></pre>
+<p>:::</p>
+<h2 id="function-library-lib.pep440.comparators"><a class="header" href="#function-library-lib.pep440.comparators"><code>lib.pep440.comparators</code></a></h2>
+<p><strong>Type</strong>: <code>operators.${operator} :: AttrSet -&gt; AttrSet -&gt; bool</code></p>
+<p>Map comparison operators as strings to a comparator function.</p>
+<p>Attributes:</p>
+<ul>
+<li><a href="https://peps.python.org/pep-0440/#compatible-release">Compatible release clause</a>: <code>~=</code></li>
+<li><a href="https://peps.python.org/pep-0440/#version-matching">Version matching clause</a>: <code>==</code></li>
+<li><a href="https://peps.python.org/pep-0440/#version-exclusion">Version exclusion clause</a>: <code>!=</code></li>
+<li><a href="https://peps.python.org/pep-0440/#inclusive-ordered-comparison">Inclusive ordered comparison clause</a>: <code>&lt;=</code>, <code>&gt;=</code></li>
+<li><a href="https://peps.python.org/pep-0440/#exclusive-ordered-comparison">Exclusive ordered comparison clause</a>: <code>&lt;</code>, <code>&gt;</code></li>
+<li><a href="https://peps.python.org/pep-0440/#arbitrary-equality">Arbitrary equality clause</a>: <code>===</code></li>
+</ul>
+<p>::: {.example #function-library-example-lib.pep440.comparators}</p>
+<h1 id="libpep440comparators-usage-example"><a class="header" href="#libpep440comparators-usage-example"><code>lib.pep440.comparators</code> usage example</a></h1>
+<pre><code class="language-nix"># comparators."==" (parseVersion "3.0.0") (parseVersion "3.0.0")
+true
+</code></pre>
+<p>:::</p>
+<footer id="open-on-gh"><hr style="margin-top: 5em;" />
+Found an issue? <a href="https://github.com/nix-community/pyproject.nix/edit/master/doc/src/lib/pep440.md">Edit this page on GitHub.</a>
+</footer><div style="break-before: page; page-break-before: always;"></div><h1 id="sec-functions-library-pep508"><a class="header" href="#sec-functions-library-pep508">pep508</a></h1>
+<h2 id="function-library-lib.pep508.parseMarkers"><a class="header" href="#function-library-lib.pep508.parseMarkers"><code>lib.pep508.parseMarkers</code></a></h2>
+<p><strong>Type</strong>: <code>parseMarkers :: string -&gt; AttrSet</code></p>
+<p>Parse PEP 508 markers into an AST.</p>
+<p>::: {.example #function-library-example-lib.pep508.parseMarkers}</p>
+<h1 id="libpep508parsemarkers-usage-example"><a class="header" href="#libpep508parsemarkers-usage-example"><code>lib.pep508.parseMarkers</code> usage example</a></h1>
+<pre><code class="language-nix"># parseMarkers "(os_name=='a' or os_name=='b') and os_name=='c'"
+{
+  lhs = {
+    lhs = {
+      lhs = {
+        type = "variable";
+        value = "os_name";
+      };
+      op = "==";
+      rhs = {
+        type = "string";
+        value = "a";
+      };
+      type = "compare";
+    };
+    op = "or";
+    rhs = {
+      lhs = {
+        type = "variable";
+        value = "os_name";
+      };
+      op = "==";
+      rhs = {
+        type = "string";
+        value = "b";
+      };
+      type = "compare";
+    };
+    type = "boolOp";
+  };
+  op = "and";
+  rhs = {
+    lhs = {
+      type = "variable";
+      value = "os_name";
+    };
+    op = "==";
+    rhs = {
+      type = "string";
+      value = "c";
+    };
+    type = "compare";
+  };
+  type = "boolOp";
+}
+</code></pre>
+<p>:::</p>
+<h2 id="function-library-lib.pep508.parseString"><a class="header" href="#function-library-lib.pep508.parseString"><code>lib.pep508.parseString</code></a></h2>
+<p><strong>Type</strong>: <code>parseString :: string -&gt; AttrSet</code></p>
+<p>Parse a PEP-508 dependency string.</p>
+<p><code>input</code></p>
+<p>: Function argument</p>
+<p>::: {.example #function-library-example-lib.pep508.parseString}</p>
+<h1 id="libpep508parsestring-usage-example"><a class="header" href="#libpep508parsestring-usage-example"><code>lib.pep508.parseString</code> usage example</a></h1>
+<pre><code class="language-nix"># parseString "cachecontrol[filecache]&gt;=0.13.0"
+{
+  conditions = [
+    {
+      op = "&gt;=";
+      version = {
+        dev = null;
+        epoch = 0;
+        local = null;
+        post = null;
+        pre = null;
+        release = [ 0 13 0 ];
+      };
+    }
+  ];
+  markers = null;
+  name = "cachecontrol";
+  extras = [ "filecache" ];
+  url = null;
+}
+</code></pre>
+<p>:::</p>
+<h2 id="function-library-lib.pep508.mkEnviron"><a class="header" href="#function-library-lib.pep508.mkEnviron"><code>lib.pep508.mkEnviron</code></a></h2>
+<p><strong>Type</strong>: <code>mkEnviron :: derivation -&gt; AttrSet</code></p>
+<p>Create an attrset of platform variables.
+As described in https://peps.python.org/pep-0508/#environment-markers.</p>
+<p><code>python</code></p>
+<p>: Function argument</p>
+<p>::: {.example #function-library-example-lib.pep508.mkEnviron}</p>
+<h1 id="libpep508mkenviron-usage-example"><a class="header" href="#libpep508mkenviron-usage-example"><code>lib.pep508.mkEnviron</code> usage example</a></h1>
+<pre><code class="language-nix"># mkEnviron pkgs.python3
+{
+  implementation_name = {
+    type = "string";
+    value = "cpython";
+  };
+  implementation_version = {
+    type = "version";
+    value = {
+      dev = null;
+      epoch = 0;
+      local = null;
+      post = null;
+      pre = null;
+      release = [ 3 10 12 ];
+    };
+  };
+  os_name = {
+    type = "string";
+    value = "posix";
+  };
+  platform_machine = {
+    type = "string";
+    value = "x86_64";
+  };
+  platform_python_implementation = {
+    type = "string";
+    value = "CPython";
+  };
+  # platform_release maps to platform.release() which returns
+  # the running kernel version on Linux.
+  # Because this field is not reproducible it's left empty.
+  platform_release = {
+    type = "string";
+    value = "";
+  };
+  platform_system = {
+    type = "string";
+    value = "Linux";
+  };
+  # platform_version maps to platform.version() which also returns
+  # the running kernel version on Linux.
+  # Because this field is not reproducible it's left empty.
+  platform_version = {
+    type = "version";
+    value = {
+      dev = null;
+      epoch = 0;
+      local = null;
+      post = null;
+      pre = null;
+      release = [ ];
+    };
+  };
+  python_full_version = {
+    type = "version";
+    value = {
+      dev = null;
+      epoch = 0;
+      local = null;
+      post = null;
+      pre = null;
+      release = [ 3 10 12 ];
+    };
+  };
+  python_version = {
+    type = "version";
+    value = {
+      dev = null;
+      epoch = 0;
+      local = null;
+      post = null;
+      pre = null;
+      release = [ 3 10 ];
+    };
+  };
+  sys_platform = {
+    type = "string";
+    value = "linux";
+  };
+}
+</code></pre>
+<p>:::</p>
+<h2 id="function-library-lib.pep508.setEnviron"><a class="header" href="#function-library-lib.pep508.setEnviron"><code>lib.pep508.setEnviron</code></a></h2>
+<p>Update one or more keys in an environment created by mkEnviron.</p>
+<p><code>environ</code></p>
+<p>: Function argument</p>
+<p><code>updates</code></p>
+<p>: Function argument</p>
+<p>::: {.example #function-library-example-lib.pep508.setEnviron}</p>
+<h1 id="libpep508setenviron-usage-example"><a class="header" href="#libpep508setenviron-usage-example"><code>lib.pep508.setEnviron</code> usage example</a></h1>
+<pre><code class="language-nix"># setEnviron (mkEnviron pkgs.python3) { platform_release = "5.10.65";  }
+</code></pre>
+<p>:::</p>
+<h2 id="function-library-lib.pep508.evalMarkers"><a class="header" href="#function-library-lib.pep508.evalMarkers"><code>lib.pep508.evalMarkers</code></a></h2>
+<p><strong>Type</strong>: <code>evalMarkers :: AttrSet -&gt; AttrSet -&gt; bool</code></p>
+<p>Evaluate an environment as returned by <code>mkEnviron</code> against markers as returend by <code>parseMarkers</code>.</p>
+<p><code>environ</code></p>
+<p>: Function argument</p>
+<p><code>value</code></p>
+<p>: Function argument</p>
+<p>::: {.example #function-library-example-lib.pep508.evalMarkers}</p>
+<h1 id="libpep508evalmarkers-usage-example"><a class="header" href="#libpep508evalmarkers-usage-example"><code>lib.pep508.evalMarkers</code> usage example</a></h1>
+<pre><code class="language-nix"># evalMarkers (mkEnviron pkgs.python3) (parseMarkers "python_version &lt; \"3.11\"")
+true
+</code></pre>
+<p>:::</p>
+<footer id="open-on-gh"><hr style="margin-top: 5em;" />
+Found an issue? <a href="https://github.com/nix-community/pyproject.nix/edit/master/doc/src/lib/pep508.md">Edit this page on GitHub.</a>
+</footer><div style="break-before: page; page-break-before: always;"></div><h1 id="sec-functions-library-pep518"><a class="header" href="#sec-functions-library-pep518">pep518</a></h1>
+<h2 id="function-library-lib.pep518.parseBuildSystems"><a class="header" href="#function-library-lib.pep518.parseBuildSystems"><code>lib.pep518.parseBuildSystems</code></a></h2>
+<p><strong>Type</strong>: <code>readPyproject :: AttrSet -&gt; list</code></p>
+<p>Parse PEP-518 <code>build-system.requires</code> from pyproject.toml.</p>
+<p><code>pyproject</code></p>
+<p>: Function argument</p>
+<p>::: {.example #function-library-example-lib.pep518.parseBuildSystems}</p>
+<h1 id="libpep518parsebuildsystems-usage-example"><a class="header" href="#libpep518parsebuildsystems-usage-example"><code>lib.pep518.parseBuildSystems</code> usage example</a></h1>
+<pre><code class="language-nix"># parseBuildSystems (lib.importTOML ./pyproject.toml)
+  [ ]  # List of parsed PEP-508 strings as returned by `lib.pep508.parseString`.
+</code></pre>
+<p>:::</p>
+<footer id="open-on-gh"><hr style="margin-top: 5em;" />
+Found an issue? <a href="https://github.com/nix-community/pyproject.nix/edit/master/doc/src/lib/pep518.md">Edit this page on GitHub.</a>
+</footer><div style="break-before: page; page-break-before: always;"></div><h1 id="sec-functions-library-pep599"><a class="header" href="#sec-functions-library-pep599">pep599</a></h1>
+<h2 id="function-library-lib.pep599.manyLinuxTargetMachines"><a class="header" href="#function-library-lib.pep599.manyLinuxTargetMachines"><code>lib.pep599.manyLinuxTargetMachines</code></a></h2>
+<p>Map Nixpkgs CPU values to target machines known to be supported for manylinux* wheels (a.k.a. <code>uname -m</code>),
+in nixpkgs found under the attribute <code>stdenv.targetPlatform.parsed.cpu.name</code></p>
+<p>::: {.example #function-library-example-lib.pep599.manyLinuxTargetMachines}</p>
+<h1 id="libpep599manylinuxtargetmachines-usage-example"><a class="header" href="#libpep599manylinuxtargetmachines-usage-example"><code>lib.pep599.manyLinuxTargetMachines</code> usage example</a></h1>
+<pre><code class="language-nix"># legacyAliases.powerpc64
+"ppc64"
+</code></pre>
+<p>:::</p>
+<footer id="open-on-gh"><hr style="margin-top: 5em;" />
+Found an issue? <a href="https://github.com/nix-community/pyproject.nix/edit/master/doc/src/lib/pep599.md">Edit this page on GitHub.</a>
+</footer><div style="break-before: page; page-break-before: always;"></div><h1 id="sec-functions-library-pep600"><a class="header" href="#sec-functions-library-pep600">pep600</a></h1>
+<h2 id="function-library-lib.pep600.legacyAliases"><a class="header" href="#function-library-lib.pep600.legacyAliases"><code>lib.pep600.legacyAliases</code></a></h2>
+<p><strong>Type</strong>: <code>legacyAliases.${tag} :: AttrSet -&gt; string</code></p>
+<p>Map legacy (pre PEP-600) platform tags to PEP-600 compliant ones.</p>
+<p>https://peps.python.org/pep-0600/#legacy-manylinux-tags</p>
+<p>::: {.example #function-library-example-lib.pep600.legacyAliases}</p>
+<h1 id="libpep600legacyaliases-usage-example"><a class="header" href="#libpep600legacyaliases-usage-example"><code>lib.pep600.legacyAliases</code> usage example</a></h1>
+<pre><code class="language-nix"># legacyAliases."manylinux1_x86_64" or "manylinux1_x86_64"
+"manylinux_2_5_x86_64"
+</code></pre>
+<p>:::</p>
+<h2 id="function-library-lib.pep600.manyLinuxTagCompatible"><a class="header" href="#function-library-lib.pep600.manyLinuxTagCompatible"><code>lib.pep600.manyLinuxTagCompatible</code></a></h2>
+<p><strong>Type</strong>: <code>manyLinuxTagCompatible :: AttrSet -&gt; derivation -&gt; string -&gt; bool</code></p>
+<p>Check if a manylinux tag is compatible with a given stdenv.</p>
+<p><code>platform</code></p>
+<p>: Platform attrset (<code>lib.systems.elaborate "x86_64-linux"</code>)</p>
+<p><code>libc</code></p>
+<p>: Libc derivation</p>
+<p><code>tag</code></p>
+<p>: Platform tag string</p>
+<p>::: {.example #function-library-example-lib.pep600.manyLinuxTagCompatible}</p>
+<h1 id="libpep600manylinuxtagcompatible-usage-example"><a class="header" href="#libpep600manylinuxtagcompatible-usage-example"><code>lib.pep600.manyLinuxTagCompatible</code> usage example</a></h1>
+<pre><code class="language-nix"># manyLinuxTagCompatible pkgs.stdenv.targetPlatform pkgs.stdenv.cc.libc "manylinux_2_5_x86_64"
+true
+</code></pre>
+<p>:::</p>
+<footer id="open-on-gh"><hr style="margin-top: 5em;" />
+Found an issue? <a href="https://github.com/nix-community/pyproject.nix/edit/master/doc/src/lib/pep600.md">Edit this page on GitHub.</a>
+</footer><div style="break-before: page; page-break-before: always;"></div><h1 id="sec-functions-library-pep621"><a class="header" href="#sec-functions-library-pep621">pep621</a></h1>
+<h2 id="function-library-lib.pep621.parseDependencies"><a class="header" href="#function-library-lib.pep621.parseDependencies"><code>lib.pep621.parseDependencies</code></a></h2>
+<p><strong>Type</strong>: <code>parseDependencies :: AttrSet -&gt; AttrSet</code></p>
+<p>Parse dependencies from pyproject.toml.</p>
+<p>structured function argument</p>
+<p>: <code>pyproject</code></p>
+<p>: Function argument</p>
+<p><code>extrasAttrPaths</code></p>
+<p>: Function argument</p>
+<p><code>extrasListPaths</code></p>
+<p>: Function argument</p>
+<p><code>groupsAttrPaths</code></p>
+<p>: Function argument</p>
+<p><code>groupsListPaths</code></p>
+<p>: Function argument</p>
+<p>::: {.example #function-library-example-lib.pep621.parseDependencies}</p>
+<h1 id="libpep621parsedependencies-usage-example"><a class="header" href="#libpep621parsedependencies-usage-example"><code>lib.pep621.parseDependencies</code> usage example</a></h1>
+<pre><code class="language-nix"># parseDependencies {
+#
+#   pyproject = (lib.importTOML ./pyproject.toml);
+#   # Don't just look at `project.optional-dependencies` for groups, also look at these:
+#   extrasAttrPaths = [ "tool.pdm.dev-dependencies" ];
+# }
+{
+  dependencies = [ ];  # List of parsed PEP-508 strings (lib.pep508.parseString)
+  extras = {
+    dev = [ ];  # List of parsed PEP-508 strings (lib.pep508.parseString)
+  };
+  build-systems = [ ];  # PEP-518 build-systems (List of parsed PEP-508 strings)
+}
+</code></pre>
+<p>:::</p>
+<h2 id="function-library-lib.pep621.parseRequiresPython"><a class="header" href="#function-library-lib.pep621.parseRequiresPython"><code>lib.pep621.parseRequiresPython</code></a></h2>
+<p><strong>Type</strong>: <code>parseRequiresPython :: AttrSet -&gt; list</code></p>
+<p>Parse project.python-requires from pyproject.toml</p>
+<p><code>pyproject</code></p>
+<p>: Function argument</p>
+<p>::: {.example #function-library-example-lib.pep621.parseRequiresPython}</p>
+<h1 id="libpep621parserequirespython-usage-example"><a class="header" href="#libpep621parserequirespython-usage-example"><code>lib.pep621.parseRequiresPython</code> usage example</a></h1>
+<pre><code class="language-nix">#  parseRequiresPython (lib.importTOML ./pyproject.toml)
+[ ]  # List of conditions as returned by `lib.pep440.parseVersionCond`
+</code></pre>
+<p>:::</p>
+<h2 id="function-library-lib.pep621.filterDependenciesByEnviron"><a class="header" href="#function-library-lib.pep621.filterDependenciesByEnviron"><code>lib.pep621.filterDependenciesByEnviron</code></a></h2>
+<p><strong>Type</strong>: <code>filterDependenciesByEnviron :: AttrSet -&gt; AttrSet -&gt; AttrSet</code></p>
+<p>Filter dependencies not relevant for this environment.</p>
+<p><code>environ</code></p>
+<p>: Environ as created by <code>lib.pep508.mkEnviron</code>.</p>
+<p><code>extras</code></p>
+<p>: Extras as a list of strings</p>
+<p><code>dependencies</code></p>
+<p>: Dependencies as parsed by <code>lib.pep621.parseDependencies</code>.</p>
+<p>::: {.example #function-library-example-lib.pep621.filterDependenciesByEnviron}</p>
+<h1 id="libpep621filterdependenciesbyenviron-usage-example"><a class="header" href="#libpep621filterdependenciesbyenviron-usage-example"><code>lib.pep621.filterDependenciesByEnviron</code> usage example</a></h1>
+<pre><code class="language-nix"># filterDependenciesByEnviron (lib.pep508.mkEnviron pkgs.python3) (lib.pep621.parseDependencies (lib.importTOML ./pyproject.toml))
+{ }  # Structure omitted in docs
+</code></pre>
+<p>:::</p>
+<footer id="open-on-gh"><hr style="margin-top: 5em;" />
+Found an issue? <a href="https://github.com/nix-community/pyproject.nix/edit/master/doc/src/lib/pep621.md">Edit this page on GitHub.</a>
+</footer><div style="break-before: page; page-break-before: always;"></div><h1 id="sec-functions-library-pep656"><a class="header" href="#sec-functions-library-pep656">pep656</a></h1>
+<h2 id="function-library-lib.pep656.muslLinuxTagCompatible"><a class="header" href="#function-library-lib.pep656.muslLinuxTagCompatible"><code>lib.pep656.muslLinuxTagCompatible</code></a></h2>
+<p><strong>Type</strong>: <code>muslLinuxTagCompatible :: AttrSet -&gt; derivation -&gt; string -&gt; bool</code></p>
+<p>Check if a musllinux tag is compatible with a given stdenv.</p>
+<p><code>platform</code></p>
+<p>: Platform attrset (<code>lib.systems.elaborate "x86_64-linux"</code>)</p>
+<p><code>libc</code></p>
+<p>: Libc derivation</p>
+<p><code>tag</code></p>
+<p>: Platform tag string</p>
+<p>::: {.example #function-library-example-lib.pep656.muslLinuxTagCompatible}</p>
+<h1 id="libpep656musllinuxtagcompatible-usage-example"><a class="header" href="#libpep656musllinuxtagcompatible-usage-example"><code>lib.pep656.muslLinuxTagCompatible</code> usage example</a></h1>
+<pre><code class="language-nix"># muslLinuxTagCompatible pkgs.stdenv.targetPlatform pkgs.stdenv.cc.libc "musllinux_1_1_x86_64"
+true
+</code></pre>
+<p>:::</p>
+<footer id="open-on-gh"><hr style="margin-top: 5em;" />
+Found an issue? <a href="https://github.com/nix-community/pyproject.nix/edit/master/doc/src/lib/pep656.md">Edit this page on GitHub.</a>
+</footer><div style="break-before: page; page-break-before: always;"></div><h1 id="sec-functions-library-pep723"><a class="header" href="#sec-functions-library-pep723">pep723</a></h1>
+<h2 id="function-library-lib.pep723.parseScript"><a class="header" href="#function-library-lib.pep723.parseScript"><code>lib.pep723.parseScript</code></a></h2>
+<p><strong>Type</strong>: <code>parseScript :: string -&gt; AttrSet</code></p>
+<p>Parse the script metadata section from a PEP-723 script.</p>
+<p><code>script</code></p>
+<p>: Function argument</p>
+<p>::: {.example #function-library-example-lib.pep723.parseScript}</p>
+<h1 id="libpep723parsescript-usage-example"><a class="header" href="#libpep723parsescript-usage-example"><code>lib.pep723.parseScript</code> usage example</a></h1>
+<pre><code class="language-nix"># parseScript (readFile ./script.py)
+{
+  requires-python = [ ];  # List of parsed version conditions (lib.pep440.parseVersionConds)
+  dependencies = [ ];  # List of parsed PEP-508 strings (lib.pep508.parseString)
+}
+</code></pre>
+<p>:::</p>
+<footer id="open-on-gh"><hr style="margin-top: 5em;" />
+Found an issue? <a href="https://github.com/nix-community/pyproject.nix/edit/master/doc/src/lib/pep723.md">Edit this page on GitHub.</a>
+</footer><div style="break-before: page; page-break-before: always;"></div><h1 id="sec-functions-library-poetry"><a class="header" href="#sec-functions-library-poetry">poetry</a></h1>
+<h2 id="function-library-lib.poetry.translatePoetryProject"><a class="header" href="#function-library-lib.poetry.translatePoetryProject"><code>lib.poetry.translatePoetryProject</code></a></h2>
+<p><strong>Type</strong>: <code>translatePoetryProject :: AttrSet -&gt; lambda</code></p>
+<p>Translate a Pyproject.toml from Poetry to PEP-621 project metadata.
+This function transposes a PEP-621 project table on top of an existing Pyproject.toml populated with data from <code>tool.poetry</code>.
+Notably does not translate dependencies/optional-dependencies.</p>
+<p>For parsing dependencies from Poetry see <code>lib.poetry.parseDependencies</code>.</p>
+<p><code>pyproject</code></p>
+<p>: Function argument</p>
+<p>::: {.example #function-library-example-lib.poetry.translatePoetryProject}</p>
+<h1 id="libpoetrytranslatepoetryproject-usage-example"><a class="header" href="#libpoetrytranslatepoetryproject-usage-example"><code>lib.poetry.translatePoetryProject</code> usage example</a></h1>
+<pre><code class="language-nix"># translatePoetryProject (lib.importTOML ./pyproject.toml)
+{ }  # TOML contents, structure omitted. See PEP-621 for more information on data members.
+</code></pre>
+<p>:::</p>
+<h2 id="function-library-lib.poetry.parseDependencies"><a class="header" href="#function-library-lib.poetry.parseDependencies"><code>lib.poetry.parseDependencies</code></a></h2>
+<p><strong>Type</strong>: <code>parseDependencies :: AttrSet -&gt; AttrSet</code></p>
+<p>Parse dependencies from pyproject.toml (Poetry edition).
+This function is analogous to <code>lib.pep621.parseDependencies</code>.</p>
+<p><code>pyproject</code></p>
+<p>: Function argument</p>
+<p>::: {.example #function-library-example-lib.poetry.parseDependencies}</p>
+<h1 id="libpoetryparsedependencies-usage-example"><a class="header" href="#libpoetryparsedependencies-usage-example"><code>lib.poetry.parseDependencies</code> usage example</a></h1>
+<pre><code class="language-nix"># parseDependencies {
+#
+#   pyproject = (lib.importTOML ./pyproject.toml);
+# }
+{
+  dependencies = [ ];  # List of parsed PEP-508 strings (lib.pep508.parseString)
+  extras = {
+    dev = [ ];  # List of parsed PEP-508 strings (lib.pep508.parseString)
+  };
+  build-systems = [ ];  # PEP-518 build-systems (List of parsed PEP-508 strings)
+}
+</code></pre>
+<p>:::</p>
+<h2 id="function-library-lib.poetry.parseVersionCond"><a class="header" href="#function-library-lib.poetry.parseVersionCond"><code>lib.poetry.parseVersionCond</code></a></h2>
+<p><strong>Type</strong>: <code>parseVersionCond :: string -&gt; [ AttrSet ]</code></p>
+<p>Parse a version conditional.
+Supports additional non-standard operators <code>^</code> and <code>~</code> used by Poetry.</p>
+<p>Because some expressions desugar to multiple expressions parseVersionCond returns a list.</p>
+<p><code>cond</code></p>
+<p>: Function argument</p>
+<h2 id="function-library-lib.poetry.parseVersionConds"><a class="header" href="#function-library-lib.poetry.parseVersionConds"><code>lib.poetry.parseVersionConds</code></a></h2>
+<p><strong>Type</strong>: <code>parseVersionConds :: string -&gt; [ AttrSet ]</code></p>
+<p>Parse a comma separated list version conditionals.
+Supports additional non-standard operators <code>^</code> and <code>~</code> used by Poetry.</p>
+<p><code>s</code></p>
+<p>: Function argument</p>
+<footer id="open-on-gh"><hr style="margin-top: 5em;" />
+Found an issue? <a href="https://github.com/nix-community/pyproject.nix/edit/master/doc/src/lib/poetry.md">Edit this page on GitHub.</a>
+</footer><div style="break-before: page; page-break-before: always;"></div><h1 id="sec-functions-library-pypa"><a class="header" href="#sec-functions-library-pypa">pypa</a></h1>
+<h2 id="function-library-lib.pypa.normalizePackageName"><a class="header" href="#function-library-lib.pypa.normalizePackageName"><code>lib.pypa.normalizePackageName</code></a></h2>
+<p><strong>Type</strong>: <code>normalizePackageName :: string -&gt; string</code></p>
+<p>Normalize package name as documented in https://packaging.python.org/en/latest/specifications/name-normalization/#normalization</p>
+<p>::: {.example #function-library-example-lib.pypa.normalizePackageName}</p>
+<h1 id="libpypanormalizepackagename-usage-example"><a class="header" href="#libpypanormalizepackagename-usage-example"><code>lib.pypa.normalizePackageName</code> usage example</a></h1>
+<pre><code class="language-nix"># readPyproject "Friendly-Bard"
+"friendly-bard"
+</code></pre>
+<p>:::</p>
+<h2 id="function-library-lib.pypa.parsePythonTag"><a class="header" href="#function-library-lib.pypa.parsePythonTag"><code>lib.pypa.parsePythonTag</code></a></h2>
+<p><strong>Type</strong>: <code>parsePythonTag :: string -&gt; AttrSet</code></p>
+<p>Parse Python tags.</p>
+<p>As described in https://packaging.python.org/en/latest/specifications/platform-compatibility-tags/#python-tag.</p>
+<p><code>tag</code></p>
+<p>: Function argument</p>
+<p>::: {.example #function-library-example-lib.pypa.parsePythonTag}</p>
+<h1 id="libpypaparsepythontag-usage-example"><a class="header" href="#libpypaparsepythontag-usage-example"><code>lib.pypa.parsePythonTag</code> usage example</a></h1>
+<pre><code class="language-nix"># parsePythonTag "cp37"
+{
+  implementation = "cpython";
+  version = "37";
+}
+</code></pre>
+<p>:::</p>
+<h2 id="function-library-lib.pypa.parseABITag"><a class="header" href="#function-library-lib.pypa.parseABITag"><code>lib.pypa.parseABITag</code></a></h2>
+<p><strong>Type</strong>: <code>parseABITag :: string -&gt; AttrSet</code></p>
+<p>Parse ABI tags.</p>
+<p>As described in https://packaging.python.org/en/latest/specifications/platform-compatibility-tags/#python-tag.</p>
+<p><code>tag</code></p>
+<p>: Function argument</p>
+<p>::: {.example #function-library-example-lib.pypa.parseABITag}</p>
+<h1 id="libpypaparseabitag-usage-example"><a class="header" href="#libpypaparseabitag-usage-example"><code>lib.pypa.parseABITag</code> usage example</a></h1>
+<pre><code class="language-nix"># parseABITag "cp37dmu"
+{
+  rest = "dmu";
+  implementation = "cp";
+  version = "37";
+}
+</code></pre>
+<p>:::</p>
+<h2 id="function-library-lib.pypa.isSdistFileName"><a class="header" href="#function-library-lib.pypa.isSdistFileName"><code>lib.pypa.isSdistFileName</code></a></h2>
+<p><strong>Type</strong>: <code>isSdistFileName :: string -&gt; bool</code></p>
+<p>Check whether string is a sdist file or not.</p>
+<p><code>name</code></p>
+<p>: The filename string</p>
+<p>::: {.example #function-library-example-lib.pypa.isSdistFileName}</p>
+<h1 id="libpypaissdistfilename-usage-example"><a class="header" href="#libpypaissdistfilename-usage-example"><code>lib.pypa.isSdistFileName</code> usage example</a></h1>
+<pre><code class="language-nix"># isSdistFileName "cryptography-41.0.1.tar.gz"
+true
+</code></pre>
+<p>:::</p>
+<h2 id="function-library-lib.pypa.matchWheelFileName"><a class="header" href="#function-library-lib.pypa.matchWheelFileName"><code>lib.pypa.matchWheelFileName</code></a></h2>
+<p><strong>Type</strong>: <code>matchWheelFileName :: string -&gt; [ string ]</code></p>
+<p>Regex match a wheel file name, returning a list of match groups. Returns null if no match.</p>
+<p><code>name</code></p>
+<p>: Function argument</p>
+<h2 id="function-library-lib.pypa.isWheelFileName"><a class="header" href="#function-library-lib.pypa.isWheelFileName"><code>lib.pypa.isWheelFileName</code></a></h2>
+<p><strong>Type</strong>: <code>isWheelFileName :: string -&gt; bool</code></p>
+<p>Check whether string is a wheel file or not.</p>
+<p><code>name</code></p>
+<p>: The filename string</p>
+<p>::: {.example #function-library-example-lib.pypa.isWheelFileName}</p>
+<h1 id="libpypaiswheelfilename-usage-example"><a class="header" href="#libpypaiswheelfilename-usage-example"><code>lib.pypa.isWheelFileName</code> usage example</a></h1>
+<pre><code class="language-nix"># isWheelFileName "cryptography-41.0.1-cp37-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl"
+true
+</code></pre>
+<p>:::</p>
+<h2 id="function-library-lib.pypa.parseWheelFileName"><a class="header" href="#function-library-lib.pypa.parseWheelFileName"><code>lib.pypa.parseWheelFileName</code></a></h2>
+<p><strong>Type</strong>: <code>parseFileName :: string -&gt; AttrSet</code></p>
+<p>Parse PEP-427 wheel file names.</p>
+<p><code>name</code></p>
+<p>: The wheel filename is <code>{distribution}-{version}(-{build tag})?-{python tag}-{abi tag}-{platform tag}.whl</code>.</p>
+<p>::: {.example #function-library-example-lib.pypa.parseWheelFileName}</p>
+<h1 id="libpypaparsewheelfilename-usage-example"><a class="header" href="#libpypaparsewheelfilename-usage-example"><code>lib.pypa.parseWheelFileName</code> usage example</a></h1>
+<pre><code class="language-nix"># parseFileName "cryptography-41.0.1-cp37-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl"
+ {
+  abiTag = {  # Parsed by pypa.parseABITag
+    implementation = "abi";
+    version = "3";
+    rest = "";
+  };
+  buildTag = null;
+  distribution = "cryptography";
+  languageTags = [  # Parsed by pypa.parsePythonTag
+    {
+      implementation = "cpython";
+      version = "37";
+    }
+  ];
+  platformTags = [ "manylinux_2_17_aarch64" "manylinux2014_aarch64" ];
+  version = "41.0.1";
+}
+</code></pre>
+<p>:::</p>
+<h2 id="function-library-lib.pypa.isABITagCompatible"><a class="header" href="#function-library-lib.pypa.isABITagCompatible"><code>lib.pypa.isABITagCompatible</code></a></h2>
+<p><strong>Type</strong>: <code>isABITagCompatible :: derivation -&gt; string -&gt; bool</code></p>
+<p>Check whether an ABI tag is compatible with this python interpreter.</p>
+<p><code>python</code></p>
+<p>: Python interpreter derivation</p>
+<p><code>abiTag</code></p>
+<p>: ABI tag string</p>
+<p>::: {.example #function-library-example-lib.pypa.isABITagCompatible}</p>
+<h1 id="libpypaisabitagcompatible-usage-example"><a class="header" href="#libpypaisabitagcompatible-usage-example"><code>lib.pypa.isABITagCompatible</code> usage example</a></h1>
+<pre><code class="language-nix"># isABITagCompatible pkgs.python3 (pypa.parseABITag "cp37")
+true
+</code></pre>
+<p>:::</p>
+<h2 id="function-library-lib.pypa.isPlatformTagCompatible"><a class="header" href="#function-library-lib.pypa.isPlatformTagCompatible"><code>lib.pypa.isPlatformTagCompatible</code></a></h2>
+<p><strong>Type</strong>: <code>isPlatformTagCompatible :: AttrSet -&gt; derivation -&gt; string -&gt; bool</code></p>
+<p>Check whether a platform tag is compatible with this python interpreter.</p>
+<p><code>platform</code></p>
+<p>: Platform attrset (<code>lib.systems.elaborate "x86_64-linux"</code>)</p>
+<p><code>libc</code></p>
+<p>: Libc derivation</p>
+<p><code>platformTag</code></p>
+<p>: Python tag</p>
+<p>::: {.example #function-library-example-lib.pypa.isPlatformTagCompatible}</p>
+<h1 id="libpypaisplatformtagcompatible-usage-example"><a class="header" href="#libpypaisplatformtagcompatible-usage-example"><code>lib.pypa.isPlatformTagCompatible</code> usage example</a></h1>
+<pre><code class="language-nix"># isPlatformTagCompatible pkgs.python3 "manylinux2014_x86_64"
+true
+</code></pre>
+<p>:::</p>
+<h2 id="function-library-lib.pypa.isPythonTagCompatible"><a class="header" href="#function-library-lib.pypa.isPythonTagCompatible"><code>lib.pypa.isPythonTagCompatible</code></a></h2>
+<p><strong>Type</strong>: <code>isPythonTagCompatible :: derivation -&gt; AttrSet -&gt; bool</code></p>
+<p>Check whether a Python language tag is compatible with this Python interpreter.</p>
+<p><code>python</code></p>
+<p>: Python interpreter derivation</p>
+<p><code>pythonTag</code></p>
+<p>: Python tag</p>
+<p>::: {.example #function-library-example-lib.pypa.isPythonTagCompatible}</p>
+<h1 id="libpypaispythontagcompatible-usage-example"><a class="header" href="#libpypaispythontagcompatible-usage-example"><code>lib.pypa.isPythonTagCompatible</code> usage example</a></h1>
+<pre><code class="language-nix"># isPythonTagCompatible pkgs.python3 (pypa.parsePythonTag "py3")
+true
+</code></pre>
+<p>:::</p>
+<h2 id="function-library-lib.pypa.isWheelFileCompatible"><a class="header" href="#function-library-lib.pypa.isWheelFileCompatible"><code>lib.pypa.isWheelFileCompatible</code></a></h2>
+<p><strong>Type</strong>: <code>isWheelFileCompatible :: derivation -&gt; AttrSet -&gt; bool</code></p>
+<p>Check whether wheel file name is compatible with this python interpreter.</p>
+<p><code>platform</code></p>
+<p>: Platform attrset (<code>lib.systems.elaborate "x86_64-linux"</code>)</p>
+<p><code>libc</code></p>
+<p>: Libc derivation</p>
+<p><code>python</code></p>
+<p>: Python interpreter derivation</p>
+<p><code>file</code></p>
+<p>: The parsed wheel filename</p>
+<p>::: {.example #function-library-example-lib.pypa.isWheelFileCompatible}</p>
+<h1 id="libpypaiswheelfilecompatible-usage-example"><a class="header" href="#libpypaiswheelfilecompatible-usage-example"><code>lib.pypa.isWheelFileCompatible</code> usage example</a></h1>
+<pre><code class="language-nix"># isWheelFileCompatible pkgs.python3 (pypa.parseWheelFileName "Pillow-9.0.1-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl")
+true
+</code></pre>
+<p>:::</p>
+<h2 id="function-library-lib.pypa.selectWheels"><a class="header" href="#function-library-lib.pypa.selectWheels"><code>lib.pypa.selectWheels</code></a></h2>
+<p><strong>Type</strong>: <code>selectWheels :: AttrSet -&gt; derivation -&gt; [ AttrSet ] -&gt; [ AttrSet ]</code></p>
+<p>Select compatible wheels from a list and return them in priority order.</p>
+<p><code>platform</code></p>
+<p>: Platform attrset (<code>lib.systems.elaborate "x86_64-linux"</code>)</p>
+<p><code>python</code></p>
+<p>: Python interpreter derivation</p>
+<p><code>files</code></p>
+<p>: List of files as parsed by parseWheelFileName</p>
+<p>::: {.example #function-library-example-lib.pypa.selectWheels}</p>
+<h1 id="libpypaselectwheels-usage-example"><a class="header" href="#libpypaselectwheels-usage-example"><code>lib.pypa.selectWheels</code> usage example</a></h1>
+<pre><code class="language-nix"># selectWheels (lib.systems.elaborate "x86_64-linux") [ (pypa.parseWheelFileName "Pillow-9.0.1-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl") ]
+[ (pypa.parseWheelFileName "Pillow-9.0.1-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl") ]
+</code></pre>
+<p>:::</p>
+<footer id="open-on-gh"><hr style="margin-top: 5em;" />
+Found an issue? <a href="https://github.com/nix-community/pyproject.nix/edit/master/doc/src/lib/pypa.md">Edit this page on GitHub.</a>
+</footer><div style="break-before: page; page-break-before: always;"></div><h1 id="sec-functions-library-eggs"><a class="header" href="#sec-functions-library-eggs">eggs</a></h1>
+<h2 id="function-library-lib.eggs.matchEggFileName"><a class="header" href="#function-library-lib.eggs.matchEggFileName"><code>lib.eggs.matchEggFileName</code></a></h2>
+<p><strong>Type</strong>: <code>matchEggFileName :: string -&gt; [ string ]</code></p>
+<p>Regex match an egg file name, returning a list of match groups. Returns null if no match.</p>
+<p><code>name</code></p>
+<p>: Function argument</p>
+<h2 id="function-library-lib.eggs.isEggFileName"><a class="header" href="#function-library-lib.eggs.isEggFileName"><code>lib.eggs.isEggFileName</code></a></h2>
+<p><strong>Type</strong>: <code>isEggFileName :: string -&gt; bool</code></p>
+<p>Check whether string is an egg file or not.</p>
+<p><code>name</code></p>
+<p>: The filename string</p>
+<p>::: {.example #function-library-example-lib.eggs.isEggFileName}</p>
+<h1 id="libeggsiseggfilename-usage-example"><a class="header" href="#libeggsiseggfilename-usage-example"><code>lib.eggs.isEggFileName</code> usage example</a></h1>
+<pre><code class="language-nix"># isEggFileName "cryptography-41.0.1-cp37-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl"
+false
+</code></pre>
+<p>:::</p>
+<h2 id="function-library-lib.eggs.parseEggFileName"><a class="header" href="#function-library-lib.eggs.parseEggFileName"><code>lib.eggs.parseEggFileName</code></a></h2>
+<p><strong>Type</strong>: <code>parsehEggFileName :: string -&gt; AttrSet</code></p>
+<p>Parse an egg file name.</p>
+<p><code>name</code></p>
+<p>: Function argument</p>
+<p>::: {.example #function-library-example-lib.eggs.parseEggFileName}</p>
+<h1 id="libeggsparseeggfilename-usage-example"><a class="header" href="#libeggsparseeggfilename-usage-example"><code>lib.eggs.parseEggFileName</code> usage example</a></h1>
+<pre><code class="language-nix"># parseEggFileName
+</code></pre>
+<p>:::</p>
+<h2 id="function-library-lib.eggs.selectEggs"><a class="header" href="#function-library-lib.eggs.selectEggs"><code>lib.eggs.selectEggs</code></a></h2>
+<p><strong>Type</strong>: <code>selectEggs :: derivation -&gt; [ AttrSet ] -&gt; [ AttrSet ]</code></p>
+<p>Select compatible eggs from a list and return them in priority order.</p>
+<p><code>python</code></p>
+<p>: Python interpreter derivation</p>
+<p><code>files</code></p>
+<p>: List of files parsed by parseEggFileName</p>
+<footer id="open-on-gh"><hr style="margin-top: 5em;" />
+Found an issue? <a href="https://github.com/nix-community/pyproject.nix/edit/master/doc/src/lib/eggs.md">Edit this page on GitHub.</a>
+</footer><div style="break-before: page; page-break-before: always;"></div><h1 id="sec-functions-library-pip"><a class="header" href="#sec-functions-library-pip">pip</a></h1>
+<h2 id="function-library-lib.pip.parseRequirementsTxt"><a class="header" href="#function-library-lib.pip.parseRequirementsTxt"><code>lib.pip.parseRequirementsTxt</code></a></h2>
+<p><strong>Type</strong>: <code>parseRequirementsTxt :: AttrSet -&gt; list</code></p>
+<p>Parse dependencies from requirements.txt</p>
+<p><code>requirements</code></p>
+<p>: The contents of or path to requirements.txt</p>
+<p>::: {.example #function-library-example-lib.pip.parseRequirementsTxt}</p>
+<h1 id="libpipparserequirementstxt-usage-example"><a class="header" href="#libpipparserequirementstxt-usage-example"><code>lib.pip.parseRequirementsTxt</code> usage example</a></h1>
+<pre><code class="language-nix"># parseRequirements ./requirements.txt
+[ { flags = []; requirement = {}; # Returned by pep508.parseString } ]
+</code></pre>
+<p>:::</p>
+<footer id="open-on-gh"><hr style="margin-top: 5em;" />
+Found an issue? <a href="https://github.com/nix-community/pyproject.nix/edit/master/doc/src/lib/pip.md">Edit this page on GitHub.</a>
+</footer><div style="break-before: page; page-break-before: always;"></div><h1 id="build-1"><a class="header" href="#build-1">Build</a></h1>
+<div class="warning">
+The pyproject.nix build infrastructure is brand new and experimental.
+At this time it's mainly targeted at python2nix authors, and is being tested in uv2nix.
+</div>
+<p>Pyproject.nix can be used with nixpkgs <code>buildPythonPackage</code>/<code>packageOverrides</code>/<code>withPackages</code>, but also implements it's own build infrastructure that fixes many structural problems with the nixpkgs implementation.</p>
+<h2 id="problems-with-nixpkgs-python-builders-1"><a class="header" href="#problems-with-nixpkgs-python-builders-1">Problems with nixpkgs Python builders</a></h2>
+<p>Nixpkgs Python infrastucture relies on <a href="https://nixos.org/manual/nixpkgs/unstable/#ssec-stdenv-dependencies-propagated">dependency propagation</a>.
+The propagation mechanism works through making dependencies available to the builder at build-time, and recording their Nix store paths in <code>$out/nix-support/propagated-build-inputs</code>.
+<a href="https://nixos.org/manual/nixpkgs/unstable/#ssec-setup-hooks">Setup hooks</a> are then used to add these packages to <code>$PYTHONPATH</code> for discovery by the Python interpreter which adds everything from <code>$PYTHONPATH</code> to <code>sys.path</code> at startup.</p>
+<p>Propagation causes several issues downstream.</p>
+<h3 id="pythonpath-leaking-into-unrelated-builds-1"><a class="header" href="#pythonpath-leaking-into-unrelated-builds-1"><code>$PYTHONPATH</code> leaking into unrelated builds</a></h3>
+<p>Consider the following development shell using nixpkgs Python builders:</p>
+<pre><code class="language-nix">let
+  pkgs = import &lt;nixpkgs&gt; { };
+  pythonEnv = pkgs.python3.withPackages(ps: [ ps.requests ]);
+in pkgs.mkShell {
+  packages = [
+    pkgs.remarshal
+    pythonEnv
+  ];
+}
+</code></pre>
+<p>Any Python package, such as <code>remarshal</code>, will have their dependencies leaking into <code>$PYTHONPATH</code>, making undeclared dependencies available to the Python interpreter.
+Making matters even worse: Any dependency on <code>$PYTHONPATH</code> takes precedence over virtualenv installed dependencies!</p>
+<h3 id="infinite-recursions-1"><a class="header" href="#infinite-recursions-1">Infinite recursions</a></h3>
+<p>Nix dependency graphs are required to be a <a href="https://en.wikipedia.org/wiki/Directed_acyclic_graph">DAG</a>, but Python dependencies can be cyclic.
+Dependency propagation is inherently incompatible with cyclic dependencies.
+In nixpkgs propagation isssues are commonly worked around by patching packages in various ways.</p>
+<h3 id="binary-wrapping-1"><a class="header" href="#binary-wrapping-1">Binary wrapping</a></h3>
+<p>Nixpkgs Python builders uses wrappers for Python executables in <code>bin/</code>, these set environment variables <code>NIX_PYTHONPATH</code> &amp; friends
+These environment variables are picked up by the interpreter using a <a href="https://docs.python.org/3/library/site.html#module-sitecustomize">sitecustomize.py</a> in the system <code>site-packages</code> directory.</p>
+<p>Any Python programs executing another child Python interpreter using <code>sys.executable</code> will have it's modules lost on import, as <code>sys.executable</code> isn't pointing to the environment created by <code>withPackages</code>.</p>
+<h3 id="extraneous-rebuilds-1"><a class="header" href="#extraneous-rebuilds-1">Extraneous rebuilds</a></h3>
+<p>Because <code>buildPythonPackage</code> uses propagation runtime dependencies of a package are required to be present at build time.</p>
+<p>In Python builds runtime dependencies are not actually required to be present.
+Making runtime dependencies available at build-time results in derivation hashes changing much more frequently than they have to.</p>
+<h2 id="solution-presented-by-pyprojectnixs-builders-1"><a class="header" href="#solution-presented-by-pyprojectnixs-builders-1">Solution presented by pyproject.nix's builders</a></h2>
+<p>The solution is to decouple the runtime dependency graph from the build time one, by putting runtime dependencies in <a href="https://nixos.org/manual/nixpkgs/unstable/#chap-passthru">passthru</a>:</p>
+<pre><code class="language-nix">stdenv.mkDerivation {
+  pname = "setuptools-scm";
+  version = "8.1.0";
+  src = fetchurl {
+    url = "https://files.pythonhosted.org/packages/4f/a4/00a9ac1b555294710d4a68d2ce8dfdf39d72aa4d769a7395d05218d88a42/setuptools_scm-8.1.0.tar.gz";
+    hash = "";
+  };
+
+  passthru = {
+    dependencies = {
+      packaging = [ ];
+      setuptools = [ ];
+    };
+
+    optional-dependencies = {
+      toml = { toml = [ ]; };
+      rich = { rich = [ ]; };
+    };
+  };
+
+  nativeBuildInputs = [
+    pyprojectHook
+  ] ++ resolveBuildSystem (
+    {
+      setuptools = [ ];
+    }
+  );
+}
+</code></pre>
+<h3 id="resolving-1"><a class="header" href="#resolving-1">Resolving</a></h3>
+<p>Because runtime dependencies are not propagated every package needs to resolve the runtime dependencies of their build-system's.</p>
+<p>Additionally packages can't simply be consumed, but must be aggregated into a virtual environment to be useful:</p>
+<pre><code class="language-nix">{ pyproject-nix, pkgs }:
+
+let
+  python = pkgs.python312;
+
+  # Inject your own packages on top with overrideScope
+  pythonSet = pkgs.callPackage pyproject-nix.build.packages {
+    inherit python;
+  };
+
+in pythonSet.pythonPkgsHostHost.mkVirtualEnv "test-venv" {
+  build = [ ];
+}
+</code></pre>
+<h3 id="cyclic-dependencies-1"><a class="header" href="#cyclic-dependencies-1">Cyclic dependencies</a></h3>
+<p>Cyclic dependencies are supported thanks to the resolver returning a flat list of required Python packages.
+For performance reasons two solvers are implemented:</p>
+<ul>
+<li>
+<p>One that does not support cyclic dependencies
+A much more performant resolver used by resolveBuildSystem and has all known build-systems memoized.</p>
+</li>
+<li>
+<p>One that does support cyclic dependencies
+Used to resolve virtual environments</p>
+</li>
+</ul>
+<p>It's possible to override the resolver used entirely, so even though cyclic build-system's are not supported by default, it can be done with overrides.</p>
+<h3 id="less-rebuilds-1"><a class="header" href="#less-rebuilds-1">Less rebuilds</a></h3>
+<p>As the runtime dependency graph is decoupled from the build time one derivation hashes change far less frequently.</p>
+<p>An additional benefit is improved build scheduling:
+Because the dependency graph is much flatter than a <code>buildPythonPackage</code> based one derivations can be more efficiently scheduled in parallel.</p>
+<h3 id="use-virtualenvs-1"><a class="header" href="#use-virtualenvs-1">Use virtualenvs</a></h3>
+<p>Instead of binary wrappers &amp; environment variables <code>pyproject.nix</code>'s builders use standard Python virtual environments.</p>
+<footer id="open-on-gh"><hr style="margin-top: 5em;" />
+Found an issue? <a href="https://github.com/nix-community/pyproject.nix/edit/master/doc/src/build.md">Edit this page on GitHub.</a>
+</footer><div style="break-before: page; page-break-before: always;"></div><h1 id="sec-functions-library-lib"><a class="header" href="#sec-functions-library-lib">build.lib</a></h1>
+<h2 id="function-library-build.lib.isBootstrapPackage"><a class="header" href="#function-library-build.lib.isBootstrapPackage"><code>build.lib.isBootstrapPackage</code></a></h2>
+<p>Check if a package is a bootstrap package by it's name.</p>
+<p>This needs to be used by lockfile consumers to check if a package needs pyprojectBootstrapHook instead of pyprojectHook.</p>
+<footer id="open-on-gh"><hr style="margin-top: 5em;" />
+Found an issue? <a href="https://github.com/nix-community/pyproject.nix/edit/master/doc/src/build/lib/index.md">Edit this page on GitHub.</a>
+</footer><div style="break-before: page; page-break-before: always;"></div><h1 id="sec-functions-library-renderers"><a class="header" href="#sec-functions-library-renderers">build.lib.renderers</a></h1>
+<h2 id="function-library-build.lib.renderers.mkDerivation"><a class="header" href="#function-library-build.lib.renderers.mkDerivation"><code>build.lib.renderers.mkDerivation</code></a></h2>
+<p><strong>Type</strong>: <code>mkDerivation :: AttrSet -&gt; AttrSet</code></p>
+<p>Renders a project as an argument that can be passed to stdenv.mkDerivation.</p>
+<p>Evaluates PEP-508 environment markers to select correct dependencies for the platform but does not validate version constraints.</p>
+<p>structured function argument</p>
+<p>: <code>project</code></p>
+<p>: Loaded pyproject.nix project</p>
+<p><code>environ</code></p>
+<p>: PEP-508 environment</p>
+<p><code>extras</code></p>
+<p>: Extras to enable (markers only, <code>optional-dependencies</code> are not enabled by default)</p>
+<h2 id="function-library-build.lib.renderers.mkDerivationEditable"><a class="header" href="#function-library-build.lib.renderers.mkDerivationEditable"><code>build.lib.renderers.mkDerivationEditable</code></a></h2>
+<p><strong>Type</strong>: <code>mkDerivation :: AttrSet -&gt; AttrSet</code></p>
+<p>Renders a project as an argument that can be passed to stdenv.mkDerivation.</p>
+<p>Evaluates PEP-508 environment markers to select correct dependencies for the platform but does not validate version constraints.</p>
+<p>structured function argument</p>
+<p>: <code>project</code></p>
+<p>: Loaded pyproject.nix project</p>
+<p><code>environ</code></p>
+<p>: PEP-508 environment</p>
+<p><code>extras</code></p>
+<p>: Extras to enable (markers only, <code>optional-dependencies</code> are not enabled by default)</p>
+<p><code>root</code></p>
+<p>: Editable root directory as a string</p>
+<footer id="open-on-gh"><hr style="margin-top: 5em;" />
+Found an issue? <a href="https://github.com/nix-community/pyproject.nix/edit/master/doc/src/build/lib/renderers.md">Edit this page on GitHub.</a>
+</footer><div style="break-before: page; page-break-before: always;"></div><h1 id="sec-functions-library-resolvers"><a class="header" href="#sec-functions-library-resolvers">build.lib.resolvers</a></h1>
+<h2 id="function-library-build.lib.resolvers.resolveNonCyclic"><a class="header" href="#function-library-build.lib.resolvers.resolveNonCyclic"><code>build.lib.resolvers.resolveNonCyclic</code></a></h2>
+<p>Resolve dependencies using a non-circular supporting approach.</p>
+<p>This implementation is faster than the one supporting circular dependencies, and is memoized.</p>
+<p><code>resolveNonCyclic</code> is intended to resolve build-system dependencies.</p>
+<p><code>memoNames</code></p>
+<p>: List of package names to memoize</p>
+<p><code>set</code></p>
+<p>: Package set to resolve packages from</p>
+<h2 id="function-library-build.lib.resolvers.resolveCyclic"><a class="header" href="#function-library-build.lib.resolvers.resolveCyclic"><code>build.lib.resolvers.resolveCyclic</code></a></h2>
+<p>Resolve dependencies using a cyclic supporting approach.</p>
+<p><code>resolveCyclic</code> is intended to resolve virtualenv dependencies.</p>
+<p><code>set</code></p>
+<p>: Package set to resolve packages from</p>
+<p><code>spec</code></p>
+<p>: Attribute set of dependencies -&gt; extras <code>{ requests = [ "socks" ]; }</code></p>
+<footer id="open-on-gh"><hr style="margin-top: 5em;" />
+Found an issue? <a href="https://github.com/nix-community/pyproject.nix/edit/master/doc/src/build/lib/resolvers.md">Edit this page on GitHub.</a>
+</footer><div style="break-before: page; page-break-before: always;"></div><h1 id="sec-functions-library-hooks"><a class="header" href="#sec-functions-library-hooks">build.packages.hooks</a></h1>
+<h2 id="function-library-build.packages.hooks.pyprojectConfigureHook"><a class="header" href="#function-library-build.packages.hooks.pyprojectConfigureHook"><code>build.packages.hooks.pyprojectConfigureHook</code></a></h2>
+<p>Undo any <code>$PYTHONPATH</code> changes done by nixpkgs Python infrastructure dependency propagation.</p>
+<p>Used internally by <code>pyprojectHook</code>.</p>
+<h2 id="function-library-build.packages.hooks.pyprojectBuildHook"><a class="header" href="#function-library-build.packages.hooks.pyprojectBuildHook"><code>build.packages.hooks.pyprojectBuildHook</code></a></h2>
+<p>Build a pyproject.toml/setuptools project.</p>
+<p>Used internally by <code>pyprojectHook</code>.</p>
+<h2 id="function-library-build.packages.hooks.pyprojectWheelDistHook"><a class="header" href="#function-library-build.packages.hooks.pyprojectWheelDistHook"><code>build.packages.hooks.pyprojectWheelDistHook</code></a></h2>
+<p>Symlink prebuilt wheel sources.</p>
+<p>Used internally by <code>pyprojectWheelHook</code>.</p>
+<h2 id="function-library-build.packages.hooks.pyprojectInstallHook"><a class="header" href="#function-library-build.packages.hooks.pyprojectInstallHook"><code>build.packages.hooks.pyprojectInstallHook</code></a></h2>
+<p>Install built projects from dist/*.whl.</p>
+<p>Used internally by <code>pyprojectHook</code>.</p>
+<h2 id="function-library-build.packages.hooks.pyprojectPypaInstallHook"><a class="header" href="#function-library-build.packages.hooks.pyprojectPypaInstallHook"><code>build.packages.hooks.pyprojectPypaInstallHook</code></a></h2>
+<p>Install hook using pypa/installer.</p>
+<p>Used instead of <code>pyprojectInstallHook</code> for cross compilation support.</p>
+<h2 id="function-library-build.packages.hooks.pyprojectBytecodeHook"><a class="header" href="#function-library-build.packages.hooks.pyprojectBytecodeHook"><code>build.packages.hooks.pyprojectBytecodeHook</code></a></h2>
+<p>Clean up any shipped bytecode in package output and recompile.</p>
+<p>Used internally by <code>pyprojectHook</code>.</p>
+<h2 id="function-library-build.packages.hooks.pyprojectOutputSetupHook"><a class="header" href="#function-library-build.packages.hooks.pyprojectOutputSetupHook"><code>build.packages.hooks.pyprojectOutputSetupHook</code></a></h2>
+<p>Create <code>pyproject.nix</code> setup hook in package output.</p>
+<p>Used internally by <code>pyprojectHook</code>.</p>
+<h2 id="function-library-build.packages.hooks.pyprojectMakeVenvHook"><a class="header" href="#function-library-build.packages.hooks.pyprojectMakeVenvHook"><code>build.packages.hooks.pyprojectMakeVenvHook</code></a></h2>
+<p>Create a virtual environment from buildInputs</p>
+<p>Used internally by <code>mkVirtualEnv</code>.</p>
+<h2 id="function-library-build.packages.hooks.pyprojectHook"><a class="header" href="#function-library-build.packages.hooks.pyprojectHook"><code>build.packages.hooks.pyprojectHook</code></a></h2>
+<p>Meta hook aggregating the default pyproject.toml/setup.py install behaviour and adds Python.</p>
+<p>This is the default choice for both pyproject.toml &amp; setuptools projects.</p>
+<h2 id="function-library-build.packages.hooks.pyprojectWheelHook"><a class="header" href="#function-library-build.packages.hooks.pyprojectWheelHook"><code>build.packages.hooks.pyprojectWheelHook</code></a></h2>
+<p>Hook used to build prebuilt wheels.</p>
+<p>Use instead of pyprojectHook.</p>
+<footer id="open-on-gh"><hr style="margin-top: 5em;" />
+Found an issue? <a href="https://github.com/nix-community/pyproject.nix/edit/master/doc/src/build/hooks.md">Edit this page on GitHub.</a>
+</footer><div style="break-before: page; page-break-before: always;"></div><h1 id="sec-functions-library-hacks"><a class="header" href="#sec-functions-library-hacks">build.hacks</a></h1>
+<h2 id="function-library-build.hacks.nixpkgsPrebuilt"><a class="header" href="#function-library-build.hacks.nixpkgsPrebuilt"><code>build.hacks.nixpkgsPrebuilt</code></a></h2>
+<p>Use a package output built by Nixpkgs Python infrastructure.</p>
+<p>Adapts a package by:</p>
+<ul>
+<li>Stripping dependency propagation</li>
+<li>Throwing away shell script wrapping</li>
+<li>Filtering out sys.path dependency injection</li>
+</ul>
+<p>This adaptation will of course break anything depending on other packages by <code>$PATH</code>, as these are injected by wrappers.</p>
+<h3 id="example"><a class="header" href="#example">Example</a></h3>
+<pre><code class="language-nix">nixpkgsPrebuilt {
+  from = pkgs.python3Packages.torchWithoutCuda;
+  prev = prev.torch;
+}
+=&gt;
+«derivation /nix/store/3864g3951bkbkq5nrld5yd8jxq7ss72y-torch-2.4.1.drv»
+</code></pre>
+<h3 id="type"><a class="header" href="#type">Type</a></h3>
+<pre><code>nixpkgsPrebuilt :: AttrSet -&gt; derivation
+</code></pre>
+<h3 id="arguments"><a class="header" href="#arguments">Arguments</a></h3>
+<p>from
+: Prebuilt package to transform output from</p>
+<p>prev
+: Previous pyproject.nix package to take passthru from</p>
+<h2 id="function-library-build.hacks.importCargoLock"><a class="header" href="#function-library-build.hacks.importCargoLock"><code>build.hacks.importCargoLock</code></a></h2>
+<p>Build a Cargo (Rust) package using rustPlatform.importCargoLock to fetch Rust dependencies.</p>
+<p>Uses IFD (import-from-derivation) on non-local packages.</p>
+<h3 id="example-1"><a class="header" href="#example-1">Example</a></h3>
+<pre><code class="language-nix">importCargoLock {
+  prev = prev.cryptography;
+  # Lock file relative to source root
+  lockFile = "src/rust/Cargo.lock";
+}
+=&gt;
+«derivation /nix/store/g3z1zlmc0sqpd6d5ccfrx3c4w4nv5dzr-cryptography-43.0.0.drv»
+</code></pre>
+<h3 id="type-1"><a class="header" href="#type-1">Type</a></h3>
+<pre><code>importCargoLock :: AttrSet -&gt; derivation
+</code></pre>
+<h3 id="arguments-1"><a class="header" href="#arguments-1">Arguments</a></h3>
+<p>prev
+: Previous pyproject.nix package</p>
+<p>importCargoLockArgs
+: Arguments passed directly to <code>rustPlatform.importCargoLock</code> function</p>
+<p>cargoRoot
+: Path to Cargo source root</p>
+<p>lockFile
+: Path to Cargo.lock (defaults to <code>${cargoRoot}/Cargo.lock</code>)</p>
+<p>doUnpack
+: Whether to unpack sources using an intermediate derivation</p>
+<p>unpackDerivationArgs
+: Arguments passed directly to intermediate unpacker derivation (unused for path sources)</p>
+<p>cargo
+: cargo derivation</p>
+<p>rustc
+: rustc derivation</p>
+<p>pkg-config
+: pkg-config derivation</p>
+<footer id="open-on-gh"><hr style="margin-top: 5em;" />
+Found an issue? <a href="https://github.com/nix-community/pyproject.nix/edit/master/doc/src/build/hacks.md">Edit this page on GitHub.</a>
+</footer><div style="break-before: page; page-break-before: always;"></div><h1 id="hacking"><a class="header" href="#hacking">Hacking</a></h1>
+<p>This document outlines hacking on <code>pyproject.nix</code> itself, and lays out it's project structure.</p>
+<h2 id="getting-started"><a class="header" href="#getting-started">Getting started</a></h2>
+<p>To start hacking run <code>nix develop -c hivemind</code> to run the project in watch mode.</p>
+<p>This will start up two processes:</p>
+<ul>
+<li>A <a href="https://github.com/adisbladis/nix-unit">Nix-unit</a> test runner</li>
+<li>A <a href="https://rust-lang.github.io/mdBook/">documentation server</a> available at http://localhost:3000</li>
+</ul>
+<h2 id="project-structure--testing"><a class="header" href="#project-structure--testing">Project structure &amp; testing</a></h2>
+<p>All Nix code lives in <code>lib/</code>. Each file has an implementation and a test suite.
+The attribute path to a an attribute <code>parseVersion</code> in <code>lib/pep440.nix</code> would be <code>lib.pep440.parseVersion</code>.</p>
+<p>A function in <code>lib/test.nix</code> maps over the public interface of the library and the test suite to generate coverage tests, ensuring that every exported symbol has at least one test covering it.</p>
+<p>Integration tests meaning tests that perform environment constructions &amp; builds lives in <code>test/</code> and are exposed through Flake checks.</p>
+<p>The manual you are reading right now is built from the <code>doc/</code> directory.
+To edit a specific page see the "Edit this page on GitHub" link in the footer for each respective page.</p>
+<h2 id="running-tests"><a class="header" href="#running-tests">Running tests</a></h2>
+<ul>
+<li>
+<p>Run the entire unit test suite
+<code>$ nix-unit --flake .#libTests</code></p>
+</li>
+<li>
+<p>Run unit tests for an individual function
+<code>$ nix-unit --flake .#libTests.pep440.parseVersion</code></p>
+</li>
+<li>
+<p>Run integration tests
+<code>$ nix flake check</code></p>
+</li>
+</ul>
+<h2 id="formatter"><a class="header" href="#formatter">Formatter</a></h2>
+<p>Before submitting a PR format the code with <code>nix fmt</code> and ensure Flake checks pass with <code>nix flake check</code>.</p>
+<footer id="open-on-gh"><hr style="margin-top: 5em;" />
+Found an issue? <a href="https://github.com/nix-community/pyproject.nix/edit/master/doc/src/HACKING.md">Edit this page on GitHub.</a>
+</footer>
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+        <script>
+        window.addEventListener('load', function() {
+            window.setTimeout(window.print, 100);
+        });
+        </script>
+
+    </div>
+    </body>
+</html>
