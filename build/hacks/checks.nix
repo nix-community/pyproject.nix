@@ -7,9 +7,15 @@ let
 
   python = pkgs.python3;
 
-  pythonSet = pkgs.callPackage pyproject-nix.build.packages {
-    inherit python;
+  buildSystems = import ../checks/build-systems.nix {
+    inherit pyproject-nix lib;
   };
+
+  pythonSet =
+    (pkgs.callPackage pyproject-nix.build.packages {
+      inherit python;
+    }).overrideScope
+      buildSystems;
 
 in
 {
