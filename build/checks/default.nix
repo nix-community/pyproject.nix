@@ -10,10 +10,16 @@ let
 
   python = pkgs.python312;
 
-  # Inject your own packages on top with overrideScope
-  pythonSet = pkgs.callPackage pyproject-nix.build.packages {
-    inherit python;
+  testOverlay = import ../test_overlay.nix {
+    inherit pyproject-nix lib;
   };
+
+  # Inject your own packages on top with overrideScope
+  pythonSet =
+    (pkgs.callPackage pyproject-nix.build.packages {
+      inherit python;
+    }).overrideScope
+      testOverlay;
 
   testVenv = pythonSet.pythonPkgsHostHost.mkVirtualEnv "test-venv" {
     build = [ ];
@@ -43,9 +49,11 @@ in
     let
       pkgs' = pkgs.pkgsCross.aarch64-multiplatform;
       python = pkgs'.python312;
-      crossSet = pkgs'.callPackage pyproject-nix.build.packages {
-        inherit python;
-      };
+      crossSet =
+        (pkgs'.callPackage pyproject-nix.build.packages {
+          inherit python;
+        }).overrideScope
+          testOverlay;
     in
     crossSet.pythonPkgsHostHost.mkVirtualEnv "cross-venv" {
       build = [ ];

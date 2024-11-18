@@ -1,7 +1,7 @@
 {
   lib,
-  pyproject-nix,
   resolvers,
+  pyproject-nix,
 }:
 let
   inherit (resolvers) resolveCyclic resolveNonCyclic;
@@ -31,7 +31,15 @@ let
 
   mkResolveVirtualEnv = set: spec: map (name: set.${name}) (resolveCyclic set spec);
 
-  pkgsFun = final: mkPkgs' { inherit (final) callPackage pyprojectBootstrapHook; };
+  deprecatedBuild = name: ''
+    You are using '${name}' from the pyproject.nix base package set.
+    This is deprecated in favour of https://github.com/pyproject-nix/build-system-pkgs and will be removed shortly.
+  '';
+  pkgsFun =
+    final:
+    lib.mapAttrs (name: drv: builtins.trace (deprecatedBuild name) drv) (mkPkgs' {
+      inherit (final) callPackage pyprojectBootstrapHook;
+    });
 
   mkPythonSet =
     {

@@ -12,7 +12,13 @@ let
 
   python = pkgs.python312;
 
-  pythonSet = pkgs.callPackage pyproject-nix.build.packages { inherit python; };
+  testOverlay = import ../test_overlay.nix {
+    inherit pyproject-nix lib;
+  };
+
+  pythonSet =
+    (pkgs.callPackage pyproject-nix.build.packages { inherit python; }).overrideScope
+      testOverlay;
 
 in
 
