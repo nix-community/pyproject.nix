@@ -29,7 +29,7 @@
       # https://nixos.org/manual/nixpkgs/stable/#reference
       #
       # Or use an overlay generator such as uv2nix:
-      # https://github.com/adisbladis/uv2nix
+      # https://github.com/pyproject-nix/uv2nix
       python = pkgs.python3;
 
     in

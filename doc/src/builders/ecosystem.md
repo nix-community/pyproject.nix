@@ -6,7 +6,7 @@ Projects currently using the `pyproject.nix` builders
 
 Lock file consumers producing package sets
 
-- [uv2nix](https://github.com/adisbladis/uv2nix)
+- [uv2nix](https://github.com/pyproject-nix/uv2nix)
 
 ## Override collections
 
