@@ -3,7 +3,7 @@
 
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
 
-  inputs.pyproject-nix.url = "github:nix-community/pyproject.nix";
+  inputs.pyproject-nix.url = "github:pyproject-nix/pyproject.nix";
 
   outputs =
     { nixpkgs, pyproject-nix, ... }:

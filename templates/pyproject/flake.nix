@@ -1,14 +1,12 @@
 {
   description = "A basic flake using pyproject.toml project metadata";
 
-  inputs.pyproject-nix.url = "github:nix-community/pyproject.nix";
+  inputs.pyproject-nix.url = "github:pyproject-nix/pyproject.nix";
   inputs.pyproject-nix.inputs.nixpkgs.follows = "nixpkgs";
 
   outputs =
     { nixpkgs, pyproject-nix, ... }:
     let
-      inherit (nixpkgs) lib;
-
       # Loads pyproject.toml into a high-level project representation
       # Do you notice how this is not tied to any `system` attribute or package sets?
       # That is because `project` refers to a pure data representation.

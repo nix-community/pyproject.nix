@@ -18,4 +18,4 @@ https://matrix.to/#/#pyproject.nix:blad.is
 
 ### Docs
 
-https://nix-community.github.io/pyproject.nix/
+https://pyproject-nix.github.io/pyproject.nix/

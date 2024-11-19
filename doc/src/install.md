@@ -11,7 +11,7 @@ let
   inherit (pkgs) lib;
 
   pyproject-nix = import (builtins.fetchGit {
-    url = "https://github.com/nix-community/pyproject.nix.git";
+    url = "https://github.com/pyproject-nix/pyproject.nix.git";
   }) {
     inherit lib;
   };
