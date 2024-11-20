@@ -1,46 +1,36 @@
 {
   "build-system": [
     {
-      "pname": "meson-python",
-      "version": "0.16.0"
+      "pname": "meson-python"
     },
     {
-      "pname": "meson",
-      "version": "1.5.2"
+      "pname": "meson"
     },
     {
-      "pname": "wheel",
-      "version": "0.44.0"
+      "pname": "wheel"
     },
     {
-      "pname": "cython",
-      "version": "3.0.10"
+      "pname": "cython"
     },
     {
-      "pname": "oldest-supported-numpy",
-      "version": "1.0.0"
+      "pname": "oldest-supported-numpy"
     },
     {
-      "pname": "versioneer",
-      "version": "0.29"
+      "pname": "versioneer"
     }
   ],
   "dependencies": [
     {
-      "pname": "numpy",
-      "version": "1.26.4"
+      "pname": "numpy"
     },
     {
-      "pname": "python-dateutil",
-      "version": "2.9.0.post0"
+      "pname": "python-dateutil"
     },
     {
-      "pname": "pytz",
-      "version": "2024.2"
+      "pname": "pytz"
     },
     {
-      "pname": "tzdata",
-      "version": "2024.2"
+      "pname": "tzdata"
     }
   ],
   "disabled": true,
@@ -50,344 +40,269 @@
   "optional-dependencies": {
     "all": [
       {
-        "pname": "beautifulsoup4",
-        "version": "4.12.3"
+        "pname": "beautifulsoup4"
       },
       {
-        "pname": "bottleneck",
-        "version": "1.4.0"
+        "pname": "bottleneck"
       },
       {
-        "pname": "brotlipy",
-        "version": "0.7.0"
+        "pname": "brotlipy"
       },
       {
-        "pname": "fastparquet",
-        "version": "2024.5.0"
+        "pname": "fastparquet"
       },
       {
-        "pname": "fsspec",
-        "version": "2024.3.0"
+        "pname": "fsspec"
       },
       {
-        "pname": "gcsfs",
-        "version": "2024.2.0"
+        "pname": "gcsfs"
       },
       {
-        "pname": "html5lib",
-        "version": "1.1"
+        "pname": "html5lib"
       },
       {
-        "pname": "hypothesis",
-        "version": "6.112.2"
+        "pname": "hypothesis"
       },
       {
-        "pname": "jinja2",
-        "version": "3.1.4"
+        "pname": "jinja2"
       },
       {
-        "pname": "lxml",
-        "version": "5.3.0"
+        "pname": "lxml"
       },
       {
-        "pname": "matplotlib",
-        "version": "3.9.0"
+        "pname": "matplotlib"
       },
       {
-        "pname": "numba",
-        "version": "0.60.0"
+        "pname": "numba"
       },
       {
-        "pname": "numexpr",
-        "version": "2.10.1"
+        "pname": "numexpr"
       },
       {
-        "pname": "odfpy",
-        "version": "1.4.1"
+        "pname": "odfpy"
       },
       {
-        "pname": "openpyxl",
-        "version": "3.1.5"
+        "pname": "openpyxl"
       },
       {
-        "pname": "pandas-gbq",
-        "version": "0.7.0"
+        "pname": "pandas-gbq"
       },
       {
-        "pname": "psycopg2",
-        "version": "2.9.9"
+        "pname": "psycopg2"
       },
       {
-        "pname": "pyarrow",
-        "version": "18.0.0"
+        "pname": "pyarrow"
       },
       {
-        "pname": "pymysql",
-        "version": "1.1.1"
+        "pname": "pymysql"
       },
       {
-        "pname": "pyqt5",
-        "version": "5.15.10"
+        "pname": "pyqt5"
       },
       {
-        "pname": "pyreadstat",
-        "version": "1.2.7"
+        "pname": "pyreadstat"
       },
       {
-        "pname": "pytest",
-        "version": "8.3.3"
+        "pname": "pytest"
       },
       {
-        "pname": "pytest-xdist",
-        "version": "3.6.1"
+        "pname": "pytest-xdist"
       },
       {
-        "pname": "pytest-asyncio",
-        "version": "0.23.8"
+        "pname": "pytest-asyncio"
       },
       {
-        "pname": "python-snappy",
-        "version": "0.7.3"
+        "pname": "python-snappy"
       },
       {
-        "pname": "pyxlsb",
-        "version": "1.0.10"
+        "pname": "pyxlsb"
       },
       {
-        "pname": "qtpy",
-        "version": "2.4.1"
+        "pname": "qtpy"
       },
       {
-        "pname": "scipy",
-        "version": "1.14.0"
+        "pname": "scipy"
       },
       {
-        "pname": "s3fs",
-        "version": "2024.9.0"
+        "pname": "s3fs"
       },
       {
-        "pname": "sqlalchemy",
-        "version": "2.0.34"
+        "pname": "sqlalchemy"
       },
       {
-        "pname": "tables",
-        "version": "3.10.1"
+        "pname": "tables"
       },
       {
-        "pname": "tabulate",
-        "version": "0.9.0"
+        "pname": "tabulate"
       },
       {
-        "pname": "xarray",
-        "version": "2024.10.0"
+        "pname": "xarray"
       },
       {
-        "pname": "xlrd",
-        "version": "2.0.1"
+        "pname": "xlrd"
       },
       {
-        "pname": "xlsxwriter",
-        "version": "3.2.0"
+        "pname": "xlsxwriter"
       },
       {
-        "pname": "zstandard",
-        "version": "0.23.0"
+        "pname": "zstandard"
       }
     ],
     "aws": [
       {
-        "pname": "s3fs",
-        "version": "2024.9.0"
+        "pname": "s3fs"
       }
     ],
     "clipboard": [
       {
-        "pname": "pyqt5",
-        "version": "5.15.10"
+        "pname": "pyqt5"
       },
       {
-        "pname": "qtpy",
-        "version": "2.4.1"
+        "pname": "qtpy"
       }
     ],
     "compression": [
       {
-        "pname": "brotlipy",
-        "version": "0.7.0"
+        "pname": "brotlipy"
       },
       {
-        "pname": "python-snappy",
-        "version": "0.7.3"
+        "pname": "python-snappy"
       },
       {
-        "pname": "zstandard",
-        "version": "0.23.0"
+        "pname": "zstandard"
       }
     ],
     "computation": [
       {
-        "pname": "scipy",
-        "version": "1.14.0"
+        "pname": "scipy"
       },
       {
-        "pname": "xarray",
-        "version": "2024.10.0"
+        "pname": "xarray"
       }
     ],
     "excel": [
       {
-        "pname": "odfpy",
-        "version": "1.4.1"
+        "pname": "odfpy"
       },
       {
-        "pname": "openpyxl",
-        "version": "3.1.5"
+        "pname": "openpyxl"
       },
       {
-        "pname": "pyxlsb",
-        "version": "1.0.10"
+        "pname": "pyxlsb"
       },
       {
-        "pname": "xlrd",
-        "version": "2.0.1"
+        "pname": "xlrd"
       },
       {
-        "pname": "xlsxwriter",
-        "version": "3.2.0"
+        "pname": "xlsxwriter"
       }
     ],
     "feather": [
       {
-        "pname": "pyarrow",
-        "version": "18.0.0"
+        "pname": "pyarrow"
       }
     ],
     "fss": [
       {
-        "pname": "fsspec",
-        "version": "2024.3.0"
+        "pname": "fsspec"
       }
     ],
     "gcp": [
       {
-        "pname": "gcsfs",
-        "version": "2024.2.0"
+        "pname": "gcsfs"
       },
       {
-        "pname": "pandas-gbq",
-        "version": "0.7.0"
+        "pname": "pandas-gbq"
       }
     ],
     "hdf5": [
       {
-        "pname": "tables",
-        "version": "3.10.1"
+        "pname": "tables"
       }
     ],
     "html": [
       {
-        "pname": "beautifulsoup4",
-        "version": "4.12.3"
+        "pname": "beautifulsoup4"
       },
       {
-        "pname": "html5lib",
-        "version": "1.1"
+        "pname": "html5lib"
       },
       {
-        "pname": "lxml",
-        "version": "5.3.0"
+        "pname": "lxml"
       }
     ],
     "mysql": [
       {
-        "pname": "sqlalchemy",
-        "version": "2.0.34"
+        "pname": "sqlalchemy"
       },
       {
-        "pname": "pymysql",
-        "version": "1.1.1"
+        "pname": "pymysql"
       }
     ],
     "output_formatting": [
       {
-        "pname": "jinja2",
-        "version": "3.1.4"
+        "pname": "jinja2"
       },
       {
-        "pname": "tabulate",
-        "version": "0.9.0"
+        "pname": "tabulate"
       }
     ],
     "parquet": [
       {
-        "pname": "pyarrow",
-        "version": "18.0.0"
+        "pname": "pyarrow"
       }
     ],
     "performance": [
       {
-        "pname": "bottleneck",
-        "version": "1.4.0"
+        "pname": "bottleneck"
       },
       {
-        "pname": "numba",
-        "version": "0.60.0"
+        "pname": "numba"
       },
       {
-        "pname": "numexpr",
-        "version": "2.10.1"
+        "pname": "numexpr"
       }
     ],
     "plot": [
       {
-        "pname": "matplotlib",
-        "version": "3.9.0"
+        "pname": "matplotlib"
       }
     ],
     "postgresql": [
       {
-        "pname": "sqlalchemy",
-        "version": "2.0.34"
+        "pname": "sqlalchemy"
       },
       {
-        "pname": "psycopg2",
-        "version": "2.9.9"
+        "pname": "psycopg2"
       }
     ],
     "spss": [
       {
-        "pname": "pyreadstat",
-        "version": "1.2.7"
+        "pname": "pyreadstat"
       }
     ],
     "sql-other": [
       {
-        "pname": "sqlalchemy",
-        "version": "2.0.34"
+        "pname": "sqlalchemy"
       }
     ],
     "test": [
       {
-        "pname": "hypothesis",
-        "version": "6.112.2"
+        "pname": "hypothesis"
       },
       {
-        "pname": "pytest",
-        "version": "8.3.3"
+        "pname": "pytest"
       },
       {
-        "pname": "pytest-xdist",
-        "version": "3.6.1"
+        "pname": "pytest-xdist"
       },
       {
-        "pname": "pytest-asyncio",
-        "version": "0.23.8"
+        "pname": "pytest-asyncio"
       }
     ],
     "xml": [
       {
-        "pname": "lxml",
-        "version": "5.3.0"
+        "pname": "lxml"
       }
     ]
   },

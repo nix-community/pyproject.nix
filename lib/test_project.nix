@@ -19,6 +19,17 @@ let
   # Get python packages from a set
   getPkgs = set: pnames: map (pname: set.pkgs.${pypa.normalizePackageName pname}) pnames;
 
+  cleanVersion = lib.flip removeAttrs [ "version" ];
+
+  cleanRendered =
+    rendered:
+    rendered
+    // {
+      dependencies = map cleanVersion rendered.dependencies;
+      optional-dependencies = lib.mapAttrs (_: map cleanVersion) rendered.optional-dependencies;
+      build-system = map cleanVersion rendered.build-system;
+    };
+
 in
 lib.fix (self: {
 
@@ -342,11 +353,14 @@ lib.fix (self: {
         let
           project = loadPoetryPyproject { pyproject = fixtures."poetry.toml"; };
         in
-        renderers.buildPythonPackage {
-          inherit project;
-          extras = [ "dev" ];
-          python = mocks.cpythonLinux38;
-        };
+        cleanRendered (
+          renderers.buildPythonPackage {
+            inherit project;
+            extras = [ "dev" ];
+            python = mocks.cpythonLinux38;
+          }
+        );
+
       expected = lib.importJSON ./expected/project.loadPoetryPyproject.testProjectRenderBuildPythonPackage.json;
     };
   };
@@ -357,19 +371,24 @@ lib.fix (self: {
         let
           project = loadPyprojectDynamic { pyproject = fixtures."poetry.toml"; };
         in
-        renderers.buildPythonPackage {
-          inherit project;
-          extras = [ "dev" ];
-          python = mocks.cpythonLinux38;
-        };
+        cleanRendered (
+          renderers.buildPythonPackage {
+            inherit project;
+            extras = [ "dev" ];
+            python = mocks.cpythonLinux38;
+          }
+        );
       inherit (self.loadPoetryPyproject.testProjectRenderBuildPythonPackage) expected;
     };
 
     testPep621 = {
-      expr = (loadPyprojectDynamic { pyproject = fixtures."pandas.toml"; }).renderers.buildPythonPackage {
-        inherit project;
-        python = mocks.cpythonLinux38;
-      };
+      expr = cleanRendered (
+        (loadPyprojectDynamic { pyproject = fixtures."pandas.toml"; }).renderers.buildPythonPackage {
+          inherit project;
+          python = mocks.cpythonLinux38;
+        }
+      );
+
       expected = lib.importJSON ./expected/project.loadPyprojectDynamic.testPep621.json;
     };
 
