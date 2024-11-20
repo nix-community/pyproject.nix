@@ -117,9 +117,8 @@ makeScope newScope (
 
   in
   (mkPythonSet {
-    inherit stdenv;
+    inherit python stdenv;
     pkgsFinal = final;
-    python = python.pythonOnBuildForHost;
     pythonPkgsBuildHost = final.pythonPkgsHostHost;
     bootstrapHooks = final.pythonPkgsBootstrap.hooks;
     pythonPkgsFun = pkgsFun;
