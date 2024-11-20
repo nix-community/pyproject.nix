@@ -5,13 +5,13 @@
 }:
 
 let
-  inherit (pyproject-nix.build.lib) isBootstrapPackage renderers;
+  inherit (pyproject-nix.build.lib) renderers;
   inherit (lib) filter attrValues isDerivation;
 
   python = pkgs.python312;
 
   buildSystems = import ./build-systems.nix {
-    inherit pyproject-nix lib;
+    inherit lib;
   };
 
   # Inject your own packages on top with overrideScope
@@ -77,41 +77,6 @@ in
       nativeBuildInputs = [ pyprojectWheelHook ];
     }
   ) { };
-
-  # Bootstrap dependencies need to use pyprojectBootstrapHook
-  overriden-bootstrap-dep =
-    let
-      overlay = final: _prev: {
-        packaging = final.stdenv.mkDerivation {
-          pname = "packaging";
-          version = "24.1";
-
-          src = pkgs.fetchurl {
-            url = "https://files.pythonhosted.org/packages/51/65/50db4dda066951078f0a96cf12f4b9ada6e4b811516bf0262c0f4f7064d4/packaging-24.1.tar.gz";
-            hash = "sha256-Am7XLI7T/M5b+JUFciWGmJJ/0dvaEKXpgc3wrDf08AI=";
-          };
-
-          nativeBuildInputs =
-            assert isBootstrapPackage "packaging";
-            [
-              final.pyprojectBootstrapHook
-            ]
-            ++ final.resolveBuildSystem {
-              flit-core = [ ];
-            };
-        };
-      };
-
-      pythonSet' = pythonSet.overrideScope (
-        _final: prev: {
-          pythonPkgsBuildHost = prev.pythonPkgsBuildHost.overrideScope overlay;
-        }
-      );
-
-    in
-    pythonSet'.pythonPkgsHostHost.mkVirtualEnv "overriden-bootstrap-venv" {
-      build = [ ];
-    };
 
   full-set =
     let

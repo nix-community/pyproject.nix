@@ -1,7 +1,6 @@
 { lib, pyproject-nix }:
 
 let
-  inherit (pyproject-nix.build.lib) isBootstrapPackage;
   inherit (lib) mapAttrs filterAttrs;
   inherit (builtins) readDir;
 
@@ -9,17 +8,6 @@ let
   paths = filterAttrs (_name: type: type == "directory") (readDir ./.);
 
 in
-{ callPackage, pyprojectBootstrapHook }:
+{ callPackage }:
 # Automatically call all packages
-(mapAttrs (
-  name: _:
-  callPackage (./. + "/${name}") (
-    # Override bootstrap packages with bootstrap hook
-    if isBootstrapPackage name then
-      {
-        pyprojectHook = pyprojectBootstrapHook;
-      }
-    else
-      { }
-  )
-) paths)
+(mapAttrs (name: _: callPackage (./. + "/${name}") { }) paths)

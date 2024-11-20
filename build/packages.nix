@@ -12,7 +12,6 @@ let
   # Build-system package names to memoise
   memoNames = lib.attrNames (mkPkgs' {
     # Hack: We only need attrNames
-    pyprojectBootstrapHook = null;
     callPackage = null;
   });
 
@@ -40,7 +39,7 @@ let
   pkgsFun =
     final:
     lib.mapAttrs (name: drv: builtins.trace (deprecatedBuild name) drv) (mkPkgs' {
-      inherit (final) callPackage pyprojectBootstrapHook;
+      inherit (final) callPackage;
     });
 
   mkPythonSet =
@@ -48,17 +47,11 @@ let
       python,
       stdenv,
       pythonPkgsBuildHost,
-      bootstrapHooks,
       pythonPkgsFun,
       pkgsFinal,
     }:
     {
       inherit python stdenv pythonPkgsBuildHost;
-
-      # Pyproject hook used for bootstrap packages
-      pyprojectBootstrapHook = pkgsFinal.pyprojectHook.override {
-        inherit (bootstrapHooks) pyprojectConfigureHook pyprojectBuildHook;
-      };
 
       # Initialize dependency resolvers
       resolveBuildSystem = mkResolveBuildSystem pythonPkgsBuildHost;
@@ -108,39 +101,13 @@ in
 }:
 makeScope newScope (
   final:
-  let
-    bootstrapHooks = final.callPackage ./hooks {
-      python = final.python.pythonOnBuildForHost;
-      resolveBuildSystem = mkResolveBuildSystem final.pythonPkgsBootstrap;
-      hooks = bootstrapHooks;
-    };
-
-  in
   (mkPythonSet {
     inherit python stdenv;
     pkgsFinal = final;
     pythonPkgsBuildHost = final.pythonPkgsHostHost;
-    bootstrapHooks = final.pythonPkgsBootstrap.hooks;
     pythonPkgsFun = pkgsFun;
   })
   // {
-    # Bootstrap packages used to bootstrap set
-    pythonPkgsBootstrap = makeScope buildPackages.newScope (
-      pkgsFinal:
-      mkPythonSet {
-        inherit (buildPackages) stdenv;
-        inherit bootstrapHooks pkgsFinal;
-        python = python.pythonOnBuildForHost;
-        pythonPkgsBuildHost = final.pythonPkgsBootstrap;
-        pythonPkgsFun =
-          _:
-          final.callPackage ./bootstrap.nix {
-            inherit (bootstrapHooks) pyprojectInstallHook pyprojectBytecodeHook pyprojectOutputSetupHook;
-            python = final.python.pythonOnBuildForHost;
-          };
-      }
-    );
-
     # Python packages for the build host.
     # In case of cross compilation this set is instantiated with host packages, otherwise
     # it's aliasing pythonPkgsHostHost
@@ -152,7 +119,6 @@ makeScope newScope (
             inherit (buildPackages) stdenv;
             python = python.pythonOnBuildForHost;
             inherit (final) pythonPkgsBuildHost;
-            bootstrapHooks = final.pythonPkgsBootstrap.hooks;
             pythonPkgsFun = pkgsFun;
             inherit pkgsFinal;
           }

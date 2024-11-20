@@ -4,10 +4,8 @@
   python,
   pkgs,
   lib,
-  resolveBuildSystem,
   stdenv,
   hooks,
-  pythonPkgsBuildHost,
 }:
 let
   inherit (python) pythonOnBuildForHost isPy3k;
@@ -45,19 +43,20 @@ in
 
     Used internally by `pyprojectHook`.
   */
-  pyprojectBuildHook = callPackage (
-    _:
-    makeSetupHook {
-      name = "pyproject-build-hook";
-      substitutions = {
-        inherit (pythonPkgsBuildHost) build;
-        inherit pythonInterpreter;
+  pyprojectBuildHook =
+    callPackage
+      (
+        { uv }:
+        makeSetupHook {
+          name = "pyproject-build-hook";
+          substitutions = {
+            inherit pythonInterpreter uv;
+          };
+        } ./pyproject-build-hook.sh
+      )
+      {
+        inherit (buildPackages) uv;
       };
-      propagatedBuildInputs = resolveBuildSystem {
-        build = [ ];
-      };
-    } ./pyproject-build-hook.sh
-  ) { };
 
   /*
     Symlink prebuilt wheel sources.

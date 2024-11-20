@@ -8,7 +8,7 @@ let
   python = pkgs.python3;
 
   buildSystems = import ../checks/build-systems.nix {
-    inherit pyproject-nix lib;
+    inherit lib;
   };
 
   pythonSet =

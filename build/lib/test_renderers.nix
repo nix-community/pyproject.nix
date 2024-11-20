@@ -13,7 +13,7 @@ let
   python = pkgs.python312;
 
   buildSystems = import ../checks/build-systems.nix {
-    inherit pyproject-nix lib;
+    inherit lib;
   };
 
   pythonSet =
