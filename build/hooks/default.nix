@@ -6,6 +6,8 @@
   lib,
   stdenv,
   hooks,
+  resolveBuildSystem,
+  pythonPkgsBuildHost,
 }:
 let
   inherit (python) pythonOnBuildForHost isPy3k;
@@ -56,6 +58,30 @@ in
       )
       {
         inherit (buildPackages) uv;
+      };
+
+  /*
+    Build a pyproject.toml/setuptools project.
+
+    Used internally by `pyprojectHook`.
+  */
+  pyprojectPypaBuildHook =
+    callPackage
+      (
+        _:
+        makeSetupHook {
+          name = "pyproject-pypa-build-hook";
+          substitutions = {
+            inherit (pythonPkgsBuildHost) build;
+            inherit pythonInterpreter;
+          };
+          propagatedBuildInputs = pythonPkgsBuildHost.resolveBuildSystem {
+            build = [ ];
+          };
+        } ./pyproject-pypa-build-hook.sh
+      )
+      {
+        inherit (buildPackages) python;
       };
 
   /*
@@ -198,6 +224,7 @@ in
         // (lib.optionalAttrs (stdenv.buildPlatform != stdenv.hostPlatform) {
           # Uv is not yet compatible with cross installs, or at least I can't figure out the magic incantation.
           # We can use installer for cross, and still use uv for native.
+          pyprojectBuildHook = hooks.pyprojectPypaBuildHook;
           pyprojectInstallHook = hooks.pyprojectPypaInstallHook;
         })
       );

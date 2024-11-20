@@ -55,8 +55,9 @@ in
         }).overrideScope
           buildSystems;
     in
-    crossSet.pythonPkgsHostHost.mkVirtualEnv "cross-venv" {
+    crossSet.mkVirtualEnv "cross-venv" {
       build = [ ];
+      cffi = [ ];
     };
 
   prebuilt-wheel = pythonSet.pythonPkgsHostHost.callPackage (
