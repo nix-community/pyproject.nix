@@ -203,6 +203,7 @@ in
           pyprojectBytecodeHook,
           pyprojectOutputSetupHook,
           python,
+          stdenv,
         }:
         makeSetupHook {
           name = "pyproject-hook";
@@ -212,9 +213,8 @@ in
             pyprojectConfigureHook
             pyprojectBuildHook
             pyprojectInstallHook
-            pyprojectBytecodeHook
             pyprojectOutputSetupHook
-          ];
+          ] ++ lib.optional (stdenv.buildPlatform != stdenv.hostPlatform) pyprojectBytecodeHook;
         } ./meta-hook.sh
       )
       (
