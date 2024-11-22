@@ -263,6 +263,11 @@ in
       expr = isPythonTagCompatible mocks.cpythonLinux38 (parsePythonTag "py2");
       expected = false;
     };
+
+    testPypyTag = {
+      expr = isPythonTagCompatible mocks.cpythonLinux38 (parsePythonTag "pp3");
+      expected = false;
+    };
   };
 
   isABITagCompatible = {

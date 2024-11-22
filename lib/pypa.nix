@@ -326,12 +326,14 @@ lib.fix (self: {
     )
     &&
       # Check version
-      pythonTag.version == null
-    || pythonTag.version == sourceVersion.major
-    || (
-      hasPrefix sourceVersion.major pythonTag.version
-      && ((toInt (sourceVersion.major + sourceVersion.minor)) >= toInt pythonTag.version)
-    );
+      (
+        pythonTag.version == null
+        || pythonTag.version == sourceVersion.major
+        || (
+          hasPrefix sourceVersion.major pythonTag.version
+          && ((toInt (sourceVersion.major + sourceVersion.minor)) >= toInt pythonTag.version)
+        )
+      );
 
   /*
     Check whether wheel file name is compatible with this python interpreter.
