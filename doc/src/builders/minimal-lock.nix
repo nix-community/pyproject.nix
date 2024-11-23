@@ -130,7 +130,6 @@ let
             stdenv,
             fetchurl,
             pyprojectHook,
-            pyprojectBootstrapHook,
             resolveBuildSystem,
           }:
           stdenv.mkDerivation {
@@ -140,8 +139,8 @@ let
 
             nativeBuildInputs =
               [
-                # Check if package is a bootstrap package. If it is we should use pyprojectBootstrapHook.
-                (if pyproject-nix.build.lib.isBootstrapPackage name then pyprojectBootstrapHook else pyprojectHook)
+                # Add hook responsible for configuring, building & installing.
+                pyprojectHook
               ]
               # Build systems needs to be resolved since we don't propagate dependencies.
               # Otherwise dependencies of our build-system will be missing.
