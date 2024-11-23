@@ -8,7 +8,7 @@ pyprojectInstallPhase() {
   pushd dist >/dev/null
 
   if [ -z "${UV_COMPILE_BYTECODE-}" ]; then
-     export UV_COMPILE_BYTECODE=1
+    export UV_COMPILE_BYTECODE=1
   fi
 
   for wheel in ./*.whl; do
