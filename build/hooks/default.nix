@@ -6,12 +6,10 @@
   lib,
   stdenv,
   hooks,
-  resolveBuildSystem,
-  pythonPkgsBuildHost,
   runCommand,
 }:
 let
-  inherit (python) pythonOnBuildForHost isPy3k;
+  inherit (python) pythonOnBuildForHost;
   inherit (pkgs) buildPackages;
   pythonSitePackages = python.sitePackages;
 
@@ -82,30 +80,6 @@ in
       };
 
   /*
-    Build a pyproject.toml/setuptools project.
-
-    Used internally by `pyprojectHook`.
-  */
-  pyprojectPypaBuildHook =
-    callPackage
-      (
-        _:
-        makeSetupHook {
-          name = "pyproject-pypa-build-hook";
-          substitutions = {
-            inherit (pythonPkgsBuildHost) build;
-            inherit pythonInterpreter;
-          };
-          propagatedBuildInputs = pythonPkgsBuildHost.resolveBuildSystem {
-            build = [ ];
-          };
-        } ./pyproject-pypa-build-hook.sh
-      )
-      {
-        inherit (buildPackages) python;
-      };
-
-  /*
     Symlink prebuilt wheel sources.
 
     Used internally by `pyprojectWheelHook`.
@@ -136,46 +110,6 @@ in
       {
         inherit (buildPackages) uv;
       };
-
-  /*
-    Install hook using pypa/installer.
-
-    Used instead of `pyprojectInstallHook` for cross compilation support.
-  */
-  pyprojectPypaInstallHook = callPackage (
-    { pythonPkgsBuildHost }:
-    makeSetupHook {
-      name = "pyproject-pypa-install-hook";
-      substitutions = {
-        inherit (pythonPkgsBuildHost) installer;
-        inherit pythonInterpreter pythonSitePackages;
-      };
-    } ./pyproject-pypa-install-hook.sh
-  ) { };
-
-  /*
-    Clean up any shipped bytecode in package output and recompile.
-
-    Used internally by `pyprojectHook`.
-  */
-  pyprojectBytecodeHook = callPackage (
-    _:
-    makeSetupHook {
-      name = "pyproject-bytecode-hook";
-      substitutions = {
-        inherit pythonInterpreter pythonSitePackages;
-        compileArgs = lib.concatStringsSep " " (
-          [
-            "-q"
-            "-f"
-            "-i -"
-          ]
-          ++ lib.optionals isPy3k [ "-j $NIX_BUILD_CORES" ]
-        );
-        bytecodeName = if isPy3k then "__pycache__" else "*.pyc";
-      };
-    } ./pyproject-bytecode-hook.sh
-  ) { };
 
   /*
     Create `pyproject.nix` setup hook in package output.
