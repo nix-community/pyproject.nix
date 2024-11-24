@@ -8,12 +8,33 @@
   hooks,
   resolveBuildSystem,
   pythonPkgsBuildHost,
+  runCommand,
 }:
 let
   inherit (python) pythonOnBuildForHost isPy3k;
   inherit (pkgs) buildPackages;
-  pythonInterpreter = pythonOnBuildForHost.interpreter;
   pythonSitePackages = python.sitePackages;
+
+  # When cross compiling create a virtual environment for the build.
+  #
+  # Because Nixpkgs builds cross compiled Python in a separate
+  # prefix from the native Python, where the native Python doesn't contain
+  # the sysconfigdata files for the cross Python.
+  # This trips up UV's interpreter discovery scripts which is invoked in isolated mode (-I).
+  #
+  # Make the build-host aware of the build-target by aggregating them into a venv.
+  crossPython = runCommand "${python.name}-cross-env" { } ''
+    ${pythonOnBuildForHost.interpreter} -m venv --without-pip $out
+    cat > $out/${pythonSitePackages}/sitecustomize.py<<EOF
+    import sys; sys.path.append('${python}/${pythonSitePackages}')
+    EOF
+  '';
+
+  pythonInterpreter =
+    if stdenv.buildPlatform != stdenv.hostPlatform then
+      "${crossPython}/bin/python"
+    else
+      pythonOnBuildForHost.interpreter;
 
 in
 {
@@ -200,10 +221,8 @@ in
           pyprojectConfigureHook,
           pyprojectBuildHook,
           pyprojectInstallHook,
-          pyprojectBytecodeHook,
           pyprojectOutputSetupHook,
           python,
-          stdenv,
         }:
         makeSetupHook {
           name = "pyproject-hook";
@@ -214,20 +233,12 @@ in
             pyprojectBuildHook
             pyprojectInstallHook
             pyprojectOutputSetupHook
-          ] ++ lib.optional (stdenv.buildPlatform != stdenv.hostPlatform) pyprojectBytecodeHook;
+          ];
         } ./meta-hook.sh
       )
-      (
-        {
-          python = pythonOnBuildForHost;
-        }
-        // (lib.optionalAttrs (stdenv.buildPlatform != stdenv.hostPlatform) {
-          # Uv is not yet compatible with cross installs, or at least I can't figure out the magic incantation.
-          # We can use installer for cross, and still use uv for native.
-          pyprojectBuildHook = hooks.pyprojectPypaBuildHook;
-          pyprojectInstallHook = hooks.pyprojectPypaInstallHook;
-        })
-      );
+      {
+        python = pythonOnBuildForHost;
+      };
 
   /*
     Hook used to build prebuilt wheels.
