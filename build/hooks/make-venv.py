@@ -271,7 +271,11 @@ def fixup_pyvenv(python_root: Path, out_root: Path) -> None:
     with open(out_root.joinpath("pyvenv.cfg"), "r") as pyvenv_f:
         pyvenv = pyvenv_f.read()
 
+    # Replace build-time interpreter references with actual target Python
     pyvenv = pyvenv.replace(os.path.dirname(os.path.dirname(sys.executable)), str(python_root))
+
+    # If the build Python is a cross Python env also replace references to the native Python bin path
+    pyvenv = pyvenv.replace(sys.base_prefix, str(python_root))
 
     with open(out_root.joinpath("pyvenv.cfg"), "w") as pyvenv_f:
         pyvenv_f.write(pyvenv)
