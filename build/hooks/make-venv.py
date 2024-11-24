@@ -154,8 +154,14 @@ def write_site_packages(src: Path, dst: Path) -> None:
         try:
             os.symlink(src, dst)
         except FileExistsError as exc:
+            # Bytecode files contain fully resolved file names, meaning that the byte code will always collide
+            # even if the original sources are identical.
+            # We can safely ignore collisions for bytecode because we check the original sources for equality.
+            if "__pycache__" in dst.parts and dst.suffix == ".pyc":
+                return
+
             if not filecmp.cmp(src, dst):
-                raise ValueError(f"""Two packages are trying to provide the same file with differnt contents.
+                raise ValueError(f"""Two packages are trying to provide the same file with different contents.
      Target: {dst}
      File 1: {src}
      File 2: {Path(dst).resolve()}.
