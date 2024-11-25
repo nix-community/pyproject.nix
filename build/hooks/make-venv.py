@@ -16,7 +16,7 @@ SITE_PACKAGES = os.path.join("lib", f"python{PYTHON_VERSION}", "site-packages")
 
 
 # Look for shebangs pointing to Python bin directory, rewrite them to venv directory
-dep_shebang = ("#!" + os.path.dirname(sys.executable)).encode()
+dep_shebang = ("#!" + os.path.join(sys.base_prefix, "bin")).encode()
 
 
 class ArgsNS(argparse.Namespace):
@@ -286,7 +286,11 @@ def main():
 
     out_root = Path(args.out)
     python_root = Path(args.python)
-    python_executable = python_root.joinpath("bin", EXECUTABLE)
+    python_bin = python_root.joinpath("bin")
+    python_executable = python_bin.joinpath(EXECUTABLE)
+
+    global dep_shebang
+    dep_shebang = ("#!" + os.path.join(python_bin)).encode()
 
     dependencies: list[Path] = []  # List of dependency roots
     seen_roots: set[str] = set()  # Keep track of unique dependency roots

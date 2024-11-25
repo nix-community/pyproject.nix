@@ -156,8 +156,8 @@ in
     makeSetupHook {
       name = "pyproject-make-venv-hook";
       substitutions = {
-        pythonInterpreter = python.interpreter;
-        inherit python;
+        inherit pythonInterpreter python;
+        hostInterpreter = python.interpreter;
         makeVenvScript = ./make-venv.py;
       };
     } ./pyproject-make-venv-hook.sh
