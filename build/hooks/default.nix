@@ -30,7 +30,7 @@ let
 
   pythonInterpreter =
     if stdenv.buildPlatform != stdenv.hostPlatform then
-      "${crossPython}/bin/python"
+      "${crossPython}/bin/${baseNameOf pythonOnBuildForHost.interpreter}"
     else
       pythonOnBuildForHost.interpreter;
 
@@ -127,6 +127,26 @@ in
   ) { };
 
   /*
+    Rewrite shebangs for cross compiled Python programs.
+
+    When cross compiling & installing a Python program the shebang gets written
+    for the install-time Pythhon, which for cross compilation is for the _build host_.
+
+    This hook rewrites any shebangs pointing to the build host Python to the target host Python.
+  */
+  pyprojectCrossShebangHook = callPackage (
+    _:
+    makeSetupHook {
+      name = "pyproject-cross-shebang-hook";
+      substitutions = {
+        script = ./patch-cross-shebangs.py;
+        inherit pythonInterpreter;
+        hostInterpreter = python.interpreter;
+      };
+    } ./pyproject-cross-shebang-hook.sh
+  ) { };
+
+  /*
     Create a virtual environment from buildInputs
 
     Used internally by `mkVirtualEnv`.
@@ -136,7 +156,8 @@ in
     makeSetupHook {
       name = "pyproject-make-venv-hook";
       substitutions = {
-        inherit pythonInterpreter python;
+        pythonInterpreter = python.interpreter;
+        inherit python;
         makeVenvScript = ./make-venv.py;
       };
     } ./pyproject-make-venv-hook.sh
@@ -156,6 +177,7 @@ in
           pyprojectBuildHook,
           pyprojectInstallHook,
           pyprojectOutputSetupHook,
+          pyprojectCrossShebangHook,
           python,
         }:
         makeSetupHook {
@@ -167,7 +189,7 @@ in
             pyprojectBuildHook
             pyprojectInstallHook
             pyprojectOutputSetupHook
-          ];
+          ] ++ lib.optional (stdenv.buildPlatform != stdenv.hostPlatform) pyprojectCrossShebangHook;
         } ./meta-hook.sh
       )
       {

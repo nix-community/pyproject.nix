@@ -84,6 +84,7 @@ let
         pyprojectInstallHook
         pyprojectBytecodeHook
         pyprojectOutputSetupHook
+        pyprojectCrossShebangHook
         pyprojectMakeVenvHook
         pyprojectHook
         pyprojectWheelHook
