@@ -62,6 +62,16 @@ let
             touch $out
           '';
 
+      make-venv-unittest =
+        pkgs.runCommand "venv-unittest"
+          {
+            nativeBuildInputs = [ python ];
+          }
+          ''
+            cd ${../hooks/make-venv} && python -m unittest -v
+            touch $out
+          '';
+
       prebuilt-wheel = pythonSet.pythonPkgsHostHost.callPackage (
         {
           stdenv,
