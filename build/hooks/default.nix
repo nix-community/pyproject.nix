@@ -158,7 +158,7 @@ in
       substitutions = {
         inherit pythonInterpreter python;
         hostInterpreter = python.interpreter;
-        makeVenvScript = ./make-venv.py;
+        makeVenvScript = ./make-venv/make_venv.py;
       };
     } ./pyproject-make-venv-hook.sh
   ) { };
@@ -168,7 +168,6 @@ in
 
     This is the default choice for both pyproject.toml & setuptools projects.
   */
-  #
   pyprojectHook =
     callPackage
       (
