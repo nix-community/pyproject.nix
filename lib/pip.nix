@@ -42,11 +42,7 @@ lib.fix (self: {
       #
       # We also need to support stringly paths...
       isPath = typeOf requirements == "path" || hasContext requirements;
-      path' =
-        if typeOf requirements == "path" then
-          requirements
-        else
-          /. + unsafeDiscardStringContext requirements;
+      path' = if isPath then requirements else /. + unsafeDiscardStringContext requirements;
       root = dirOf path';
 
       # Requirements without comments and no empty strings
