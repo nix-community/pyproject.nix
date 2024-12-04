@@ -1,9 +1,13 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:base"],
+  "extends": [
+    "config:recommended"
+  ],
   "lockFileMaintenance": {
     "enabled": true,
-    "extends": ["schedule:weekly"]
+    "extends": [
+      "schedule:weekly"
+    ]
   },
   "nix": {
     "enabled": true
@@ -14,7 +18,12 @@
   "pip_requirements": {
     "enabled": false
   },
-  "python": {
-    "enabled": false
-  }
+  "packageRules": [
+    {
+      "matchCategories": [
+        "python"
+      ],
+      "enabled": false
+    }
+  ]
 }
