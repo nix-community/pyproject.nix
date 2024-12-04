@@ -6,7 +6,7 @@ pyprojectBuildPhase() {
   runHook preBuild
 
   echo "Creating a wheel..."
-  env PYTHONPATH="${NIX_PYPROJECT_PYTHONPATH}:${PYTHONPATH}" @uv@/bin/uv build --no-cache --python=@pythonInterpreter@ --offline --no-build-isolation --out-dir dist/ --wheel $uvBuildFlags
+  env PYTHONPATH="${NIX_PYPROJECT_PYTHONPATH}:${PYTHONPATH}" @uv@/bin/uv build -v --no-cache --python=@pythonInterpreter@ --offline --no-build-isolation --out-dir dist/ --wheel $uvBuildFlags
 
   runHook postBuild
   echo "Finished executing pyprojectBuildPhase"
