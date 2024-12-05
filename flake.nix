@@ -136,6 +136,11 @@
             pyproject-nix = self;
           }
         ))
+        // (lib.mapAttrs' (name: drv: lib.nameValuePair "build-util-${name}" drv) (
+          pkgs.callPackages ./build/util/checks.nix {
+            pyproject-nix = self;
+          }
+        ))
         // {
           formatter =
             pkgs.runCommand "fmt-check"
