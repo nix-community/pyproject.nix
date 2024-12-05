@@ -93,7 +93,7 @@
         },
         "type": "boolOp"
       },
-      "name": "backports.cached-property",
+      "name": "backports-cached-property",
       "url": null
     },
     {

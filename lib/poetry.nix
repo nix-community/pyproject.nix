@@ -3,6 +3,7 @@
   pep440,
   pep508,
   pep518,
+  pypa,
   ...
 }:
 
@@ -160,7 +161,7 @@ lib.fix (
 
       in
       {
-        inherit (dep) name;
+        name = pypa.normalizePackageName dep.name;
         conditions = if dep ? version then self.parseVersionConds dep.version else [ ];
         extras = dep.extras or [ ];
         url = dep.url or null;
