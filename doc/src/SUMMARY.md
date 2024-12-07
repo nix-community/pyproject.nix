@@ -48,6 +48,7 @@
     - [resolvers](./build/lib/resolvers.md)
   - [packages.hooks](./build/hooks.md)
   - [hacks](./build/hacks.md)
+  - [util](./build/util.md)
 
 # Contributing
 
