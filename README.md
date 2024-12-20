@@ -12,10 +12,14 @@ Pyproject.nix is a collection of Nix utilities to work with Python project metad
 
 And additionally support for many other standards relating to Python packaging. Pyproject.nix aims to be a swiss army knife of simple customizable utilities that supports many use cases.
 
+### Docs
+
+https://pyproject-nix.github.io/pyproject.nix/
+
 ### Matrix chat
 
 https://matrix.to/#/#pyproject.nix:blad.is
 
-### Docs
+---
 
-https://pyproject-nix.github.io/pyproject.nix/
+This project is supported by [Bladis Limited](https://blad.is/consulting/).

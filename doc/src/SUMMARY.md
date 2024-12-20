@@ -53,3 +53,7 @@
 # Contributing
 
 - [Hacking](./HACKING.md)
+
+# Commercial support
+
+- [Support](./support.md)
